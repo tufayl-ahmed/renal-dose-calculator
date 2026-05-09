@@ -2150,13 +2150,98 @@ h1 {
   text-align: right;
 }
 
-.mobile-result-strip {
-  display: none;
+.clinical-summary-bar {
+  position: sticky;
+  top: 8px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 0.85fr 0.7fr 1fr 1.25fr;
+  gap: 10px;
+  align-items: stretch;
+  margin: 0 0 12px;
+  padding: 10px;
+  border: 1px solid rgba(15, 118, 110, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.clinical-summary-bar > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid #e1e8f0;
+  border-radius: 7px;
+  background: #f8fafc;
+}
+
+.clinical-summary-bar span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 850;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.clinical-summary-bar strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: clamp(0.92rem, 1.15vw, 1.08rem);
+  font-weight: 900;
+  line-height: 1.08;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary-decision[data-tone="success"] {
+  border-color: rgba(22, 163, 74, 0.3);
+  background: var(--green-soft);
+}
+
+.summary-decision[data-tone="success"] strong {
+  color: #166534;
+}
+
+.summary-decision[data-tone="warning"] {
+  border-color: rgba(245, 158, 11, 0.42);
+  background: var(--amber-soft);
+}
+
+.summary-decision[data-tone="warning"] strong {
+  color: #92400e;
+}
+
+.summary-decision[data-tone="danger"] {
+  border-color: rgba(220, 38, 38, 0.34);
+  background: var(--red-soft);
+}
+
+.summary-decision[data-tone="danger"] strong {
+  color: var(--red);
 }
 
 .clinical-grid {
-  grid-template-columns: minmax(360px, 0.98fr) minmax(390px, 1.08fr) minmax(360px, 1fr);
+  grid-template-columns: minmax(360px, 0.82fr) minmax(560px, 1.18fr);
   gap: 16px;
+  align-items: start;
+}
+
+.calculator-panel {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.dose-card {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.kidney-panel {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 .panel,
@@ -2626,7 +2711,18 @@ input::placeholder {
 .dose-card {
   display: grid;
   align-content: start;
-  border-color: #d2dedb;
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(15, 118, 110, 0.3);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.dose-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--teal);
+  content: "";
 }
 
 .dose-title-row {
@@ -2931,7 +3027,7 @@ input::placeholder {
 
 .source-detail-block dl div {
   display: grid;
-  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-columns: 96px minmax(0, 1fr);
   gap: 10px;
 }
 
@@ -2970,6 +3066,13 @@ input::placeholder {
 @media (max-width: 1180px) {
   .clinical-grid {
     grid-template-columns: 1fr;
+  }
+
+  .calculator-panel,
+  .dose-card,
+  .kidney-panel {
+    grid-column: auto;
+    grid-row: auto;
   }
 
   .calculator-panel .field-grid {
@@ -3036,12 +3139,12 @@ input::placeholder {
     height: 18px;
   }
 
-  .mobile-result-strip:not(.hidden) {
+  .clinical-summary-bar {
     position: sticky;
     top: 60px;
     z-index: 4;
     display: grid;
-    grid-template-columns: 0.8fr 0.8fr minmax(0, 1.4fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     align-items: stretch;
     margin: 8px 0 10px;
@@ -3053,7 +3156,7 @@ input::placeholder {
     backdrop-filter: blur(16px);
   }
 
-  .mobile-result-strip > div {
+  .clinical-summary-bar > div {
     display: grid;
     gap: 3px;
     min-width: 0;
@@ -3063,14 +3166,14 @@ input::placeholder {
     background: #f8fafc;
   }
 
-  .mobile-result-strip span {
+  .clinical-summary-bar span {
     color: var(--muted);
     font-size: 0.62rem;
     font-weight: 850;
     line-height: 1;
   }
 
-  .mobile-result-strip strong {
+  .clinical-summary-bar strong {
     color: var(--ink);
     font-size: 0.82rem;
     font-weight: 900;

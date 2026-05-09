@@ -8,7 +8,7 @@
       content="Adult CKD-EPI eGFR and Cockcroft-Gault creatinine clearance calculator with renal dosing label lookup."
     />
     <title>Renal Dose Calculator</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260509-9" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260509-10" />
   </head>
   <body>
     <main class="app-shell">
@@ -32,18 +32,22 @@
           <p>Verify before prescribing</p>
         </section>
 
-        <section class="mobile-result-strip hidden" id="mobile-result-strip" aria-live="polite">
+        <section class="clinical-summary-bar" id="mobile-result-strip" aria-live="polite">
           <div>
             <span>CrCl</span>
             <strong id="strip-crcl">--</strong>
           </div>
           <div>
-            <span>eGFR</span>
-            <strong id="strip-egfr">--</strong>
+            <span>CKD</span>
+            <strong id="strip-ckd">--</strong>
           </div>
           <div>
-            <span id="strip-drug">No drug</span>
-            <strong id="strip-dose">Awaiting result</strong>
+            <span>Drug</span>
+            <strong id="strip-drug">No drug</strong>
+          </div>
+          <div class="summary-decision" id="strip-decision" data-tone="neutral">
+            <span>Dose adjustment</span>
+            <strong id="strip-dose">Awaiting inputs</strong>
           </div>
         </section>
 
@@ -430,6 +434,10 @@
                   <dd id="source-updated-text">Shown when supplied by openFDA.</dd>
                 </div>
                 <div>
+                  <dt>Last checked</dt>
+                  <dd id="source-checked-text">Not checked yet.</dd>
+                </div>
+                <div>
                   <dt>Status</dt>
                   <dd id="source-status-text">Search a drug to view label evidence.</dd>
                 </div>
@@ -458,6 +466,6 @@
     </main>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="./src/app.js?v=20260509-10"></script>
+    <script type="module" src="./src/app.js?v=20260509-11"></script>
   </body>
 </html>

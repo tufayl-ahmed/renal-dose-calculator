@@ -31,6 +31,7 @@ const sourceStatusText = document.querySelector("#source-status-text");
 const sourceProductText = document.querySelector("#source-product-text");
 const sourceSectionText = document.querySelector("#source-section-text");
 const sourceUpdatedText = document.querySelector("#source-updated-text");
+const sourceCheckedText = document.querySelector("#source-checked-text");
 const sourceTableExcerpt = document.querySelector("#source-table-excerpt");
 const sourceLink = document.querySelector("#source-link");
 const copySourceButton = document.querySelector("#copy-source");
@@ -55,9 +56,10 @@ const sourceDetails = document.querySelector("#source-details");
 const sourceSummaryText = document.querySelector("#source-summary-text");
 const mobileResultStrip = document.querySelector("#mobile-result-strip");
 const stripCrcl = document.querySelector("#strip-crcl");
-const stripEgfr = document.querySelector("#strip-egfr");
+const stripCkd = document.querySelector("#strip-ckd");
 const stripDrug = document.querySelector("#strip-drug");
 const stripDose = document.querySelector("#strip-dose");
+const stripDecision = document.querySelector("#strip-decision");
 const ckdStageLarge = document.querySelector("#ckd-stage-large");
 const ckdStageLabel = document.querySelector("#ckd-stage-label");
 const ckdTableMarker = document.querySelector("#ckd-table-marker");
@@ -80,8 +82,11 @@ let latestSourceText = "";
 let latestCockpitState = {
   egfr: null,
   crcl: null,
+  ckd: "",
   drug: "",
   dose: "",
+  decisionLabel: "Awaiting inputs",
+  decisionTone: "neutral",
   route: "ALL",
 };
 const RECENT_KEY = "renal-dose-recent-v2";
@@ -122,6 +127,7 @@ clearHistoryButton?.addEventListener("click", clearRecentHistory);
 commonDrugChips?.addEventListener("click", handleDrugChipClick);
 
 collapseSourceEvidenceOnMobile();
+renderMobileResultStrip();
 renderRecentHistory();
 
 async function runCalculation(formData) {
@@ -188,6 +194,7 @@ function renderRenalResults({ values, egfr, crcl, stage, crclTone }) {
     ...latestCockpitState,
     egfr,
     crcl,
+    ckd: stage.stage,
     drug: values.drug || latestCockpitState.drug || "",
     route: values.route || latestCockpitState.route || "ALL",
   };
@@ -220,6 +227,7 @@ async function renderDrugLookup(values) {
   sourceProductText.textContent = "Matching product label...";
   sourceSectionText.textContent = "Searching renal impairment and dosage sections...";
   sourceUpdatedText.textContent = "Waiting for label metadata.";
+  sourceCheckedText.textContent = "Checking now...";
   labelSections.innerHTML = "";
   latestSourceText = "";
   setSourceCopyState(false);
@@ -232,6 +240,8 @@ async function renderDrugLookup(values) {
     drug: values.drug,
     route: values.route,
     dose: "Searching label",
+    decisionLabel: "Checking label",
+    decisionTone: "neutral",
   };
   renderMobileResultStrip();
   sourceLink.href = buildDailyMedSearchUrl(values.drug);
@@ -268,6 +278,7 @@ async function renderDrugLookup(values) {
     sourceProductText.textContent = "No product matched.";
     sourceSectionText.textContent = "No label section available.";
     sourceUpdatedText.textContent = "Not available.";
+    sourceCheckedText.textContent = formatCheckedAt();
     sourceLink.href = buildDailyMedSearchUrl(values.drug);
     doseCallout.innerHTML = renderDoseGuidance({
       status: "not_available",
@@ -291,6 +302,8 @@ async function renderDrugLookup(values) {
       drug: values.drug,
       route: values.route,
       dose: "Review source",
+      decisionLabel: "No reliable guidance",
+      decisionTone: "neutral",
     };
     renderMobileResultStrip();
     renderDosingContextControls(null);
@@ -316,6 +329,7 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
   sourceProductText.textContent = formatProductMatch(assist, guidance, normalizedDrug);
   sourceSectionText.textContent = formatSourceSectionMatch(assist);
   sourceUpdatedText.textContent = formatLabelUpdated(assist);
+  sourceCheckedText.textContent = formatCheckedAt();
   sourceLink.href = assist.sourceUrl || guidance.sourceUrl || buildDailyMedSearchUrl(guidance.drugName || values.drug);
   sourceLink.classList.remove("is-disabled");
   renderDosingContextControls(null);
@@ -329,11 +343,14 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
   setSourceCopyState(Boolean(latestSourceText));
   sourceTableExcerpt.innerHTML = renderSourceTableExcerpt(guidance);
   latestDrugSummary = buildDrugShareText({ assist, guidance, values });
+  const decision = getDoseDecision(guidance);
   latestCockpitState = {
     ...latestCockpitState,
     drug: guidance.drugName || values.drug,
     route: values.route,
     dose: formatStripDose(guidance),
+    decisionLabel: decision.label,
+    decisionTone: decision.tone,
   };
   sourceDetails.open = true;
   sourceSummaryText.textContent = summarizeSourceEvidence(assist);
@@ -395,6 +412,16 @@ function formatLabelUpdated(assist) {
   return String(value);
 }
 
+function formatCheckedAt(date = new Date()) {
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
 function buildSourceCopyText(assist, guidance) {
   const sections = assist?.sourceSections || [];
   const sourceLines = sections
@@ -406,6 +433,7 @@ function buildSourceCopyText(assist, guidance) {
     `Label section: ${formatSourceSectionMatch(assist)}`,
     `Source: DailyMed via openFDA`,
     `Updated: ${formatLabelUpdated(assist)}`,
+    `Last checked: ${formatCheckedAt()}`,
     assist?.sourceUrl || guidance?.sourceUrl ? `Full label: ${assist?.sourceUrl || guidance?.sourceUrl}` : "",
     sourceLines.length ? "" : "No renal label section text was returned to the app.",
     ...sourceLines,
@@ -937,16 +965,13 @@ function renderMobileResultStrip() {
   if (!mobileResultStrip) {
     return;
   }
-  const hasRenal = Number.isFinite(latestCockpitState.crcl) || Number.isFinite(latestCockpitState.egfr);
-  mobileResultStrip.classList.toggle("hidden", !hasRenal);
   stripCrcl.textContent = Number.isFinite(latestCockpitState.crcl)
-    ? latestCockpitState.crcl.toFixed(1)
+    ? `${latestCockpitState.crcl.toFixed(1)} mL/min`
     : "--";
-  stripEgfr.textContent = Number.isFinite(latestCockpitState.egfr)
-    ? latestCockpitState.egfr.toFixed(1)
-    : "--";
+  stripCkd.textContent = latestCockpitState.ckd || "--";
   stripDrug.textContent = latestCockpitState.drug || "No drug";
-  stripDose.textContent = latestCockpitState.dose || "Awaiting result";
+  stripDose.textContent = latestCockpitState.decisionLabel || "Awaiting inputs";
+  stripDecision?.setAttribute("data-tone", latestCockpitState.decisionTone || "neutral");
 }
 
 function formatStripDose(guidance) {
@@ -959,6 +984,38 @@ function formatStripDose(guidance) {
     return compactQuickText(dose, 42);
   }
   return compactQuickText(`${dose} · ${interval}`, 58);
+}
+
+function getDoseDecision(guidance = {}) {
+  const reviewText = [
+    guidance.status,
+    guidance.reviewLevel,
+    guidance.dose,
+    guidance.interval,
+    guidance.recommendation,
+    guidance.caveat,
+    guidance.indicationNote,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  if (/contraindicated|do not use|do not initiate|discontinue|avoid|not recommended|consult/i.test(reviewText)) {
+    return { label: "Avoid / consult", tone: "danger" };
+  }
+
+  if (/no renal dose adjustment|no dose adjustment/i.test(reviewText)) {
+    return { label: "No adjustment", tone: "success" };
+  }
+
+  if (/not_available|not found|route.*not found|review source|source review|required|manual-review|unavailable|no reliable/i.test(reviewText)) {
+    return { label: "No reliable guidance", tone: "neutral" };
+  }
+
+  if (guidance.dose || guidance.interval || guidance.rows?.some((row) => row.selected)) {
+    return { label: "Adjust dose", tone: "warning" };
+  }
+
+  return { label: "No reliable guidance", tone: "neutral" };
 }
 
 function summarizeSourceEvidence(assist) {
@@ -1183,7 +1240,16 @@ function renderError(message) {
   updateCkdBandTable("");
   crclNote.textContent = message;
   interpretationList.innerHTML = `<li>${escapeHtml(message)}</li>`;
-  latestCockpitState = { egfr: null, crcl: null, drug: "", dose: "Check input", route: "ALL" };
+  latestCockpitState = {
+    egfr: null,
+    crcl: null,
+    ckd: "",
+    drug: "",
+    dose: "Check input",
+    decisionLabel: "Check input",
+    decisionTone: "danger",
+    route: "ALL",
+  };
   renderMobileResultStrip();
 }
 
@@ -1207,7 +1273,16 @@ function resetUi() {
   crclNote.textContent = "Enter age, sex, creatinine, and weight. CrCl and eGFR will appear here.";
   interpretationList.innerHTML = "<li>Awaiting patient inputs.</li>";
   latestRenalSummary = "";
-  latestCockpitState = { egfr: null, crcl: null, drug: "", dose: "", route: "ALL" };
+  latestCockpitState = {
+    egfr: null,
+    crcl: null,
+    ckd: "",
+    drug: "",
+    dose: "",
+    decisionLabel: "Awaiting inputs",
+    decisionTone: "neutral",
+    route: "ALL",
+  };
   renderMobileResultStrip();
   resetDrugUi();
 }
@@ -1225,6 +1300,7 @@ function resetDrugUi() {
   sourceProductText.textContent = "No product matched yet.";
   sourceSectionText.textContent = "Renal impairment / dosage adjustment when available.";
   sourceUpdatedText.textContent = "Shown when supplied by openFDA.";
+  sourceCheckedText.textContent = "Not checked yet.";
   sourceLink.href = "#";
   sourceLink.classList.add("is-disabled");
   labelSections.innerHTML = "";
@@ -1238,6 +1314,8 @@ function resetDrugUi() {
     ...latestCockpitState,
     drug: "",
     dose: Number.isFinite(latestCockpitState.crcl) ? "Awaiting result" : "",
+    decisionLabel: Number.isFinite(latestCockpitState.crcl) ? "No drug selected" : "Awaiting inputs",
+    decisionTone: "neutral",
   };
   renderMobileResultStrip();
   setCopyButtonState(false);
