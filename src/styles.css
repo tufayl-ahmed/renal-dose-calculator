@@ -2008,19 +2008,11 @@ body {
 }
 
 .kidney-mark {
-  width: 36px;
-  height: 36px;
-  color: var(--teal);
-  fill: currentColor;
-  stroke: none;
+  display: block;
+  width: 46px;
+  height: 40px;
+  object-fit: contain;
   filter: drop-shadow(0 5px 10px rgba(0, 121, 111, 0.16));
-}
-
-.kidney-mark path:last-child {
-  fill: none;
-  stroke: #ecfffb;
-  stroke-linecap: round;
-  stroke-width: 2.8;
 }
 
 h1 {
@@ -2807,8 +2799,8 @@ input::placeholder {
   }
 
   .kidney-mark {
-    width: 31px;
-    height: 31px;
+    width: 38px;
+    height: 34px;
   }
 
   h1 {
