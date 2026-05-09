@@ -156,8 +156,9 @@ Manual deploy during development:
 npm run deploy
 ```
 
-The intended production workflow is GitHub-to-Cloudflare auto-deploy: push to
-`main`, Cloudflare builds from GitHub, then verify the live Pages URL.
+The intended production workflow is GitHub-to-Cloudflare auto-deploy through
+GitHub Actions: push to `main`, tests run, and Wrangler deploys the existing
+Cloudflare Pages project when deployment is enabled.
 
 ## Free-First Architecture
 
