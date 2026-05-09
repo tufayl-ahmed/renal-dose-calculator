@@ -28,8 +28,12 @@ const drugTitle = document.querySelector("#drug-title");
 const drugMeta = document.querySelector("#drug-meta");
 const sourceLabelTitle = document.querySelector("#source-label-title");
 const sourceStatusText = document.querySelector("#source-status-text");
+const sourceProductText = document.querySelector("#source-product-text");
+const sourceSectionText = document.querySelector("#source-section-text");
+const sourceUpdatedText = document.querySelector("#source-updated-text");
 const sourceTableExcerpt = document.querySelector("#source-table-excerpt");
 const sourceLink = document.querySelector("#source-link");
+const copySourceButton = document.querySelector("#copy-source");
 const doseCallout = document.querySelector("#dose-callout");
 const labelSections = document.querySelector("#label-sections");
 const dosingContext = document.querySelector("#dosing-context");
@@ -45,6 +49,8 @@ const quickApplyButton = document.querySelector("#quick-apply");
 const recentPanel = document.querySelector("#recent-panel");
 const recentList = document.querySelector("#recent-list");
 const clearHistoryButton = document.querySelector("#clear-history");
+const commonDrugChips = document.querySelector(".common-drug-chips");
+const sourceShell = document.querySelector("#source-shell");
 const sourceDetails = document.querySelector("#source-details");
 const sourceSummaryText = document.querySelector("#source-summary-text");
 const mobileResultStrip = document.querySelector("#mobile-result-strip");
@@ -70,6 +76,7 @@ const fields = {
 let drugLookupRequestId = 0;
 let latestRenalSummary = "";
 let latestDrugSummary = "";
+let latestSourceText = "";
 let latestCockpitState = {
   egfr: null,
   crcl: null,
@@ -101,6 +108,7 @@ form.addEventListener("reset", () => {
 });
 
 copyResultButton?.addEventListener("click", copyCurrentResult);
+copySourceButton?.addEventListener("click", copyCurrentSourceText);
 doseCallout?.addEventListener("click", handleDoseCalloutClick);
 quickApplyButton?.addEventListener("click", applyQuickInput);
 quickInput?.addEventListener("keydown", (event) => {
@@ -111,7 +119,9 @@ quickInput?.addEventListener("keydown", (event) => {
 });
 recentList?.addEventListener("click", handleRecentClick);
 clearHistoryButton?.addEventListener("click", clearRecentHistory);
+commonDrugChips?.addEventListener("click", handleDrugChipClick);
 
+collapseSourceEvidenceOnMobile();
 renderRecentHistory();
 
 async function runCalculation(formData) {
@@ -145,6 +155,7 @@ function renderRenalResults({ values, egfr, crcl, stage, crclTone }) {
   crclStage.dataset.tone = crclTone.tone;
   ckdStageLarge.textContent = stage.stage;
   ckdStageLarge.dataset.tone = stage.tone;
+  ckdStageLarge.parentElement.dataset.tone = stage.tone;
   ckdStageLabel.textContent = stage.label;
   ckdTableMarker.textContent = `eGFR ${egfr.toFixed(1)} mL/min/1.73 m²`;
   updateCkdBandTable(stage.stage);
@@ -156,12 +167,10 @@ function renderRenalResults({ values, egfr, crcl, stage, crclTone }) {
   bsaValue.textContent = bsa ? `${bsa} m²` : "--";
   ibwValue.textContent = idealBodyWeight ? `${idealBodyWeight} kg` : "--";
   abwValue.textContent = adjustedBodyWeight ? `${adjustedBodyWeight} kg` : "--";
-  weightMethod.textContent = values.height
-    ? `Actual ${values.weight} kg · IBW ${idealBodyWeight} kg`
-    : "Cockcroft-Gault (Actual body weight)";
+  weightMethod.textContent = `Cockcroft-Gault using: Actual body weight (${values.weight} kg)`;
 
   const bodyWeightNote = values.height
-    ? `BMI ${bmi} kg/m². Adjusted body weight estimate: ${adjustedBodyWeight ? `${adjustedBodyWeight} kg` : "not needed by current rule"}.`
+    ? `BMI ${bmi} kg/m². IBW ${idealBodyWeight} kg${adjustedBodyWeight ? `; adjusted body weight ${adjustedBodyWeight} kg` : ""}. Review weight choice for extremes of body size.`
     : "Height was not entered, so Cockcroft-Gault used actual body weight only.";
   crclNote.textContent = bodyWeightNote;
 
@@ -208,7 +217,12 @@ async function renderDrugLookup(values) {
   drugMeta.textContent = "Checking DailyMed/openFDA label text with AI assistance...";
   sourceLabelTitle.textContent = values.drug;
   sourceStatusText.textContent = "Checking DailyMed/openFDA label text with AI assistance...";
+  sourceProductText.textContent = "Matching product label...";
+  sourceSectionText.textContent = "Searching renal impairment and dosage sections...";
+  sourceUpdatedText.textContent = "Waiting for label metadata.";
   labelSections.innerHTML = "";
+  latestSourceText = "";
+  setSourceCopyState(false);
   sourceTableExcerpt.innerHTML = renderSourceTableSkeleton();
   doseCallout.innerHTML = renderLoadingDoseGuidance(values);
   sourceDetails.open = false;
@@ -251,6 +265,9 @@ async function renderDrugLookup(values) {
     drugMeta.textContent = error.message;
     sourceLabelTitle.textContent = values.drug;
     sourceStatusText.textContent = error.message;
+    sourceProductText.textContent = "No product matched.";
+    sourceSectionText.textContent = "No label section available.";
+    sourceUpdatedText.textContent = "Not available.";
     sourceLink.href = buildDailyMedSearchUrl(values.drug);
     doseCallout.innerHTML = renderDoseGuidance({
       status: "not_available",
@@ -264,7 +281,9 @@ async function renderDrugLookup(values) {
       rows: [],
     });
     labelSections.innerHTML = "";
-    sourceTableExcerpt.innerHTML = `<p>No parsed renal table available. Review the DailyMed source.</p>`;
+    latestSourceText = "";
+    setSourceCopyState(false);
+    sourceTableExcerpt.innerHTML = `<p>No renal dosing evidence could be parsed from this label. Review the DailyMed source.</p>`;
     sourceDetails.open = false;
     sourceSummaryText.textContent = "Source needed";
     latestCockpitState = {
@@ -294,6 +313,9 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
     .filter(Boolean)
     .join(" · ");
   sourceStatusText.textContent = formatAssistSourceMode(assist);
+  sourceProductText.textContent = formatProductMatch(assist, guidance, normalizedDrug);
+  sourceSectionText.textContent = formatSourceSectionMatch(assist);
+  sourceUpdatedText.textContent = formatLabelUpdated(assist);
   sourceLink.href = assist.sourceUrl || guidance.sourceUrl || buildDailyMedSearchUrl(guidance.drugName || values.drug);
   sourceLink.classList.remove("is-disabled");
   renderDosingContextControls(null);
@@ -303,6 +325,8 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
     sourceMode: assist.sourceMode,
   });
   labelSections.innerHTML = renderAssistedSourceSections(assist);
+  latestSourceText = buildSourceCopyText(assist, guidance);
+  setSourceCopyState(Boolean(latestSourceText));
   sourceTableExcerpt.innerHTML = renderSourceTableExcerpt(guidance);
   latestDrugSummary = buildDrugShareText({ assist, guidance, values });
   latestCockpitState = {
@@ -341,7 +365,53 @@ function renderAssistedSourceSections(assist) {
   const sourceSections = sections.filter((section) => section.hasRenalKeyword).slice(0, 3);
   return sourceSections.length
     ? sourceSections.map(renderSection).join("")
-    : `<div class="label-section"><h4>No dosing sections returned</h4><p>Open the DailyMed source to review the current label.</p></div>`;
+    : `<div class="label-section"><h4>Source review needed</h4><p>No renal dosing section was returned to the app. Open the DailyMed source to review the current label.</p></div>`;
+}
+
+function formatProductMatch(assist, guidance, normalizedDrug) {
+  const label = assist?.label || {};
+  const title = label.title || guidance?.drugName || normalizedDrug?.displayName || "Selected drug";
+  const generic = label.genericName && label.genericName !== title ? ` · ${label.genericName}` : "";
+  const productType = label.productType ? ` · ${label.productType}` : "";
+  return `${title}${generic}${productType}`;
+}
+
+function formatSourceSectionMatch(assist) {
+  const sections = assist?.sourceSections || [];
+  const renalSection = sections.find((section) => section.hasRenalKeyword) || sections[0];
+  return renalSection?.heading || "Renal impairment / dosage adjustment when available.";
+}
+
+function formatLabelUpdated(assist) {
+  const label = assist?.label || {};
+  const value = label.effectiveTime || label.effective_time || label.updated || "";
+  if (!value) {
+    return "Not supplied by openFDA response.";
+  }
+  const cleaned = String(value).replace(/\D/g, "");
+  if (cleaned.length === 8) {
+    return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 6)}-${cleaned.slice(6, 8)}`;
+  }
+  return String(value);
+}
+
+function buildSourceCopyText(assist, guidance) {
+  const sections = assist?.sourceSections || [];
+  const sourceLines = sections
+    .filter((section) => section.hasRenalKeyword)
+    .slice(0, 3)
+    .map((section) => `${section.heading}: ${section.text}`);
+  return [
+    `Product matched: ${formatProductMatch(assist, guidance, null)}`,
+    `Label section: ${formatSourceSectionMatch(assist)}`,
+    `Source: DailyMed via openFDA`,
+    `Updated: ${formatLabelUpdated(assist)}`,
+    assist?.sourceUrl || guidance?.sourceUrl ? `Full label: ${assist?.sourceUrl || guidance?.sourceUrl}` : "",
+    sourceLines.length ? "" : "No renal label section text was returned to the app.",
+    ...sourceLines,
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
 }
 
 function renderSourceTableSkeleton() {
@@ -357,7 +427,7 @@ function renderSourceTableSkeleton() {
 function renderSourceTableExcerpt(guidance) {
   const rows = Array.isArray(guidance?.rows) ? guidance.rows.slice(0, 5) : [];
   if (!rows.length) {
-    return `<p>${escapeHtml(guidance?.caveat || "No parsed renal table was returned. Review the DailyMed source for full context.")}</p>`;
+    return `<p>${escapeHtml(guidance?.caveat || "No renal dosing table was returned. Review the DailyMed source for full context.")}</p>`;
   }
 
   return `
@@ -737,6 +807,25 @@ async function copyCurrentResult() {
   window.setTimeout(() => setCopyButtonLabel(originalText), 1400);
 }
 
+async function copyCurrentSourceText() {
+  if (!latestSourceText || !copySourceButton) {
+    return;
+  }
+
+  const originalText = copySourceButton.textContent || "Copy source text";
+  try {
+    await navigator.clipboard.writeText(latestSourceText);
+    copySourceButton.textContent = "Source copied";
+    notifyTelegramNotification("success");
+  } catch {
+    copySourceButton.textContent = "Copy failed";
+    notifyTelegramNotification("error");
+  }
+  window.setTimeout(() => {
+    copySourceButton.textContent = originalText;
+  }, 1400);
+}
+
 function setCopyButtonState(enabled) {
   if (!copyResultButton) {
     return;
@@ -750,6 +839,14 @@ function setCopyButtonLabel(value) {
   if (label) {
     label.textContent = value;
   }
+}
+
+function setSourceCopyState(enabled) {
+  if (!copySourceButton) {
+    return;
+  }
+  copySourceButton.disabled = !enabled;
+  copySourceButton.setAttribute("aria-disabled", String(!enabled));
 }
 
 function handleDoseCalloutClick(event) {
@@ -787,6 +884,22 @@ async function applyQuickInput() {
   await runCalculation(new FormData(form));
 }
 
+async function handleDrugChipClick(event) {
+  const chip = event.target.closest(".drug-chip");
+  if (!chip) {
+    return;
+  }
+  fields.drug.value = chip.dataset.drug || chip.textContent.trim();
+  fields.drug.focus();
+  if (canRunCalculationFromCurrentFields()) {
+    await runCalculation(new FormData(form));
+  }
+}
+
+function canRunCalculationFromCurrentFields() {
+  return [fields.age, fields.creatinine, fields.weight].every((field) => field?.value);
+}
+
 function fillClinicalFields(parsed) {
   fields.age.value = parsed.age || "";
   setSex(parsed.sex || "male");
@@ -808,6 +921,15 @@ function setRoute(route) {
   const routeInput = form.querySelector(`input[name="route"][value="${route}"]`);
   if (routeInput) {
     routeInput.checked = true;
+  }
+}
+
+function collapseSourceEvidenceOnMobile() {
+  if (!sourceShell) {
+    return;
+  }
+  if (window.matchMedia("(max-width: 760px)").matches) {
+    sourceShell.open = false;
   }
 }
 
@@ -847,7 +969,7 @@ function summarizeSourceEvidence(assist) {
   if (count === 1) {
     return "1 renal section";
   }
-  return "Open source preview";
+  return "Source preview appears after drug search";
 }
 
 function addRecentCalculation({ values, guidance, assist }) {
@@ -1052,6 +1174,7 @@ function renderError(message) {
   crclStage.dataset.tone = "danger";
   ckdStageLarge.textContent = "—";
   ckdStageLarge.dataset.tone = "danger";
+  ckdStageLarge.parentElement.dataset.tone = "danger";
   ckdStageLabel.textContent = "Check patient inputs.";
   ckdTableMarker.textContent = "Check input";
   bsaValue.textContent = "--";
@@ -1073,15 +1196,16 @@ function resetUi() {
   crclStage.dataset.tone = "neutral";
   ckdStageLarge.textContent = "—";
   ckdStageLarge.dataset.tone = "neutral";
-  ckdStageLabel.textContent = "Enter patient details to calculate CKD category.";
+  ckdStageLarge.parentElement.dataset.tone = "neutral";
+  ckdStageLabel.textContent = "Enter age, sex, creatinine, and weight. CrCl and eGFR will appear here.";
   ckdTableMarker.textContent = "Awaiting eGFR";
   bsaValue.textContent = "--";
   ibwValue.textContent = "--";
   abwValue.textContent = "--";
   updateCkdBandTable("");
-  weightMethod.textContent = "Cockcroft-Gault";
-  crclNote.textContent = "Enter adult patient details to calculate CrCl for medication dosing.";
-  interpretationList.innerHTML = "<li>No calculation yet.</li>";
+  weightMethod.textContent = "Cockcroft-Gault using: Enter height to estimate IBW/adjusted weight";
+  crclNote.textContent = "Enter age, sex, creatinine, and weight. CrCl and eGFR will appear here.";
+  interpretationList.innerHTML = "<li>Awaiting patient inputs.</li>";
   latestRenalSummary = "";
   latestCockpitState = { egfr: null, crcl: null, drug: "", dose: "", route: "ALL" };
   renderMobileResultStrip();
@@ -1098,12 +1222,17 @@ function resetDrugUi() {
   drugMeta.textContent = "Search a drug to view label evidence.";
   sourceLabelTitle.textContent = "No drug selected";
   sourceStatusText.textContent = "Search a drug to view label evidence.";
+  sourceProductText.textContent = "No product matched yet.";
+  sourceSectionText.textContent = "Renal impairment / dosage adjustment when available.";
+  sourceUpdatedText.textContent = "Shown when supplied by openFDA.";
   sourceLink.href = "#";
   sourceLink.classList.add("is-disabled");
   labelSections.innerHTML = "";
-  sourceTableExcerpt.innerHTML = "<p>No parsed renal table yet.</p>";
+  sourceTableExcerpt.innerHTML = "<p>Search a drug to view matched renal dosing evidence when DailyMed/openFDA provides it.</p>";
+  latestSourceText = "";
+  setSourceCopyState(false);
   sourceDetails.open = false;
-  sourceSummaryText.textContent = "Open source preview";
+  sourceSummaryText.textContent = "Source preview appears after drug search";
   latestDrugSummary = "";
   latestCockpitState = {
     ...latestCockpitState,

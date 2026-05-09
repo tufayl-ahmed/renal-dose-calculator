@@ -8,7 +8,7 @@
       content="Adult CKD-EPI eGFR and Cockcroft-Gault creatinine clearance calculator with renal dosing label lookup."
     />
     <title>Renal Dose Calculator</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260509-7" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260509-9" />
   </head>
   <body>
     <main class="app-shell">
@@ -86,112 +86,157 @@
                   Fill
                 </button>
               </div>
+              <p class="quick-example">Example: 65 male creat 1.8 weight 70 cefixime oral</p>
             </details>
 
-            <div class="field-grid">
-              <label class="field">
-                <span>Age</span>
-                <div class="unit-input">
-                  <input id="age" name="age" inputmode="decimal" type="number" min="18" max="120" step="1" placeholder="72" required />
-                  <span>years</span>
+            <div class="form-sections">
+              <section class="form-section">
+                <div class="form-section-title">
+                  <h3>Patient</h3>
+                  <p>Age, sex, actual weight, and height</p>
                 </div>
-              </label>
-
-              <fieldset class="field sex-field">
-                <span>Sex</span>
-                <div class="sex-segment" role="radiogroup" aria-label="Sex">
-                  <label>
-                    <input id="sex-male" type="radio" name="sex" value="male" checked />
-                    <span>
-                      <svg aria-hidden="true" viewBox="0 0 24 24">
-                        <circle cx="12" cy="7" r="3" />
-                        <path d="M6.5 21v-1.2A5.5 5.5 0 0 1 12 14.3a5.5 5.5 0 0 1 5.5 5.5V21" />
-                      </svg>
-                      Male
-                    </span>
+                <div class="field-grid patient-grid">
+                  <label class="field">
+                    <span>Age</span>
+                    <div class="unit-input">
+                      <input id="age" name="age" inputmode="decimal" type="number" min="18" max="120" step="1" placeholder="72" required />
+                      <span>years</span>
+                    </div>
                   </label>
-                  <label>
-                    <input id="sex-female" type="radio" name="sex" value="female" />
-                    <span>
-                      <svg aria-hidden="true" viewBox="0 0 24 24">
-                        <circle cx="12" cy="7" r="3" />
-                        <path d="M6.5 21v-1.2A5.5 5.5 0 0 1 12 14.3a5.5 5.5 0 0 1 5.5 5.5V21" />
-                      </svg>
-                      Female
-                    </span>
+
+                  <fieldset class="field sex-field">
+                    <span>Sex</span>
+                    <div class="sex-segment" role="radiogroup" aria-label="Sex">
+                      <label>
+                        <input id="sex-male" type="radio" name="sex" value="male" checked />
+                        <span>
+                          <svg aria-hidden="true" viewBox="0 0 24 24">
+                            <circle cx="12" cy="7" r="3" />
+                            <path d="M6.5 21v-1.2A5.5 5.5 0 0 1 12 14.3a5.5 5.5 0 0 1 5.5 5.5V21" />
+                          </svg>
+                          Male
+                        </span>
+                      </label>
+                      <label>
+                        <input id="sex-female" type="radio" name="sex" value="female" />
+                        <span>
+                          <svg aria-hidden="true" viewBox="0 0 24 24">
+                            <circle cx="12" cy="7" r="3" />
+                            <path d="M6.5 21v-1.2A5.5 5.5 0 0 1 12 14.3a5.5 5.5 0 0 1 5.5 5.5V21" />
+                          </svg>
+                          Female
+                        </span>
+                      </label>
+                    </div>
+                  </fieldset>
+
+                  <label class="field">
+                    <span>Weight</span>
+                    <div class="unit-input">
+                      <input id="weight" name="weight" inputmode="decimal" type="number" min="20" max="300" step="0.1" placeholder="78" required />
+                      <span>kg</span>
+                    </div>
+                    <small>Actual body weight in kg</small>
                   </label>
-                </div>
-              </fieldset>
 
-              <label class="field">
-                <span>S. Creatinine</span>
-                <div class="unit-input">
-                  <input id="creatinine" name="creatinine" inputmode="decimal" type="number" min="0.1" max="25" step="0.01" placeholder="1.4" required />
-                  <span>mg/dL</span>
-                </div>
-              </label>
-
-              <label class="field">
-                <span>Weight</span>
-                <div class="unit-input">
-                  <input id="weight" name="weight" inputmode="decimal" type="number" min="20" max="300" step="0.1" placeholder="78" required />
-                  <span>kg</span>
-                </div>
-              </label>
-
-              <label class="field height-field">
-                <span>Height <em>optional</em></span>
-                <div class="unit-input">
-                  <input id="height" name="height" inputmode="decimal" type="number" min="100" max="230" step="0.1" placeholder="175" />
-                  <span>cm</span>
-                </div>
-              </label>
-
-              <label class="field drug-field">
-                <span>Drug search <em>optional</em></span>
-                <input id="drug" name="drug" autocomplete="off" placeholder="Amoxicillin" />
-              </label>
-
-              <fieldset class="field route-field">
-                <span>Route</span>
-                <div class="route-segment" role="radiogroup" aria-label="Route">
-                  <label>
-                    <input type="radio" name="route" value="ALL" checked />
-                    <span>All routes</span>
-                  </label>
-                  <label>
-                    <input type="radio" name="route" value="IV" />
-                    <span>IV</span>
-                  </label>
-                  <label>
-                    <input type="radio" name="route" value="ORAL" />
-                    <span>Oral</span>
+                  <label class="field height-field">
+                    <span>Height <em>optional</em></span>
+                    <div class="unit-input">
+                      <input id="height" name="height" inputmode="decimal" type="number" min="100" max="230" step="0.1" placeholder="175" />
+                      <span>cm</span>
+                    </div>
+                    <small>Used to estimate IBW and adjusted body weight</small>
                   </label>
                 </div>
-              </fieldset>
+              </section>
 
-              <div class="context-controls hidden" id="dosing-context" aria-label="Dosing context">
-                <label class="field hidden" id="dialysis-field">
-                  <span>Dialysis status</span>
-                  <select id="dialysis" name="dialysis">
-                    <option value="none">Not on dialysis</option>
-                  </select>
-                </label>
+              <section class="form-section">
+                <div class="form-section-title">
+                  <h3>Renal lab</h3>
+                  <p>Creatinine value used for both equations</p>
+                </div>
+                <div class="field-grid renal-lab-grid">
+                  <label class="field">
+                    <span>S. Creatinine</span>
+                    <div class="unit-input">
+                      <input id="creatinine" name="creatinine" inputmode="decimal" type="number" min="0.1" max="25" step="0.01" placeholder="1.4" required />
+                      <span>mg/dL</span>
+                    </div>
+                    <small>Example: 1.4</small>
+                  </label>
+                </div>
+              </section>
 
-                <label class="field hidden" id="indication-field">
-                  <span>Indication</span>
-                  <select id="indication" name="indication">
-                    <option value="any">Any indication</option>
-                  </select>
-                </label>
+              <section class="form-section">
+                <div class="form-section-title">
+                  <h3>Drug</h3>
+                  <p>Name, route, indication, formulation, dialysis status</p>
+                </div>
+                <div class="field-grid drug-grid">
+                  <label class="field drug-field">
+                    <span>Drug search <em>optional</em></span>
+                    <input id="drug" name="drug" autocomplete="off" placeholder="Amoxicillin" />
+                    <small>Generic names work best. Example: cefixime</small>
+                  </label>
 
-                <label class="field hidden" id="formulation-field">
-                  <span>Product / formulation</span>
-                  <select id="formulation" name="formulation">
-                    <option value="any">Any product</option>
-                  </select>
-                </label>
-              </div>
+                  <div class="common-drug-panel" aria-label="Common drug shortcuts">
+                    <p>Common renal-dose lookups</p>
+                    <div class="common-drug-chips">
+                      <button class="drug-chip" type="button" data-drug="metformin">Metformin</button>
+                      <button class="drug-chip" type="button" data-drug="enoxaparin">Enoxaparin</button>
+                      <button class="drug-chip" type="button" data-drug="piperacillin tazobactam">Piperacillin-tazobactam</button>
+                      <button class="drug-chip" type="button" data-drug="cefepime">Cefepime</button>
+                      <button class="drug-chip" type="button" data-drug="cefixime">Cefixime</button>
+                      <button class="drug-chip" type="button" data-drug="levofloxacin">Levofloxacin</button>
+                      <button class="drug-chip" type="button" data-drug="gabapentin">Gabapentin</button>
+                      <button class="drug-chip" type="button" data-drug="meropenem">Meropenem</button>
+                      <button class="drug-chip" type="button" data-drug="fluconazole">Fluconazole</button>
+                      <button class="drug-chip" type="button" data-drug="vancomycin">Vancomycin</button>
+                    </div>
+                  </div>
+
+                  <fieldset class="field route-field">
+                    <span>Route</span>
+                    <div class="route-segment" role="radiogroup" aria-label="Route">
+                      <label>
+                        <input type="radio" name="route" value="ALL" checked />
+                        <span>All routes</span>
+                      </label>
+                      <label>
+                        <input type="radio" name="route" value="IV" />
+                        <span>IV</span>
+                      </label>
+                      <label>
+                        <input type="radio" name="route" value="ORAL" />
+                        <span>Oral</span>
+                      </label>
+                    </div>
+                  </fieldset>
+
+                  <div class="context-controls hidden" id="dosing-context" aria-label="Dosing context">
+                    <label class="field hidden" id="dialysis-field">
+                      <span>Dialysis status</span>
+                      <select id="dialysis" name="dialysis">
+                        <option value="none">Not on dialysis</option>
+                      </select>
+                    </label>
+
+                    <label class="field hidden" id="indication-field">
+                      <span>Indication</span>
+                      <select id="indication" name="indication">
+                        <option value="any">Any indication</option>
+                      </select>
+                    </label>
+
+                    <label class="field hidden" id="formulation-field">
+                      <span>Product / formulation</span>
+                      <select id="formulation" name="formulation">
+                        <option value="any">Any product</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              </section>
             </div>
 
             <div class="actions">
@@ -282,10 +327,10 @@
               </div>
             </dl>
 
-            <p class="helper-text" id="weight-method">Cockcroft-Gault</p>
+            <p class="helper-text weight-used-line" id="weight-method">Cockcroft-Gault using: Enter height to estimate IBW/adjusted weight</p>
             <p class="helper-text" id="crcl-note">Enter adult patient details to calculate CrCl for medication dosing.</p>
             <ul class="clinical-list" id="interpretation-list">
-              <li>No calculation yet.</li>
+              <li>Enter age, sex, creatinine, and weight to calculate renal function.</li>
             </ul>
           </section>
 
@@ -319,7 +364,8 @@
             </div>
 
             <div class="drug-empty" id="drug-empty">
-              Add a drug name to search human DailyMed labels and match the current CrCl against renal dosing information when possible.
+              <strong>No drug selected yet</strong>
+              <span>Search a drug name to view renal dosing guidance from DailyMed/openFDA.</span>
             </div>
 
             <div class="drug-results hidden" id="drug-results">
@@ -331,7 +377,8 @@
         </div>
 
         <section class="result-card source-evidence-panel" id="source-panel">
-          <div class="source-header">
+          <details class="source-shell" id="source-shell" open>
+          <summary class="source-header">
             <div class="heading-line">
               <svg aria-hidden="true" viewBox="0 0 24 24">
                 <path d="M6 2h9l5 5v15H6z" />
@@ -342,14 +389,14 @@
               <h2>Source evidence <span>(DailyMed / openFDA)</span></h2>
             </div>
             <span class="source-badge">openFDA</span>
-          </div>
+          </summary>
 
           <div class="source-evidence-grid">
             <div class="source-block">
               <p class="source-label">Label section</p>
               <details class="source-details" id="source-details">
                 <summary>
-                  <span id="source-summary-text">Open source preview</span>
+                  <span id="source-summary-text">Source preview appears after drug search</span>
                 </summary>
                 <div class="label-sections" id="label-sections"></div>
               </details>
@@ -358,7 +405,7 @@
             <div class="source-block">
               <p class="source-label">Table excerpt</p>
               <div class="source-table-excerpt" id="source-table-excerpt">
-                <p>No parsed renal table yet.</p>
+                <p>Search a drug to view matched renal dosing evidence when DailyMed/openFDA provides it.</p>
               </div>
             </div>
 
@@ -371,13 +418,29 @@
                   <dd>DailyMed via openFDA</dd>
                 </div>
                 <div>
+                  <dt>Product</dt>
+                  <dd id="source-product-text">No product matched yet.</dd>
+                </div>
+                <div>
+                  <dt>Section</dt>
+                  <dd id="source-section-text">Renal impairment / dosage adjustment when available.</dd>
+                </div>
+                <div>
+                  <dt>Updated</dt>
+                  <dd id="source-updated-text">Shown when supplied by openFDA.</dd>
+                </div>
+                <div>
                   <dt>Status</dt>
                   <dd id="source-status-text">Search a drug to view label evidence.</dd>
                 </div>
               </dl>
-              <a id="source-link" class="secondary-link is-disabled" href="#" target="_blank" rel="noreferrer">View full DailyMed label</a>
+              <div class="source-actions">
+                <a id="source-link" class="secondary-link is-disabled" href="#" target="_blank" rel="noreferrer">Open full label</a>
+                <button id="copy-source" class="secondary-link source-copy-button" type="button" disabled aria-disabled="true">Copy source text</button>
+              </div>
             </div>
           </div>
+          </details>
         </section>
 
         <footer class="safety-check" role="note" aria-label="Safety disclaimer">
@@ -395,6 +458,6 @@
     </main>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="./src/app.js?v=20260509-8"></script>
+    <script type="module" src="./src/app.js?v=20260509-10"></script>
   </body>
 </html>

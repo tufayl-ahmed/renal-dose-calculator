@@ -471,6 +471,7 @@ function normalizeLabel(label, route, lookupTerm) {
   const genericNames = readOpenFdaArray(label, "generic_name");
   const routes = readOpenFdaArray(label, "route");
   const setId = readOpenFdaArray(label, "spl_set_id")[0] || label.set_id || label.spl_set_id || "";
+  const effectiveTime = readOpenFdaArray(label, "effective_time")[0] || label.effective_time || "";
   const title = brandNames[0] || genericNames[0] || lookupTerm;
   return {
     status: "found",
@@ -481,6 +482,7 @@ function normalizeLabel(label, route, lookupTerm) {
     route: route === "ALL" ? routes.join(", ") : route || routes.join(", "),
     productType: readOpenFdaArray(label, "product_type").join(", "),
     setId,
+    effectiveTime,
     sourceUrl: setId
       ? `https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=${encodeURIComponent(setId)}`
       : buildDailyMedSearchUrl(lookupTerm),
