@@ -1,0 +1,15 @@
+name = "renal-dose-calculator"
+compatibility_date = "2026-05-06"
+pages_build_output_dir = "."
+
+[vars]
+AI_FREE_MODE = "true"
+FREE_AI_DAILY_REQUEST_LIMIT = "200"
+WHATSAPP_GRAPH_VERSION = "v23.0"
+
+[[kv_namespaces]]
+binding = "WHATSAPP_DEDUPE"
+id = "49303b27af3645ceacd975fde9d3c31f"
+
+[ai]
+binding = "AI"

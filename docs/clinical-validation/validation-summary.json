@@ -1,0 +1,22 @@
+{
+  "sourceReport": "/Users/tehsim/Codex Side Projects/EGFR Calculator and Renal Dose/docs/testing/generated/live-api-qa-200-2026-05-08T18-31-45-993Z.json",
+  "summary": {
+    "byStatus": {
+      "clinical-review": 42,
+      "source-matched": 83,
+      "parser-or-ai-review": 36,
+      "source-summary": 39
+    },
+    "byPriority": {
+      "P2": 42,
+      "P4": 83,
+      "P1": 36,
+      "P3": 39
+    },
+    "byRoute": {
+      "ORAL": 157,
+      "IV": 39,
+      "ALL": 4
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "egfr-renal-dose",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 5173",
+    "cf:dev": "wrangler pages dev . --compatibility-date=2026-05-06",
+    "deploy": "wrangler pages deploy . --project-name renal-dose-calculator --commit-dirty=true",
+    "qa:live200": "node scripts/qa-live-200.mjs --limit=200 --concurrency=2",
+    "validation:table": "node scripts/generate-clinical-validation-table.mjs",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "wrangler": "^4.90.0"
+  }
+}

@@ -1,0 +1,7 @@
+node_modules
+test
+docs/curation
+docs/design
+*.md
+package-lock.json
+package.json
