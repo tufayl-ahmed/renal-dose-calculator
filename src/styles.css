@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "Manrope";
+  src: url("../assets/fonts/manrope-latin-variable.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 200 800;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("../assets/fonts/geist-mono-latin-variable.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 100 900;
+}
+
 :root {
   --page: #f8fbfa;
   --canvas: #eef7f5;
@@ -23,7 +39,7 @@
   --shadow-card: 0 14px 34px rgba(8, 43, 51, 0.07);
   color-scheme: light;
   font-family:
-    "Geist", "Satoshi", "Aptos", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Manrope", "Aptos", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", sans-serif;
 }
 
@@ -1945,5 +1961,1099 @@ select:focus,
 
   .result-card {
     box-shadow: 0 8px 18px rgba(8, 43, 51, 0.07);
+  }
+}
+
+/* Screenshot-matched cockpit redesign */
+body {
+  background:
+    radial-gradient(circle at 9% -16%, rgba(0, 121, 111, 0.12), transparent 31rem),
+    radial-gradient(circle at 92% 4%, rgba(9, 112, 103, 0.08), transparent 28rem),
+    linear-gradient(180deg, #fbfdfc 0%, #f3faf8 45%, #eaf5f2 100%);
+}
+
+.app-shell {
+  padding: 0;
+}
+
+.workspace {
+  width: min(1452px, calc(100% - 32px));
+  min-height: calc(100dvh - 18px);
+  margin: 4px auto 18px;
+  padding: 0 22px 24px;
+  border-color: #bed0cc;
+  border-radius: 8px 8px 30px 30px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(241, 249, 247, 0.92)),
+    #eef8f5;
+  box-shadow:
+    0 22px 58px rgba(8, 43, 51, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.topbar {
+  min-height: 60px;
+  margin: 0 -22px 0;
+  padding: 12px 22px 11px;
+  align-items: center;
+  border-bottom: 1px solid rgba(8, 43, 51, 0.11);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 15px;
+}
+
+.kidney-mark {
+  width: 36px;
+  height: 36px;
+  color: var(--teal);
+  fill: currentColor;
+  stroke: none;
+  filter: drop-shadow(0 5px 10px rgba(0, 121, 111, 0.16));
+}
+
+.kidney-mark path:last-child {
+  fill: none;
+  stroke: #ecfffb;
+  stroke-linecap: round;
+  stroke-width: 2.8;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.35vw, 2.05rem);
+  font-weight: 850;
+  line-height: 1;
+}
+
+.maker-line {
+  margin: 0;
+  color: #18313a;
+  font-size: 1rem;
+  font-weight: 570;
+}
+
+.warning-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 40px;
+  margin: 10px 0 12px;
+  padding: 8px 14px;
+  border: 1px solid #f2a51b;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 250, 238, 0.96), rgba(255, 245, 222, 0.92));
+  color: #743f03;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.warning-banner svg {
+  width: 20px;
+  height: 20px;
+  color: #d37800;
+}
+
+.warning-banner strong {
+  font-weight: 850;
+}
+
+.warning-banner span {
+  width: 1px;
+  height: 24px;
+  background: rgba(183, 102, 0, 0.34);
+}
+
+.warning-banner p {
+  margin: 0;
+  font-weight: 520;
+}
+
+.quick-panel {
+  margin-bottom: 12px;
+  border: 1px solid rgba(0, 121, 111, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.quick-panel summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--teal-dark);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 850;
+  list-style: none;
+}
+
+.quick-panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.quick-panel summary strong {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.quick-panel .command-bar {
+  padding: 0 10px 10px;
+}
+
+.quick-panel .command-bar input,
+.quick-panel .command-button {
+  min-height: 38px;
+  font-size: 0.86rem;
+}
+
+.mobile-result-strip {
+  display: none !important;
+}
+
+.clinical-grid {
+  grid-template-columns: minmax(360px, 0.98fr) minmax(390px, 1.08fr) minmax(360px, 1fr);
+  gap: 16px;
+}
+
+.panel,
+.result-card {
+  border-color: #d2dedb;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 12px 28px rgba(8, 43, 51, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.panel,
+.result-card,
+.source-evidence-panel {
+  backdrop-filter: blur(14px);
+}
+
+.panel,
+.result-card {
+  padding: 18px;
+}
+
+.panel-heading {
+  align-items: center;
+  min-height: 30px;
+  margin-bottom: 14px;
+}
+
+.heading-line {
+  gap: 12px;
+  color: #006b64;
+}
+
+.heading-line h2 {
+  font-size: 1.12rem;
+  font-weight: 820;
+}
+
+.calculator-panel .field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.field > span {
+  color: #0a2029;
+  font-size: 0.93rem;
+  font-weight: 760;
+}
+
+input,
+select,
+.unit-input,
+.route-segment,
+.sex-segment {
+  min-height: 40px;
+  border-color: #cad8d5;
+  border-radius: 7px;
+  box-shadow: inset 0 1px 2px rgba(8, 43, 51, 0.03);
+}
+
+input,
+select {
+  font-size: 0.94rem;
+  font-weight: 520;
+}
+
+input::placeholder {
+  color: #aab8bb;
+  font-weight: 470;
+}
+
+.unit-input input {
+  min-height: 38px;
+}
+
+.unit-input span {
+  min-width: 54px;
+  color: #425864;
+  font-size: 0.83rem;
+  font-weight: 620;
+}
+
+.sex-segment {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid #cad8d5;
+  background: #fff;
+}
+
+.sex-segment label {
+  position: relative;
+  min-width: 0;
+}
+
+.sex-segment label + label {
+  border-left: 1px solid var(--line);
+}
+
+.sex-segment input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.sex-segment span,
+.route-segment span {
+  min-height: 40px;
+  color: #14323b;
+  font-size: 0.9rem;
+  font-weight: 720;
+}
+
+.sex-segment span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 7px;
+}
+
+.sex-segment svg {
+  width: 17px;
+  height: 17px;
+}
+
+.sex-segment input:checked + span {
+  background: #e8f8f5;
+  color: #006b64;
+  box-shadow: inset 0 0 0 1px #00796f;
+}
+
+.route-segment input:checked + span {
+  background: #00796f;
+  color: #fff;
+}
+
+.primary-button {
+  min-height: 42px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #008579, #006b64);
+  font-size: 0.98rem;
+  font-weight: 820;
+  box-shadow: 0 12px 24px rgba(0, 121, 111, 0.2);
+}
+
+.actions {
+  margin-top: 14px;
+}
+
+.formula-note {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(11, 99, 206, 0.22);
+  border-radius: 7px;
+  background: rgba(232, 242, 255, 0.7);
+  color: #074da2;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.kidney-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.kidney-panel .panel-heading {
+  margin-bottom: 0;
+}
+
+.kidney-panel .metrics-grid {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.kidney-panel .metric-card {
+  min-height: 128px;
+  padding: 15px;
+  box-shadow: none;
+  border: 0;
+  background: transparent;
+}
+
+.kidney-panel .metric-card + .metric-card {
+  border-left: 1px solid var(--line);
+}
+
+.metric-label {
+  color: #0d2530;
+  font-size: 1rem;
+  font-weight: 820;
+}
+
+.metric-label span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 540;
+}
+
+.kidney-panel .metric-card h3 {
+  margin: 8px 0 2px;
+  color: #00796f;
+  font-size: clamp(2.8rem, 4.4vw, 3.75rem);
+  font-weight: 850;
+  line-height: 0.95;
+}
+
+.kidney-panel .metric-unit {
+  color: #263e49;
+  font-size: 0.92rem;
+  font-weight: 540;
+}
+
+.kidney-panel .stage-badge {
+  display: inline-flex;
+  min-width: 0;
+  margin-top: 7px;
+  padding: 5px 9px;
+  border: 1px solid rgba(11, 138, 85, 0.22);
+  border-radius: 8px;
+  background: var(--green-soft);
+  color: #087045;
+}
+
+.ckd-summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.ckd-stage-card {
+  display: grid;
+  place-items: center;
+  min-width: 72px;
+  min-height: 58px;
+  border: 1px solid rgba(11, 138, 85, 0.28);
+  border-radius: 8px;
+  background: var(--green-soft);
+}
+
+.ckd-stage-card span {
+  color: #087045;
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ckd-summary h3 {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 1rem;
+  font-weight: 830;
+}
+
+.ckd-summary h3 span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 540;
+}
+
+.ckd-summary p,
+.helper-text,
+.clinical-list {
+  color: #405663;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.ckd-band-table {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ckd-band-table div {
+  display: grid;
+  gap: 6px;
+  min-height: 54px;
+  place-items: center;
+  padding: 8px 4px;
+  color: #293f49;
+}
+
+.ckd-band-table div + div {
+  border-left: 1px solid var(--line);
+}
+
+.ckd-band-table span {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.ckd-band-table strong {
+  font-size: 0.78rem;
+  font-weight: 560;
+}
+
+.ckd-band-table .is-active {
+  background: #00796f;
+  color: #fff;
+}
+
+.ckd-marker {
+  margin: -8px 0 0;
+  color: #00796f;
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.body-metrics {
+  display: grid;
+  margin: 2px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.body-metrics div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 32px;
+  padding: 0 12px;
+}
+
+.body-metrics div + div {
+  border-top: 1px solid var(--line);
+}
+
+.body-metrics dt,
+.body-metrics dd {
+  margin: 0;
+  color: #425864;
+  font-size: 0.82rem;
+}
+
+.body-metrics dd {
+  color: #132d36;
+  font-weight: 650;
+}
+
+.clinical-list {
+  display: none;
+}
+
+.dose-card {
+  display: grid;
+  align-content: start;
+  border-color: #d2dedb;
+}
+
+.dose-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.dose-title-row h3 {
+  margin: 0;
+  font-size: 1.38rem;
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.dose-title-row #drug-meta {
+  margin-top: 3px;
+  color: #0b63ce;
+  font-size: 0.9rem;
+  font-weight: 620;
+}
+
+.dose-tools {
+  flex: 0 0 auto;
+}
+
+.copy-button span {
+  font-size: 0.78rem;
+}
+
+.drug-empty {
+  margin-top: 6px;
+  min-height: 112px;
+  border-color: #c8d8d4;
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.dose-guidance {
+  gap: 12px;
+}
+
+.dose-guidance-header {
+  display: none;
+}
+
+.guidance-safety {
+  order: 3;
+  border-color: rgba(242, 165, 27, 0.48);
+  background: #fff5df;
+  color: #744203;
+}
+
+.guidance-safety strong {
+  color: #8f5608;
+}
+
+.dose-main {
+  grid-template-columns: minmax(104px, 0.32fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 14px;
+  border: 1px solid rgba(11, 138, 85, 0.42);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(234, 248, 241, 0.82), rgba(255, 255, 255, 0.92));
+}
+
+.dose-band-large {
+  align-content: center;
+  padding-right: 14px;
+  border-right: 1px solid rgba(11, 138, 85, 0.28);
+}
+
+.dose-band-large span,
+.dose-columns span {
+  color: #1d3a43;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.dose-band-large strong {
+  color: #087045;
+  font-size: 1.38rem;
+  font-weight: 850;
+}
+
+.dose-recommendation h3 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.dose-columns {
+  gap: 12px;
+}
+
+.dose-columns > div + div {
+  padding-left: 12px;
+}
+
+.dose-columns strong {
+  color: #00796f;
+  font-size: clamp(1.08rem, 1.65vw, 1.4rem);
+  font-weight: 860;
+}
+
+.dose-actions-row {
+  order: 6;
+}
+
+.text-action,
+.secondary-link {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #0b63ce;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dose-table {
+  order: 4;
+}
+
+.source-evidence-panel {
+  margin-top: 12px;
+  padding: 16px;
+}
+
+.source-header {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.source-header h2 span {
+  font-weight: 540;
+}
+
+.source-evidence-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(280px, 0.9fr) minmax(260px, 0.9fr);
+  gap: 22px;
+}
+
+.source-block {
+  min-width: 0;
+}
+
+.source-block + .source-block {
+  padding-left: 22px;
+  border-left: 1px solid var(--line);
+}
+
+.source-label {
+  margin: 0 0 10px;
+  color: #0c2530;
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.source-details {
+  padding: 0;
+  border-top: 0;
+}
+
+.source-details summary {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  color: #1d3540;
+}
+
+.source-details summary span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label-sections {
+  max-height: 140px;
+  overflow: auto;
+  padding: 12px 2px 0;
+}
+
+.source-table {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.source-table > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.85fr) minmax(0, 1fr);
+  min-height: 32px;
+}
+
+.source-table > div + div {
+  border-top: 1px solid var(--line);
+}
+
+.source-table span,
+.source-table strong {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 7px 10px;
+  color: #263e49;
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.source-table span + strong,
+.source-table span + span {
+  border-left: 1px solid var(--line);
+}
+
+.source-table strong {
+  font-weight: 680;
+}
+
+.source-table .source-table-head span {
+  background: #f6faf9;
+  color: #425864;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.source-table .is-selected {
+  background: var(--green-soft);
+  box-shadow: inset 0 0 0 1px rgba(11, 138, 85, 0.28);
+}
+
+.source-table.loading-table span {
+  margin: 8px;
+  min-height: 8px;
+  border-radius: 999px;
+  background: rgba(196, 210, 207, 0.5);
+}
+
+.source-table-excerpt > p,
+.source-detail-block dd,
+.source-detail-block dt {
+  color: #425864;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.source-detail-block h3 {
+  margin-bottom: 14px;
+  font-size: 0.98rem;
+}
+
+.source-detail-block dl {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.source-detail-block dl div {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.source-detail-block dt {
+  font-weight: 760;
+}
+
+.source-detail-block dd {
+  margin: 0;
+}
+
+.safety-check {
+  margin-top: 14px;
+  border-color: rgba(11, 138, 85, 0.24);
+  background: rgba(234, 248, 241, 0.78);
+}
+
+@media (max-width: 1180px) {
+  .clinical-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator-panel .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .route-field,
+  .drug-field,
+  .context-controls {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    width: min(430px, 100%);
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 0 10px 14px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    min-height: 60px;
+    margin: 0 -10px 0;
+    padding: max(9px, env(safe-area-inset-top)) 12px 9px;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(18px);
+  }
+
+  .kidney-mark {
+    width: 31px;
+    height: 31px;
+  }
+
+  h1 {
+    font-size: 1.08rem;
+  }
+
+  .maker-line {
+    display: none;
+  }
+
+  .warning-banner {
+    justify-content: flex-start;
+    min-height: 34px;
+    margin: 8px 0;
+    padding: 7px 9px;
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+
+  .warning-banner svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .warning-banner span {
+    height: 18px;
+  }
+
+  .quick-panel summary {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 0.78rem;
+  }
+
+  .quick-panel summary strong {
+    display: none;
+  }
+
+  .quick-panel .command-bar {
+    grid-template-columns: 1fr auto;
+  }
+
+  .clinical-grid {
+    gap: 10px;
+  }
+
+  .panel,
+  .result-card {
+    padding: 12px;
+  }
+
+  .panel-heading {
+    margin-bottom: 12px;
+  }
+
+  .heading-line h2 {
+    font-size: 0.92rem;
+  }
+
+  .calculator-panel .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .drug-field,
+  .route-field,
+  .context-controls,
+  .height-field {
+    grid-column: 1 / -1;
+  }
+
+  .field > span {
+    font-size: 0.74rem;
+  }
+
+  input,
+  select,
+  .unit-input,
+  .route-segment,
+  .sex-segment {
+    min-height: 34px;
+    border-radius: 6px;
+  }
+
+  input,
+  select,
+  .route-segment span,
+  .sex-segment span {
+    min-height: 34px;
+    font-size: 0.76rem;
+  }
+
+  .unit-input input {
+    min-height: 32px;
+  }
+
+  .unit-input span {
+    min-width: 40px;
+    font-size: 0.68rem;
+  }
+
+  .primary-button {
+    min-height: 38px;
+    font-size: 0.82rem;
+  }
+
+  .formula-note {
+    font-size: 0.68rem;
+  }
+
+  .kidney-panel {
+    gap: 10px;
+  }
+
+  .kidney-panel .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .kidney-panel .metric-card + .metric-card {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .kidney-panel .metric-card {
+    min-height: auto;
+    padding: 10px;
+  }
+
+  .kidney-panel .metric-card h3 {
+    font-size: 2.1rem;
+  }
+
+  .metric-label {
+    font-size: 0.8rem;
+  }
+
+  .ckd-summary {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .ckd-stage-card {
+    min-width: 58px;
+    min-height: 48px;
+  }
+
+  .ckd-stage-card span {
+    font-size: 1.45rem;
+  }
+
+  .ckd-band-table div {
+    min-height: 48px;
+  }
+
+  .ckd-band-table span,
+  .ckd-band-table strong {
+    font-size: 0.62rem;
+  }
+
+  .body-metrics div {
+    min-height: 30px;
+    padding: 0 9px;
+  }
+
+  .body-metrics dt,
+  .body-metrics dd,
+  .helper-text,
+  .clinical-list {
+    font-size: 0.7rem;
+  }
+
+  .dose-title-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .dose-title-row h3 {
+    font-size: 1rem;
+  }
+
+  .dose-title-row #drug-meta {
+    font-size: 0.72rem;
+  }
+
+  .dose-main {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .dose-band-large {
+    padding: 0 0 9px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(11, 138, 85, 0.24);
+  }
+
+  .dose-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dose-columns span {
+    display: block;
+  }
+
+  .dose-recommendation p {
+    display: block;
+    font-size: 0.72rem;
+  }
+
+  .source-evidence-panel {
+    padding: 12px;
+  }
+
+  .source-evidence-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .source-block + .source-block {
+    padding-left: 0;
+    padding-top: 14px;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .source-table > div {
+    grid-template-columns: minmax(92px, 0.78fr) minmax(0, 1fr);
+  }
+
+  .safety-check {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    font-size: 0.7rem;
+  }
+
+  .safety-check > span:last-child {
+    text-align: left;
+  }
+}
+
+@media (max-width: 430px) {
+  .calculator-panel .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kidney-panel .metrics-grid {
+    grid-template-columns: 1fr;
   }
 }

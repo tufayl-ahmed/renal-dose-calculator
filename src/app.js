@@ -26,6 +26,9 @@ const drugEmpty = document.querySelector("#drug-empty");
 const drugResults = document.querySelector("#drug-results");
 const drugTitle = document.querySelector("#drug-title");
 const drugMeta = document.querySelector("#drug-meta");
+const sourceLabelTitle = document.querySelector("#source-label-title");
+const sourceStatusText = document.querySelector("#source-status-text");
+const sourceTableExcerpt = document.querySelector("#source-table-excerpt");
 const sourceLink = document.querySelector("#source-link");
 const doseCallout = document.querySelector("#dose-callout");
 const labelSections = document.querySelector("#label-sections");
@@ -49,11 +52,16 @@ const stripCrcl = document.querySelector("#strip-crcl");
 const stripEgfr = document.querySelector("#strip-egfr");
 const stripDrug = document.querySelector("#strip-drug");
 const stripDose = document.querySelector("#strip-dose");
+const ckdStageLarge = document.querySelector("#ckd-stage-large");
+const ckdStageLabel = document.querySelector("#ckd-stage-label");
+const ckdTableMarker = document.querySelector("#ckd-table-marker");
+const bsaValue = document.querySelector("#bsa-value");
+const ibwValue = document.querySelector("#ibw-value");
+const abwValue = document.querySelector("#abw-value");
 const telegramWebApp = window.Telegram?.WebApp || null;
 const isTelegramMiniApp = detectTelegramMiniApp();
 const fields = {
   age: document.querySelector("#age"),
-  sex: document.querySelector("#sex"),
   creatinine: document.querySelector("#creatinine"),
   weight: document.querySelector("#weight"),
   height: document.querySelector("#height"),
@@ -135,10 +143,19 @@ function renderRenalResults({ values, egfr, crcl, stage, crclTone }) {
   ckdStage.dataset.tone = stage.tone;
   crclStage.textContent = crclTone.label;
   crclStage.dataset.tone = crclTone.tone;
+  ckdStageLarge.textContent = stage.stage;
+  ckdStageLarge.dataset.tone = stage.tone;
+  ckdStageLabel.textContent = stage.label;
+  ckdTableMarker.textContent = `eGFR ${egfr.toFixed(1)} mL/min/1.73 m²`;
+  updateCkdBandTable(stage.stage);
 
   const bmi = calculateBmi(values);
   const idealBodyWeight = calculateIdealBodyWeight(values);
   const adjustedBodyWeight = calculateAdjustedBodyWeight(values);
+  const bsa = calculateMostellerBsa(values);
+  bsaValue.textContent = bsa ? `${bsa} m²` : "--";
+  ibwValue.textContent = idealBodyWeight ? `${idealBodyWeight} kg` : "--";
+  abwValue.textContent = adjustedBodyWeight ? `${adjustedBodyWeight} kg` : "--";
   weightMethod.textContent = values.height
     ? `Actual ${values.weight} kg · IBW ${idealBodyWeight} kg`
     : "Cockcroft-Gault (Actual body weight)";
@@ -168,6 +185,19 @@ function renderRenalResults({ values, egfr, crcl, stage, crclTone }) {
   renderMobileResultStrip();
 }
 
+function calculateMostellerBsa({ weight, height }) {
+  if (!Number.isFinite(weight) || !Number.isFinite(height) || weight <= 0 || height <= 0) {
+    return null;
+  }
+  return Math.round(Math.sqrt((height * weight) / 3600) * 100) / 100;
+}
+
+function updateCkdBandTable(activeStage) {
+  document.querySelectorAll(".ckd-band-table [data-stage]").forEach((cell) => {
+    cell.classList.toggle("is-active", cell.dataset.stage === activeStage);
+  });
+}
+
 async function renderDrugLookup(values) {
   const requestId = (drugLookupRequestId += 1);
   drugEmpty.classList.add("hidden");
@@ -176,7 +206,10 @@ async function renderDrugLookup(values) {
   drugStatus.classList.add("is-loading");
   drugTitle.textContent = values.drug;
   drugMeta.textContent = "Checking DailyMed/openFDA label text with AI assistance...";
+  sourceLabelTitle.textContent = values.drug;
+  sourceStatusText.textContent = "Checking DailyMed/openFDA label text with AI assistance...";
   labelSections.innerHTML = "";
+  sourceTableExcerpt.innerHTML = renderSourceTableSkeleton();
   doseCallout.innerHTML = renderLoadingDoseGuidance(values);
   sourceDetails.open = false;
   sourceSummaryText.textContent = "Waiting for label";
@@ -216,6 +249,8 @@ async function renderDrugLookup(values) {
     drugStatus.classList.remove("is-loading");
     drugTitle.textContent = values.drug;
     drugMeta.textContent = error.message;
+    sourceLabelTitle.textContent = values.drug;
+    sourceStatusText.textContent = error.message;
     sourceLink.href = buildDailyMedSearchUrl(values.drug);
     doseCallout.innerHTML = renderDoseGuidance({
       status: "not_available",
@@ -229,6 +264,7 @@ async function renderDrugLookup(values) {
       rows: [],
     });
     labelSections.innerHTML = "";
+    sourceTableExcerpt.innerHTML = `<p>No parsed renal table available. Review the DailyMed source.</p>`;
     sourceDetails.open = false;
     sourceSummaryText.textContent = "Source needed";
     latestCockpitState = {
@@ -248,6 +284,7 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
   drugStatus.textContent = formatGuidanceStatus(assist, guidance);
   drugStatus.classList.remove("is-loading");
   drugTitle.textContent = guidance.drugName;
+  sourceLabelTitle.textContent = guidance.drugName;
   drugMeta.textContent = [
     formatNormalizationMeta(normalizedDrug),
     `${guidance.routeLabel} label summary`,
@@ -256,6 +293,7 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
   ]
     .filter(Boolean)
     .join(" · ");
+  sourceStatusText.textContent = formatAssistSourceMode(assist);
   sourceLink.href = assist.sourceUrl || guidance.sourceUrl || buildDailyMedSearchUrl(guidance.drugName || values.drug);
   sourceLink.classList.remove("is-disabled");
   renderDosingContextControls(null);
@@ -265,6 +303,7 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
     sourceMode: assist.sourceMode,
   });
   labelSections.innerHTML = renderAssistedSourceSections(assist);
+  sourceTableExcerpt.innerHTML = renderSourceTableExcerpt(guidance);
   latestDrugSummary = buildDrugShareText({ assist, guidance, values });
   latestCockpitState = {
     ...latestCockpitState,
@@ -272,7 +311,7 @@ function renderAssistedDrugGuidance(assist, normalizedDrug, values) {
     route: values.route,
     dose: formatStripDose(guidance),
   };
-  sourceDetails.open = false;
+  sourceDetails.open = true;
   sourceSummaryText.textContent = summarizeSourceEvidence(assist);
   renderMobileResultStrip();
   addRecentCalculation({ values, guidance, assist });
@@ -303,6 +342,42 @@ function renderAssistedSourceSections(assist) {
   return sourceSections.length
     ? sourceSections.map(renderSection).join("")
     : `<div class="label-section"><h4>No dosing sections returned</h4><p>Open the DailyMed source to review the current label.</p></div>`;
+}
+
+function renderSourceTableSkeleton() {
+  return `
+    <div class="source-table loading-table" aria-hidden="true">
+      <div><span></span><span></span></div>
+      <div><span></span><span></span></div>
+      <div><span></span><span></span></div>
+    </div>
+  `;
+}
+
+function renderSourceTableExcerpt(guidance) {
+  const rows = Array.isArray(guidance?.rows) ? guidance.rows.slice(0, 5) : [];
+  if (!rows.length) {
+    return `<p>${escapeHtml(guidance?.caveat || "No parsed renal table was returned. Review the DailyMed source for full context.")}</p>`;
+  }
+
+  return `
+    <div class="source-table" role="table" aria-label="Parsed renal dose table excerpt">
+      <div class="source-table-head" role="row">
+        <span role="columnheader">Renal function</span>
+        <span role="columnheader">Dose guidance</span>
+      </div>
+      ${rows
+        .map(
+          (row) => `
+            <div class="${row.selected ? "is-selected" : ""}" role="row">
+              <span role="cell">${escapeHtml(row.band)}</span>
+              <strong role="cell">${escapeHtml(row.recommendation)}</strong>
+            </div>
+          `
+        )
+        .join("")}
+    </div>
+  `;
 }
 
 function formatAssistSourceMode(assist) {
@@ -433,6 +508,7 @@ function getLoadingCrclBand(crcl) {
 function renderDoseGuidance(guidance, context = {}) {
   const recommendation = buildRecommendationDisplay(guidance);
   const chips = buildGuidanceChips(guidance, context);
+  const renalBandTitle = formatRenalBandTitle(guidance.renalBandLabel || (guidance.crclBand ? "CrCl band" : guidance.routeLabel));
   const drugHeading = context.drugName
     ? `${context.drugName}${guidance.routeLabel ? ` (${guidance.routeLabel})` : ""}`
     : guidance.title;
@@ -474,7 +550,7 @@ function renderDoseGuidance(guidance, context = {}) {
       </div>
       <div class="dose-main">
         <div class="dose-band-large">
-          <span>${escapeHtml(guidance.renalBandLabel || (guidance.crclBand ? "CrCl band" : guidance.routeLabel))}</span>
+          <span>${escapeHtml(renalBandTitle)}</span>
           <strong>${escapeHtml(cleanRenalBand(guidance.crclBand) || guidance.routeLabel)}</strong>
         </div>
         <div class="dose-recommendation">
@@ -504,6 +580,17 @@ function renderDoseGuidance(guidance, context = {}) {
       ${rows}
     </div>
   `;
+}
+
+function formatRenalBandTitle(label) {
+  const text = String(label || "").replace(/\s+/g, " ").trim();
+  if (/egfr/i.test(text)) {
+    return "Selected eGFR band";
+  }
+  if (/crcl|creatinine clearance/i.test(text)) {
+    return "Selected CrCl band";
+  }
+  return text || "Selected band";
 }
 
 function buildGuidanceChips(guidance, context = {}) {
@@ -702,12 +789,19 @@ async function applyQuickInput() {
 
 function fillClinicalFields(parsed) {
   fields.age.value = parsed.age || "";
-  fields.sex.value = parsed.sex || "male";
+  setSex(parsed.sex || "male");
   fields.creatinine.value = parsed.creatinine || "";
   fields.weight.value = parsed.weight || "";
   fields.height.value = parsed.height || "";
   fields.drug.value = parsed.drug || "";
   setRoute(parsed.route || "ALL");
+}
+
+function setSex(sex) {
+  const sexInput = form.querySelector(`input[name="sex"][value="${sex}"]`);
+  if (sexInput) {
+    sexInput.checked = true;
+  }
 }
 
 function setRoute(route) {
@@ -950,12 +1044,20 @@ function renderSection(section) {
 }
 
 function renderError(message) {
-  egfrValue.textContent = "--";
-  crclValue.textContent = "--";
+  egfrValue.textContent = "—";
+  crclValue.textContent = "—";
   ckdStage.textContent = "Check input";
   ckdStage.dataset.tone = "danger";
   crclStage.textContent = "Check input";
   crclStage.dataset.tone = "danger";
+  ckdStageLarge.textContent = "—";
+  ckdStageLarge.dataset.tone = "danger";
+  ckdStageLabel.textContent = "Check patient inputs.";
+  ckdTableMarker.textContent = "Check input";
+  bsaValue.textContent = "--";
+  ibwValue.textContent = "--";
+  abwValue.textContent = "--";
+  updateCkdBandTable("");
   crclNote.textContent = message;
   interpretationList.innerHTML = `<li>${escapeHtml(message)}</li>`;
   latestCockpitState = { egfr: null, crcl: null, drug: "", dose: "Check input", route: "ALL" };
@@ -963,12 +1065,20 @@ function renderError(message) {
 }
 
 function resetUi() {
-  egfrValue.textContent = "--";
-  crclValue.textContent = "--";
+  egfrValue.textContent = "—";
+  crclValue.textContent = "—";
   ckdStage.textContent = "Waiting";
   ckdStage.dataset.tone = "neutral";
   crclStage.textContent = "Waiting";
   crclStage.dataset.tone = "neutral";
+  ckdStageLarge.textContent = "—";
+  ckdStageLarge.dataset.tone = "neutral";
+  ckdStageLabel.textContent = "Enter patient details to calculate CKD category.";
+  ckdTableMarker.textContent = "Awaiting eGFR";
+  bsaValue.textContent = "--";
+  ibwValue.textContent = "--";
+  abwValue.textContent = "--";
+  updateCkdBandTable("");
   weightMethod.textContent = "Cockcroft-Gault";
   crclNote.textContent = "Enter adult patient details to calculate CrCl for medication dosing.";
   interpretationList.innerHTML = "<li>No calculation yet.</li>";
@@ -986,9 +1096,12 @@ function resetDrugUi() {
   drugResults.classList.add("hidden");
   drugTitle.textContent = "No drug selected";
   drugMeta.textContent = "Search a drug to view label evidence.";
+  sourceLabelTitle.textContent = "No drug selected";
+  sourceStatusText.textContent = "Search a drug to view label evidence.";
   sourceLink.href = "#";
   sourceLink.classList.add("is-disabled");
   labelSections.innerHTML = "";
+  sourceTableExcerpt.innerHTML = "<p>No parsed renal table yet.</p>";
   sourceDetails.open = false;
   sourceSummaryText.textContent = "Open source preview";
   latestDrugSummary = "";
