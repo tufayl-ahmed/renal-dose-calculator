@@ -1,5 +1,8 @@
 # Renal Dose Calculator
 
+Adult renal-function and renal-dose guidance web app by Dr. Tufayl
+(Cortex Labs).
+
 Adult-only web MVP for:
 
 - CKD-EPI 2021 creatinine eGFR in mL/min/1.73 m²
@@ -13,12 +16,23 @@ Adult-only web MVP for:
 The current app can parse some DailyMed/openFDA renal dose tables and match the patient's Cockcroft-Gault CrCl band. This is still label-based educational support, not a verified local dosing database. Production dosing recommendations should come from reviewed structured rules.
 
 For the production data plan, see [docs/DATA_STRATEGY.md](./docs/DATA_STRATEGY.md).
+For deployment, see [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 For bot setup, see [docs/whatsapp-setup.md](./docs/whatsapp-setup.md) and
 [docs/telegram-setup.md](./docs/telegram-setup.md).
+
+## Repository Status
+
+- Source of truth branch: `main`
+- Hosting target: Cloudflare Pages
+- Runtime functions: Cloudflare Pages Functions under `functions/api`
+- Secrets: never committed; configured only in Cloudflare Pages
+- Package manager: npm
+- Node target: 20+
 
 ## Run Locally
 
 ```bash
+npm install
 npm run dev
 ```
 
@@ -33,6 +47,18 @@ http://localhost:5173
 ```bash
 npm test
 ```
+
+## Cloudflare Local Runtime
+
+Use Wrangler when you need to test Pages Functions locally:
+
+```bash
+npm run cf:dev
+```
+
+This app can run as static HTML for frontend work, but the drug-dose API,
+Telegram webhook, WhatsApp webhook, and Workers AI binding need Cloudflare's
+Pages runtime.
 
 ## Clinical Scope
 
@@ -84,3 +110,14 @@ The live LLM pathway is designed to stay free-first:
 - For a persistent daily guard, add an optional free-tier KV binding named `AI_USAGE`. Without it, the app still uses compact prompts and cache, but cannot count AI calls across edge instances.
 
 If the guard is reached or AI is unavailable, the app returns a source-review card instead of inventing a dose.
+
+## Security
+
+Use `.env.example` only as a template. Do not commit real Telegram, WhatsApp,
+Cloudflare, GitHub, or Meta tokens. See [SECURITY.md](./SECURITY.md) for the
+repo security policy.
+
+## License
+
+No open-source license has been selected yet. All rights reserved unless a
+license is added later.

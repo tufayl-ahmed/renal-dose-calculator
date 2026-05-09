@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "python3 -m http.server 5173",
     "cf:dev": "wrangler pages dev . --compatibility-date=2026-05-06",

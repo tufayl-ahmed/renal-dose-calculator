@@ -1,7 +1,14 @@
 node_modules
+.git
+.github
+.env*
+.editorconfig
+.gitignore
+.wrangler
 test
 docs/curation
 docs/design
+docs/testing/generated
 *.md
 package-lock.json
 package.json
