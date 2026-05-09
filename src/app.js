@@ -12,6 +12,7 @@ import { buildDailyMedSearchUrl } from "./drugLookup.js?v=20260508-1";
 import { requestLlmDoseAssist } from "./llmDoseAssist.js?v=20260509-1";
 import { normalizeDrugQuery } from "./drugNormalizer.js?v=20260508-2";
 import { parseQuickInput } from "./quickInput.js?v=20260509-2";
+import { getDrugAutocompleteSuggestions } from "./drugAutocomplete.js?v=20260509-1";
 
 const form = document.querySelector("#renal-form");
 const egfrValue = document.querySelector("#egfr-value");
@@ -50,7 +51,7 @@ const quickApplyButton = document.querySelector("#quick-apply");
 const recentPanel = document.querySelector("#recent-panel");
 const recentList = document.querySelector("#recent-list");
 const clearHistoryButton = document.querySelector("#clear-history");
-const commonDrugChips = document.querySelector(".common-drug-chips");
+const drugAutocomplete = document.querySelector("#drug-autocomplete");
 const sourceShell = document.querySelector("#source-shell");
 const sourceDetails = document.querySelector("#source-details");
 const sourceSummaryText = document.querySelector("#source-summary-text");
@@ -89,6 +90,11 @@ let latestCockpitState = {
   decisionTone: "neutral",
   route: "ALL",
 };
+let drugAutocompleteState = {
+  activeIndex: -1,
+  suggestions: [],
+  useTypedInput: false,
+};
 const RECENT_KEY = "renal-dose-recent-v2";
 
 initializeTelegramMiniApp();
@@ -124,7 +130,12 @@ quickInput?.addEventListener("keydown", (event) => {
 });
 recentList?.addEventListener("click", handleRecentClick);
 clearHistoryButton?.addEventListener("click", clearRecentHistory);
-commonDrugChips?.addEventListener("click", handleDrugChipClick);
+fields.drug?.addEventListener("input", updateDrugAutocomplete);
+fields.drug?.addEventListener("focus", updateDrugAutocomplete);
+fields.drug?.addEventListener("keydown", handleDrugAutocompleteKeydown);
+drugAutocomplete?.addEventListener("mousedown", (event) => event.preventDefault());
+drugAutocomplete?.addEventListener("click", handleDrugAutocompleteClick);
+document.addEventListener("click", handleDocumentAutocompleteClick);
 
 collapseSourceEvidenceOnMobile();
 renderMobileResultStrip();
@@ -912,20 +923,159 @@ async function applyQuickInput() {
   await runCalculation(new FormData(form));
 }
 
-async function handleDrugChipClick(event) {
-  const chip = event.target.closest(".drug-chip");
-  if (!chip) {
+function canRunCalculationFromCurrentFields() {
+  return [fields.age, fields.creatinine, fields.weight].every((field) => field?.value);
+}
+
+function updateDrugAutocomplete() {
+  const query = fields.drug?.value || "";
+  const suggestions = getDrugAutocompleteSuggestions(query, { limit: 8 });
+  const showTypedFallback = query.trim().length >= 2;
+  drugAutocompleteState = {
+    activeIndex: suggestions.length ? 0 : showTypedFallback ? 0 : -1,
+    suggestions,
+    useTypedInput: showTypedFallback && !suggestions.length,
+  };
+  renderDrugAutocomplete();
+}
+
+function renderDrugAutocomplete() {
+  if (!drugAutocomplete || !fields.drug) {
     return;
   }
-  fields.drug.value = chip.dataset.drug || chip.textContent.trim();
-  fields.drug.focus();
+
+  const { suggestions, activeIndex, useTypedInput } = drugAutocompleteState;
+  const typedValue = fields.drug.value.trim();
+  const shouldOpen = suggestions.length > 0 || useTypedInput;
+  drugAutocomplete.classList.toggle("hidden", !shouldOpen);
+  fields.drug.setAttribute("aria-expanded", String(shouldOpen));
+
+  if (!shouldOpen) {
+    fields.drug.removeAttribute("aria-activedescendant");
+    drugAutocomplete.innerHTML = "";
+    return;
+  }
+
+  const suggestionMarkup = suggestions
+    .map(
+      (suggestion, index) => `
+        <button
+          class="drug-suggestion"
+          id="drug-option-${index}"
+          type="button"
+          role="option"
+          aria-selected="${index === activeIndex}"
+          data-index="${index}"
+        >
+          <strong>${escapeHtml(suggestion.label)}</strong>
+          <span>${escapeHtml(suggestion.description)}</span>
+        </button>
+      `
+    )
+    .join("");
+
+  const fallbackMarkup = useTypedInput
+    ? `
+        <button
+          class="drug-suggestion"
+          id="drug-option-0"
+          type="button"
+          role="option"
+          aria-selected="true"
+          data-use-typed="true"
+        >
+          <strong>Use "${escapeHtml(typedValue)}"</strong>
+          <span>No local suggestion found. Search DailyMed/openFDA using typed text.</span>
+        </button>
+      `
+    : "";
+
+  drugAutocomplete.innerHTML = suggestionMarkup || fallbackMarkup;
+  const activeId = activeIndex >= 0 ? `drug-option-${activeIndex}` : "";
+  if (activeId) {
+    fields.drug.setAttribute("aria-activedescendant", activeId);
+  } else {
+    fields.drug.removeAttribute("aria-activedescendant");
+  }
+}
+
+async function handleDrugAutocompleteKeydown(event) {
+  if (!drugAutocomplete || drugAutocomplete.classList.contains("hidden")) {
+    return;
+  }
+
+  const optionCount = drugAutocompleteState.suggestions.length || (drugAutocompleteState.useTypedInput ? 1 : 0);
+  if (!optionCount) {
+    return;
+  }
+
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    drugAutocompleteState.activeIndex = (drugAutocompleteState.activeIndex + 1) % optionCount;
+    renderDrugAutocomplete();
+    return;
+  }
+
+  if (event.key === "ArrowUp") {
+    event.preventDefault();
+    drugAutocompleteState.activeIndex = (drugAutocompleteState.activeIndex - 1 + optionCount) % optionCount;
+    renderDrugAutocomplete();
+    return;
+  }
+
+  if (event.key === "Escape") {
+    closeDrugAutocomplete();
+    return;
+  }
+
+  if (event.key === "Enter") {
+    event.preventDefault();
+    await selectDrugAutocompleteOption(drugAutocompleteState.activeIndex);
+  }
+}
+
+async function handleDrugAutocompleteClick(event) {
+  const option = event.target.closest(".drug-suggestion");
+  if (!option) {
+    return;
+  }
+  const index = option.dataset.useTyped === "true" ? 0 : Number(option.dataset.index || 0);
+  await selectDrugAutocompleteOption(index);
+}
+
+function handleDocumentAutocompleteClick(event) {
+  if (!drugAutocomplete || !fields.drug) {
+    return;
+  }
+  if (event.target === fields.drug || drugAutocomplete.contains(event.target)) {
+    return;
+  }
+  closeDrugAutocomplete();
+}
+
+async function selectDrugAutocompleteOption(index) {
+  const suggestion = drugAutocompleteState.suggestions[index];
+  if (suggestion) {
+    fields.drug.value = suggestion.value;
+  }
+  closeDrugAutocomplete();
+  fields.drug?.focus();
   if (canRunCalculationFromCurrentFields()) {
     await runCalculation(new FormData(form));
   }
 }
 
-function canRunCalculationFromCurrentFields() {
-  return [fields.age, fields.creatinine, fields.weight].every((field) => field?.value);
+function closeDrugAutocomplete() {
+  if (!drugAutocomplete || !fields.drug) {
+    return;
+  }
+  drugAutocomplete.classList.add("hidden");
+  fields.drug.setAttribute("aria-expanded", "false");
+  fields.drug.removeAttribute("aria-activedescendant");
+  drugAutocompleteState = {
+    ...drugAutocompleteState,
+    activeIndex: -1,
+  };
 }
 
 function fillClinicalFields(parsed) {

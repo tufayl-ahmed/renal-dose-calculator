@@ -2395,48 +2395,81 @@ input::placeholder {
   color: #fff;
 }
 
-.common-drug-panel {
-  display: grid;
-  gap: 8px;
+.drug-autocomplete-shell {
+  position: relative;
+  min-width: 0;
 }
 
-.common-drug-panel p {
-  margin: 0;
+.drug-autocomplete {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  z-index: 6;
+  display: grid;
+  gap: 4px;
+  max-height: 292px;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid #cbd8e3;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.14);
+}
+
+.drug-suggestion {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+
+.drug-suggestion strong,
+.drug-suggestion span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drug-suggestion strong {
+  font-size: 0.88rem;
+  font-weight: 850;
+}
+
+.drug-suggestion span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.drug-suggestion:hover,
+.drug-suggestion[aria-selected="true"] {
+  border-color: rgba(15, 118, 110, 0.18);
+  background: var(--teal-soft);
+}
+
+.autocomplete-note {
+  align-self: start;
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid #d7e1ec;
+  border-radius: 8px;
+  background: #f8fafc;
   color: var(--muted);
   font-size: 0.76rem;
-  font-weight: 750;
+  line-height: 1.35;
 }
 
-.common-drug-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.drug-chip {
-  min-height: 30px;
-  padding: 0 10px;
-  border: 1px solid #d7e1ec;
-  border-radius: 999px;
-  background: #f8fafc;
-  color: #374151;
-  font-size: 0.76rem;
-  font-weight: 800;
-  transition:
-    transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 160ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.drug-chip:hover {
-  border-color: rgba(15, 118, 110, 0.36);
-  background: var(--teal-soft);
+.autocomplete-note strong {
   color: var(--teal-dark);
-  transform: translateY(-1px);
-}
-
-.drug-chip:active {
-  transform: translateY(0);
+  font-size: 0.8rem;
 }
 
 .primary-button {

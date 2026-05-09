@@ -8,7 +8,7 @@
       content="Adult CKD-EPI eGFR and Cockcroft-Gault creatinine clearance calculator with renal dosing label lookup."
     />
     <title>Renal Dose Calculator</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260509-10" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260509-11" />
   </head>
   <body>
     <main class="app-shell">
@@ -179,24 +179,25 @@
                 <div class="field-grid drug-grid">
                   <label class="field drug-field">
                     <span>Drug search <em>optional</em></span>
-                    <input id="drug" name="drug" autocomplete="off" placeholder="Amoxicillin" />
-                    <small>Generic names work best. Example: cefixime</small>
+                    <div class="drug-autocomplete-shell">
+                      <input
+                        id="drug"
+                        name="drug"
+                        autocomplete="off"
+                        placeholder="Search drug name, brand, or shorthand"
+                        role="combobox"
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-controls="drug-autocomplete"
+                      />
+                      <div class="drug-autocomplete hidden" id="drug-autocomplete" role="listbox" aria-label="Drug suggestions"></div>
+                    </div>
+                    <small>Example: cefixime, metformin, piptaz, levoflox. Free text is allowed.</small>
                   </label>
 
-                  <div class="common-drug-panel" aria-label="Common drug shortcuts">
-                    <p>Common renal-dose lookups</p>
-                    <div class="common-drug-chips">
-                      <button class="drug-chip" type="button" data-drug="metformin">Metformin</button>
-                      <button class="drug-chip" type="button" data-drug="enoxaparin">Enoxaparin</button>
-                      <button class="drug-chip" type="button" data-drug="piperacillin tazobactam">Piperacillin-tazobactam</button>
-                      <button class="drug-chip" type="button" data-drug="cefepime">Cefepime</button>
-                      <button class="drug-chip" type="button" data-drug="cefixime">Cefixime</button>
-                      <button class="drug-chip" type="button" data-drug="levofloxacin">Levofloxacin</button>
-                      <button class="drug-chip" type="button" data-drug="gabapentin">Gabapentin</button>
-                      <button class="drug-chip" type="button" data-drug="meropenem">Meropenem</button>
-                      <button class="drug-chip" type="button" data-drug="fluconazole">Fluconazole</button>
-                      <button class="drug-chip" type="button" data-drug="vancomycin">Vancomycin</button>
-                    </div>
+                  <div class="autocomplete-note" aria-live="polite">
+                    <strong>Local autocomplete</strong>
+                    <span>1000 DailyMed/openFDA label-backed drug names plus common shorthand aliases.</span>
                   </div>
 
                   <fieldset class="field route-field">
@@ -466,6 +467,6 @@
     </main>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="./src/app.js?v=20260509-11"></script>
+    <script type="module" src="./src/app.js?v=20260509-12"></script>
   </body>
 </html>
