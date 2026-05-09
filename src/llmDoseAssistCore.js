@@ -14,7 +14,7 @@ const VAGUE_DOSE =
 const DOSE_UNIT = /\b\d+(?:\.\d+)?\s*(?:(?:mg|g|gram|grams|mcg|units?|iu|meq|mmol|ml|percent)\b|%)/i;
 const DOSE_DEPENDENT_PHRASE = /\b\d+(?:\.\d+)?\s*%\s+of\s+(?:the\s+)?(?:usual|daily)\s+dose\b/i;
 const RENAL_ACTION_PHRASE =
-  /\b(?:do not initiate|contraindicated|discontinue|do not use|avoid use|not recommended|no renal dose adjustment|no dose adjustment|reduce(?:\s+\w+){0,4}\s+dose by \d+%|dose should not exceed)\b/i;
+  /\b(?:do not initiate|contraindicated|discontinue|do not use|avoid(?: use)?|restriction language|product restriction|renal caution|use with caution|monitor renal function|dose-reduction language|dose reduction|dose decrease|dose limit|lower dose|lower individual doses|slower titration|not recommended|no renal-specific dose adjustment found|no renal dose adjustment|no dose adjustment|reduce dose|reduce(?:\s+\w+){0,4}\s+dose by \d+%|dose should not exceed)\b/i;
 const FREQUENCY_SIGNAL =
   /\b(?:every\s+\d+\s+hours?|q\s*\d+\s*h|once daily|twice daily|three times daily|four times daily|daily|weekly|single dose|after dialysis|following dialysis|with each dialysis|bid|tid|qid|q24h|q12h|q8h|q6h|q48h|q72h)\b/i;
 const NO_ADJUSTMENT =
@@ -79,11 +79,31 @@ function buildCompactSourceText(sections) {
 function dosageSourceWindow(text) {
   const clean = compactText(text);
   const lower = clean.toLowerCase();
+  const renalSpecificStarts = [
+    "dosage adjustments in adult patients with renal impairment",
+    "dosage adjustment in adult patients with renal impairment",
+    "dosage adjustment in patients with renal impairment",
+    "dosing in patients with renal impairment",
+    "recommended dosage in patients with renal impairment",
+    "recommended dosage for patients with renal impairment",
+    "adult patients with renal impairment",
+    "patients with renal impairment",
+    "dose adjustment in patients with renal impairment",
+    "dose adjustment in renal impairment",
+  ]
+    .flatMap((phrase) => allIndexesOf(lower, phrase))
+    .filter((index) => index >= 0);
+  const lateSpecificStart = renalSpecificStarts.find((index) => index > 300);
+  if (lateSpecificStart >= 0) {
+    return clean.slice(lateSpecificStart, lateSpecificStart + AI_SOURCE_TEXT_LIMIT);
+  }
+
   const starts = [
     "dosage adjustment",
     "dosage adjustments",
     "dosage in adult patients with renal impairment",
     "adult patients with renal impairment",
+    "dosing in patients with renal impairment",
     "recommended dosage schedule for adult patients with renal impairment",
     "recommended dosage",
     "creatinine clearance",
@@ -94,6 +114,20 @@ function dosageSourceWindow(text) {
     .filter((index) => index >= 0);
   const start = starts.length ? Math.min(...starts) : 0;
   return clean.slice(start, start + AI_SOURCE_TEXT_LIMIT);
+}
+
+function allIndexesOf(text, phrase) {
+  const indexes = [];
+  let startIndex = 0;
+  while (startIndex < text.length) {
+    const index = text.indexOf(phrase, startIndex);
+    if (index === -1) {
+      break;
+    }
+    indexes.push(index);
+    startIndex = index + phrase.length;
+  }
+  return indexes;
 }
 
 export function parseAndValidateAssistResponse(rawValue, sourceText, fallback = {}) {

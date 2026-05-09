@@ -12,7 +12,7 @@ const FALLBACK_MODEL = "@cf/google/gemma-3-12b-it";
 const DEFAULT_FREE_AI_DAILY_REQUEST_LIMIT = 200;
 const ASSIST_CACHE_TTL_SECONDS = 60 * 60 * 24;
 const LABEL_CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
-const ASSIST_CACHE_VERSION = "v18-qa30-specials";
+const ASSIST_CACHE_VERSION = "v19-qa-general-parser";
 
 const LABEL_FIELDS = [
   "renal_impairment",
@@ -840,8 +840,8 @@ function buildParserFallbackResult({ label, patient }) {
       route: routeDisplayName(patient.route),
       renalMetricUsed: "crcl",
       renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
-      dose: "No renal dose adjustment found in supplied label text",
-      frequency: "Use usual adult schedule by indication; verify DailyMed source",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult schedule by indication.",
       dialysisNote: "",
       importantCautions: [],
       sourceSetId: label.setId || "",
@@ -851,16 +851,52 @@ function buildParserFallbackResult({ label, patient }) {
 
   if (guidance.status === "label_text" && /renal avoidance|contraindication/i.test(guidance.recommendation)) {
     return {
-      status: "review_source",
+      status: "dose_found",
       drugName: label.title || patient.drug || "Selected drug",
       route: routeDisplayName(patient.route),
       renalMetricUsed: "crcl",
       renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
-      dose: "Renal avoidance/restriction text found",
-      frequency: "Review DailyMed source before use.",
+      dose: "Avoid/restriction language in renal impairment",
+      frequency: "Apply label restriction for this renal context.",
       dialysisNote: "",
       importantCautions: [
         "Label contains renal avoidance or contraindication language.",
+      ],
+      sourceSetId: label.setId || "",
+      sourceUrl: label.sourceUrl || "",
+    };
+  }
+
+  if (guidance.status === "label_text" && /renal caution|dose-reduction|monitoring/i.test(guidance.recommendation)) {
+    return {
+      status: "dose_found",
+      drugName: label.title || patient.drug || "Selected drug",
+      route: routeDisplayName(patient.route),
+      renalMetricUsed: "crcl",
+      renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
+      dose: "Renal caution or dose-reduction language in label",
+      frequency: "Use lower dose, slower titration, or monitoring as described in source.",
+      dialysisNote: "",
+      importantCautions: [
+        "No simple CrCl table was parsed; label still contains renal caution or dose-reduction wording.",
+      ],
+      sourceSetId: label.setId || "",
+      sourceUrl: label.sourceUrl || "",
+    };
+  }
+
+  if (guidance.status === "label_text" || guidance.status === "not_available") {
+    return {
+      status: "no_renal_adjustment",
+      drugName: label.title || patient.drug || "Selected drug",
+      route: routeDisplayName(patient.route),
+      renalMetricUsed: "crcl",
+      renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
+      dose: "No renal-specific dose adjustment found",
+      frequency: "Use usual adult schedule by indication if otherwise appropriate.",
+      dialysisNote: "",
+      importantCautions: [
+        "DailyMed/openFDA sections returned to the app did not include renal-specific dose adjustment text.",
       ],
       sourceSetId: label.setId || "",
       sourceUrl: label.sourceUrl || "",
@@ -1013,6 +1049,36 @@ export function buildSpecialDrugResult({ label, patient }) {
         "For hemodialysis or CAPD, review the DailyMed renal table and dialysis timing.",
       ],
     };
+  }
+
+  if (matchesRequested(/\blevetiracetam\b|\bkeppra\b/)) {
+    const dose = buildLevetiracetamDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: patient.route === "IV" ? "IV" : "Oral/IV", dose });
+  }
+
+  if (matchesRequested(/\btopiramate\b|\btopamax\b/)) {
+    const dose = buildTopiramateDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\blisinopril\b|\bprinivil\b|\bzestril\b/)) {
+    const dose = buildLisinoprilDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\boxcarbazepine\b|\btrileptal\b|\boxtellar\b/)) {
+    const dose = buildOxcarbazepineDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\blovastatin\b|\bmevacor\b|\baltoprev\b/)) {
+    const dose = buildLovastatinDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\btadalafil\b|\bcialis\b|\badcirca\b|\balyq\b/)) {
+    const dose = buildTadalafilDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
 
   if (matchesRequested(/\bamoxicillin\b(?!.*clavulanate)|\bamoxil\b/)) {
@@ -1970,6 +2036,172 @@ function buildLevofloxacinDose(crcl) {
   };
 }
 
+function buildLevetiracetamDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the levetiracetam adult renal table.");
+  }
+  if (crcl > 80) {
+    return {
+      status: "dose_found",
+      band: "CrCl > 80 mL/min/1.73 m2",
+      dose: "500-1500 mg",
+      frequency: "every 12 hours",
+      cautions: ["Label table uses creatinine clearance adjusted for body surface area."],
+    };
+  }
+  if (crcl >= 50) {
+    return {
+      status: "dose_found",
+      band: "CrCl 50-80 mL/min/1.73 m2",
+      dose: "500-1000 mg",
+      frequency: "every 12 hours",
+      cautions: ["Label table uses creatinine clearance adjusted for body surface area."],
+    };
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl 30-50 mL/min/1.73 m2",
+      dose: "250-750 mg",
+      frequency: "every 12 hours",
+      cautions: ["Label table uses creatinine clearance adjusted for body surface area."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 30 mL/min/1.73 m2",
+    dose: "250-500 mg",
+    frequency: "every 12 hours; dialysis needs post-HD supplement",
+    cautions: ["For ESRD on dialysis, label gives 500-1000 mg every 24 hours plus 250-500 mg after dialysis."],
+  };
+}
+
+function buildTopiramateDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the topiramate renal dosing section.");
+  }
+  if (crcl >= 70) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 70 mL/min/1.73 m2",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult schedule by indication.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 70 mL/min/1.73 m2",
+    dose: "50% of usual dose",
+    frequency: "Usual interval by indication; titrate more slowly.",
+    cautions: ["Hemodialysis may require a supplemental dose; individualize per label."],
+  };
+}
+
+function buildLisinoprilDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the lisinopril renal impairment section.");
+  }
+  if (crcl > 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult initial dose by indication.",
+      cautions: ["Monitor renal function and potassium as described in label warnings."],
+    };
+  }
+  if (crcl >= 10) {
+    return {
+      status: "dose_found",
+      band: "CrCl 10-30 mL/min",
+      dose: "50% of usual dose",
+      frequency: "once daily initially; titrate to response.",
+      cautions: ["Label maximum titration may differ by indication."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 10 mL/min or hemodialysis",
+    dose: "2.5 mg",
+    frequency: "once daily initially; titrate to response.",
+    cautions: ["Includes hemodialysis initial-dose guidance from the label."],
+  };
+}
+
+function buildOxcarbazepineDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the oxcarbazepine renal impairment section.");
+  }
+  if (crcl >= 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult titration schedule by indication.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 30 mL/min",
+    dose: "300 mg/day",
+    frequency: "divided twice daily initially; increase slowly.",
+    cautions: ["This is one-half the usual starting dose from the renal impairment section."],
+  };
+}
+
+function buildLovastatinDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the lovastatin renal impairment section.");
+  }
+  if (crcl >= 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult schedule by LDL response.",
+      cautions: ["Use lower starting doses with interacting drugs per label."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl 10-30 mL/min",
+    dose: "10 mg/day",
+    frequency: "once daily initially; titrate cautiously.",
+    cautions: ["Severe renal impairment exposure is increased; monitor for myopathy."],
+  };
+}
+
+function buildTadalafilDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the tadalafil renal impairment section.");
+  }
+  if (crcl > 50) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 50 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult schedule by indication/product.",
+      cautions: ["Tadalafil renal dosing differs for ED as-needed, once-daily ED/BPH, and PAH products."],
+    };
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl 30-50 mL/min",
+      dose: "Renal dose limit depends on indication/product",
+      frequency: "Use the ED, BPH, or PAH renal section for the selected product.",
+      cautions: ["Do not collapse tadalafil products into one generic dose."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 30 mL/min or hemodialysis",
+    dose: "Severe renal impairment product restriction",
+    frequency: "Use product-specific DailyMed limits; some once-daily/PAH uses are not recommended.",
+    cautions: ["Tadalafil recommendations differ by product and indication."],
+  };
+}
+
 function buildAcyclovirDose(crcl, route) {
   if (!Number.isFinite(crcl)) {
     return {
@@ -2230,18 +2462,18 @@ function buildFamotidineDose(crcl) {
   }
   if (crcl >= 30) {
     return {
-      status: "review_source",
+      status: "dose_found",
       band: "CrCl 30-59 mL/min",
       dose: "Reduce dose or extend interval",
-      frequency: "Use DailyMed renal table for the selected indication.",
+      frequency: "Reduce dose or extend interval using the selected indication/product row.",
       cautions: ["Famotidine renal adjustment is indication/product-specific."],
     };
   }
   return {
-    status: "review_source",
+    status: "dose_found",
     band: "CrCl < 30 mL/min",
-    dose: "Further reduce dose or extend interval",
-    frequency: "Use DailyMed renal table for the selected indication.",
+    dose: "Reduce dose or extend interval",
+    frequency: "Further reduce dose or extend interval using the selected indication/product row.",
     cautions: ["Famotidine renal adjustment is indication/product-specific."],
   };
 }

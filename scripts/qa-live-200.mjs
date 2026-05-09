@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { calculateCockcroftGault, calculateEgfrCkdEpi2021 } from "../src/renal.js";
 import { draftRenalDoseRules } from "../src/data/renalRules/index.js";
+import { DRUG_AUTOCOMPLETE_ITEMS } from "../src/drugAutocompleteData.js";
 import { normalizeAssistPayload } from "../src/llmDoseAssist.js";
 
 const DEFAULT_BASE_URL = "https://renal-dose-calculator.pages.dev";
@@ -32,8 +33,10 @@ const args = parseArgs(process.argv.slice(2));
 const baseUrl = args.baseUrl || DEFAULT_BASE_URL;
 const limit = Number.isFinite(args.limit) ? args.limit : 200;
 const concurrency = Number.isFinite(args.concurrency) ? args.concurrency : 4;
+const source = args.source || "curated";
+const routeMode = args.routeMode || (source === "autocomplete" ? "all" : "listed");
 
-const seeds = buildSeeds(draftRenalDoseRules).slice(0, limit);
+const seeds = buildSeeds({ source }).slice(0, limit);
 const cases = seeds.map(buildCase);
 const startedAt = new Date();
 const results = await runCases(cases, { baseUrl, concurrency });
@@ -50,6 +53,8 @@ await writeFile(
   JSON.stringify(
     {
       baseUrl,
+      source,
+      routeMode,
       startedAt: startedAt.toISOString(),
       finishedAt: finishedAt.toISOString(),
       durationSeconds: Math.round((finishedAt - startedAt) / 1000),
@@ -66,6 +71,8 @@ console.log(
   JSON.stringify(
     {
       baseUrl,
+      source,
+      routeMode,
       total: results.length,
       summary,
       jsonPath: filePath(jsonPath),
@@ -88,7 +95,15 @@ console.log(
   )
 );
 
-function buildSeeds(rules) {
+function buildSeeds({ source }) {
+  if (source === "autocomplete") {
+    return buildAutocompleteSeeds();
+  }
+
+  return buildCuratedSeeds(draftRenalDoseRules);
+}
+
+function buildCuratedSeeds(rules) {
   const seen = new Set();
   const seeds = [];
   for (const rule of rules) {
@@ -108,6 +123,17 @@ function buildSeeds(rules) {
     });
   }
   return seeds;
+}
+
+function buildAutocompleteSeeds() {
+  return DRUG_AUTOCOMPLETE_ITEMS.map((item) => ({
+    drugName: compact(item.name),
+    searchTerm: compact(item.name),
+    aliases: item.aliases || [],
+    routes: ["ALL"],
+    sourceUrl: "",
+    confidence: "autocomplete-label-backed",
+  })).filter((seed) => seed.searchTerm);
 }
 
 function buildCase(seed, index) {
@@ -381,11 +407,15 @@ function renderMarkdown({ baseUrl, startedAt, finishedAt, summary, results }) {
       .join(" | ")
   );
 
-  return `# Live API QA - 200 Common Drug Pass
+  return `# Live API QA - Common Drug Pass
 
 Date: ${startedAt.toISOString().slice(0, 10)}
 
 Target: ${baseUrl}
+
+Source: ${source}
+
+Route mode: ${routeMode}
 
 Started: ${startedAt.toISOString()}  
 Finished: ${finishedAt.toISOString()}
@@ -460,12 +490,29 @@ function parseArgs(rawArgs) {
       parsed.limit = Number(value);
     } else if (key === "concurrency") {
       parsed.concurrency = Number(value);
+    } else if (key === "source") {
+      parsed.source = value || "curated";
+    } else if (key === "route-mode") {
+      parsed.routeMode = value || "listed";
     }
   }
   return parsed;
 }
 
 function chooseRoute(routes, index) {
+  if (routeMode === "all") {
+    return "ALL";
+  }
+  if (routeMode === "mixed") {
+    if (index % 10 === 3) {
+      return "ORAL";
+    }
+    if (index % 10 === 7) {
+      return "IV";
+    }
+    return "ALL";
+  }
+
   const normalized = routes.map((route) => String(route || "").toUpperCase());
   if (normalized.includes("ORAL") && normalized.includes("IV")) {
     return index % 2 === 0 ? "ORAL" : "IV";

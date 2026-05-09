@@ -235,6 +235,28 @@ test("LLM validator accepts source-supported renal action wording", () => {
   assert.equal(result.dose, "Do not initiate");
 });
 
+test("LLM validator accepts clean parser renal-caution action cards", () => {
+  const result = validateAssistResponse(
+    {
+      status: "dose_found",
+      drugName: "Example",
+      route: "Oral",
+      renalMetricUsed: "crcl",
+      renalBand: "CrCl 20-40 mL/min",
+      dose: "Renal caution or dose-reduction language in label",
+      frequency: "Use lower dose, slower titration, or monitoring as described in source.",
+      dialysisNote: "",
+      importantCautions: [],
+      sourceUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=test",
+    },
+    "Renal impairment: dosage decrease may be necessary. Monitor renal function.",
+    { crcl: 28, trustSourceEvidence: true }
+  );
+
+  assert.equal(result.status, "dose_found");
+  assert.match(result.dose, /Renal caution/i);
+});
+
 test("LLM validator strips raw internal status tokens from model fields", () => {
   const review = validateAssistResponse(
     {
@@ -859,6 +881,30 @@ test("backend special handlers cover common QA renal band failures", () => {
     label: { title: "Digoxin", genericName: "digoxin", sourceUrl },
     patient: { drug: "digoxin", route: "ORAL", crcl: 35.9 },
   });
+  const levetiracetam = buildSpecialDrugResult({
+    label: { title: "Levetiracetam", genericName: "levetiracetam", sourceUrl },
+    patient: { drug: "levetiracetam", route: "ORAL", crcl: 28.1 },
+  });
+  const topiramate = buildSpecialDrugResult({
+    label: { title: "Topiramate", genericName: "topiramate", sourceUrl },
+    patient: { drug: "topiramate", route: "ORAL", crcl: 34.9 },
+  });
+  const lisinopril = buildSpecialDrugResult({
+    label: { title: "Lisinopril", genericName: "lisinopril", sourceUrl },
+    patient: { drug: "lisinopril", route: "ORAL", crcl: 61.8 },
+  });
+  const tadalafil = buildSpecialDrugResult({
+    label: { title: "Tadalafil", genericName: "tadalafil", sourceUrl },
+    patient: { drug: "tadalafil", route: "ORAL", crcl: 64.4 },
+  });
+  const oxcarbazepine = buildSpecialDrugResult({
+    label: { title: "Oxcarbazepine", genericName: "oxcarbazepine", sourceUrl },
+    patient: { drug: "oxcarbazepine", route: "ORAL", crcl: 15.9 },
+  });
+  const lovastatin = buildSpecialDrugResult({
+    label: { title: "Lovastatin", genericName: "lovastatin", sourceUrl },
+    patient: { drug: "lovastatin", route: "ORAL", crcl: 32.7 },
+  });
 
   assert.equal(cipro.status, "no_renal_adjustment");
   assert.equal(cipro.renalBand, "CrCl > 30 mL/min");
@@ -869,6 +915,17 @@ test("backend special handlers cover common QA renal band failures", () => {
   assert.match(famotidine.dose, /reduce/i);
   assert.equal(digoxin.status, "review_source");
   assert.match(digoxin.dose, /level-based/i);
+  assert.equal(levetiracetam.status, "dose_found");
+  assert.match(levetiracetam.dose, /250-500 mg/);
+  assert.equal(topiramate.status, "dose_found");
+  assert.match(topiramate.dose, /50% of usual dose/i);
+  assert.equal(lisinopril.status, "no_renal_adjustment");
+  assert.match(lisinopril.frequency, /usual adult initial dose/i);
+  assert.equal(tadalafil.status, "no_renal_adjustment");
+  assert.match(tadalafil.frequency, /product/i);
+  assert.equal(oxcarbazepine.status, "dose_found");
+  assert.equal(oxcarbazepine.dose, "300 mg/day");
+  assert.equal(lovastatin.status, "no_renal_adjustment");
 });
 
 test("backend special handlers cover 30-case antibiotic QA warnings", () => {

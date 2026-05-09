@@ -12,6 +12,8 @@ const gabapentinSection =
   "Dosage Adjustment in Patients with Renal Impairment TABLE 1. Gabapentin Dosage Based on Renal Function TID = Three times a day; BID = Two times a day; QD = Single daily dose Renal Function Creatinine Clearance (mL/min) Total Daily Dose Range (mg/day) Dose Regimen (mg) ≥60 900 to 3600 300 TID 400 TID 600 TID 800 TID 1200 TID >30 to 59 400 to 1400 200 BID 300 BID 400 BID 500 BID 700 BID >15 to 29 200 to 700 200 QD 300 QD 400 QD 500 QD 700 QD";
 const fluconazoleSection =
   "Dosage In Patients With Impaired Renal Function: After the loading dose, the daily dose according to indication should be based on the following table: Creatinine Clearance (mL/min) Recommended Dose (%) >50 100 ≤50 (no dialysis) 50 Hemodialysis 100% after each hemodialysis";
+const levetiracetamSection =
+  "2.5 Dosage Adjustments in Adult Patients with Renal Impairment Levetiracetam tablet dosing must be individualized according to the patient’s renal function status. Table 1: Dosing Adjustment Regimen for Adult Patients with Renal Impairment Group Creatinine Clearance (mL/min/1.73 m2) Dosage (mg) Frequency Normal > 80 500 to 1,500 Every 12 hours Mild 50 to 80 500 to 1,000 Every 12 hours Moderate 30 to 50 250 to 750 Every 12 hours Severe < 30 250 to 500 Every 12 hours ESRD patients using dialysis ---- 500 to 1,000 Every 24 hours Following dialysis, a 250 to 500 mg supplemental dose is recommended.";
 
 test("extracts renal dose rows from DailyMed-style text", () => {
   const rows = extractDoseRows(meropenemSection, "Dosage And Administration");
@@ -146,7 +148,7 @@ test("keeps non-table renal label text out of the quick dose recommendation", ()
 
   assert.equal(guidance.status, "label_text");
   assert.equal(guidance.rows.length, 0);
-  assert.match(guidance.recommendation, /No CrCl dose table was parsed/i);
+  assert.match(guidance.recommendation, /No renal dose adjustment/i);
   assert.doesNotMatch(guidance.recommendation, /Studies have shown/i);
   assert.ok(guidance.recommendation.length < 120);
 });
@@ -215,6 +217,75 @@ test("parses percent dose renal tables", () => {
   assert.equal(guidance.status, "matched");
   assert.equal(guidance.crclBand, "CrCl <= 50 mL/min");
   assert.match(guidance.recommendation, /50% of usual daily dose/);
+});
+
+test("parses levetiracetam adult renal adjustment table without formula noise", () => {
+  const guidance = deriveRenalDoseGuidance({
+    crcl: 28,
+    route: "ORAL",
+    label: {
+      status: "found",
+      sections: [
+        {
+          heading: "Dosage And Administration",
+          hasRenalKeyword: true,
+          fullText: levetiracetamSection,
+          text: levetiracetamSection,
+        },
+      ],
+    },
+  });
+
+  assert.equal(guidance.status, "matched");
+  assert.equal(guidance.crclBand, "CrCl < 30 mL/min");
+  assert.match(guidance.recommendation, /250 to 500 mg every 12 hours/);
+  assert.doesNotMatch(guidance.recommendation, /Mild/i);
+});
+
+test("surfaces renal caution text as a clean action instead of generic review", () => {
+  const guidance = deriveRenalDoseGuidance({
+    crcl: 28,
+    route: "ORAL",
+    label: {
+      status: "found",
+      sections: [
+        {
+          heading: "Use In Specific Populations",
+          hasRenalKeyword: true,
+          fullText:
+            "Renal impairment: dosage decrease may be necessary in patients with moderate to severe renal impairment. Monitor renal function during therapy.",
+          text: "Renal impairment: dosage decrease may be necessary in patients with moderate to severe renal impairment.",
+        },
+      ],
+    },
+  });
+
+  assert.equal(guidance.status, "label_text");
+  assert.match(guidance.recommendation, /renal caution/i);
+  assert.doesNotMatch(guidance.recommendation, /Review the DailyMed label/i);
+});
+
+test("does not treat liver no-adjustment text as renal no-adjustment", () => {
+  const guidance = deriveRenalDoseGuidance({
+    crcl: 28,
+    route: "ORAL",
+    label: {
+      status: "found",
+      sections: [
+        {
+          heading: "Dosage And Administration",
+          hasRenalKeyword: true,
+          fullText:
+            "No dosage adjustment is needed in patients with mild liver impairment. Patients with Renal Impairment: reduced maintenance doses may be effective for patients with significant renal impairment.",
+          text: "No dosage adjustment is needed in patients with mild liver impairment. Patients with Renal Impairment: reduced maintenance doses may be effective.",
+        },
+      ],
+    },
+  });
+
+  assert.equal(guidance.status, "label_text");
+  assert.match(guidance.recommendation, /renal caution/i);
+  assert.doesNotMatch(guidance.recommendation, /No renal dose adjustment/i);
 });
 
 test("does not interpret age ranges as CrCl dose bands", () => {

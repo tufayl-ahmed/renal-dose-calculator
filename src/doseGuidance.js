@@ -16,8 +16,12 @@ const DOSE_CONTEXT = ["dose", "dosage", "dosing", "administer", "recommended"];
 const MAX_QUICK_RECOMMENDATION_LENGTH = 150;
 const NON_DOSING_TEXT =
   /\b(?:study|studies|pharmacokinetic|subjects|volunteers|observed|adverse reactions?|contraindications?|warnings?)\b/i;
-const NO_RENAL_ADJUSTMENT =
-  /\b(?:no\s+(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended)|does\s+not\s+require\s+(?:dosage?|dose)\s+adjustment|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended))\b/i;
+const NO_RENAL_ADJUSTMENT_TEXT =
+  String.raw`\b(?:no\s+(?:renal\s+)?(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended|needed)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended|needed)|does\s+not\s+require\s+(?:dosage?|dose)\s+adjustment|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended|needed))\b`;
+const NO_RENAL_ADJUSTMENT = new RegExp(NO_RENAL_ADJUSTMENT_TEXT, "i");
+const NO_RENAL_ADJUSTMENT_GLOBAL = new RegExp(NO_RENAL_ADJUSTMENT_TEXT, "gi");
+const RENAL_CAUTION =
+  /\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b[\s\S]{0,180}\b(?:use with caution|monitor(?:ing)? renal function|monitor(?:ing)? kidney function|reduce(?:d|ing)? (?:the )?(?:dose|dosage)|reduced? [\w\s]{0,40}doses?|dose(?:age)? decrease may be (?:needed|necessary)|dose(?:age)? reduction may be (?:needed|necessary)|lower individual doses|halve usual initial dose|discontinue(?:d)? if|not recommended|should not be used)\b|\b(?:use with caution|monitor(?:ing)? renal function|monitor(?:ing)? kidney function|reduce(?:d|ing)? (?:the )?(?:dose|dosage)|reduced? [\w\s]{0,40}doses?|dose(?:age)? decrease may be (?:needed|necessary)|dose(?:age)? reduction may be (?:needed|necessary)|lower individual doses|halve usual initial dose|discontinue(?:d)? if|not recommended|should not be used)\b[\s\S]{0,180}\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i;
 
 export function deriveRenalDoseGuidance({ label, crcl, route }) {
   if (!label || label.status !== "found") {
@@ -81,23 +85,26 @@ export function deriveRenalDoseGuidance({ label, crcl, route }) {
 
   if (renalSections.length) {
     const noAdjustmentSection = renalSections.find((section) =>
-      NO_RENAL_ADJUSTMENT.test(section.fullText || section.text)
+      hasNoRenalAdjustmentText(section.fullText || section.text, section.heading)
     );
 
     const contraindicationSection = renalSections.find((section) => hasRenalAvoidanceText(section.fullText || section.text));
+    const cautionSection = renalSections.find((section) => hasRenalCautionText(section.fullText || section.text));
 
     return {
       status: "label_text",
-      title: contraindicationSection ? "Renal restriction found" : noAdjustmentSection ? "Renal label note" : "Renal label text found",
-      badge: contraindicationSection ? "Avoid/review" : noAdjustmentSection ? "Verify label" : "No table parsed",
+      title: contraindicationSection ? "Renal restriction found" : cautionSection ? "Renal caution found" : noAdjustmentSection ? "Renal label note" : "Renal label text found",
+      badge: contraindicationSection ? "Avoid/review" : cautionSection ? "Renal caution" : noAdjustmentSection ? "No adjustment" : "No table parsed",
       routeLabel: routeLabel(route),
       crclBand: `CrCl ${formatNumber(crcl)} mL/min`,
       recommendation: contraindicationSection
         ? "Label text contains renal avoidance or contraindication language; verify DailyMed source."
-        : noAdjustmentSection
-          ? "No CrCl dose table was parsed. Label text suggests no renal dose adjustment; verify source."
-          : "No clear CrCl-based dose line was parsed. Review the DailyMed label.",
-      sourceHeading: contraindicationSection?.heading || noAdjustmentSection?.heading || renalSections[0].heading,
+        : cautionSection
+          ? "Label text contains renal caution, monitoring, or dose-reduction language."
+          : noAdjustmentSection
+            ? "No renal dose adjustment is described in the selected label text."
+            : "Renal label text is present, but no clear CrCl-based dose line was parsed.",
+      sourceHeading: contraindicationSection?.heading || cautionSection?.heading || noAdjustmentSection?.heading || renalSections[0].heading,
       caveat: "Educational purpose only. Results are estimates and are not for prescribing.",
       rows: [],
     };
@@ -147,6 +154,7 @@ export function extractDoseRows(text, sourceHeading = "Label") {
 function extractKnownRenalTableRows(text, sourceHeading) {
   return [
     ...extractGabapentinRows(text, sourceHeading),
+    ...extractLevetiracetamRows(text, sourceHeading),
     ...extractFluconazoleRows(text, sourceHeading),
   ];
 }
@@ -214,6 +222,47 @@ function extractFluconazoleRows(text, sourceHeading) {
       min: 0,
       max: 50,
       recommendation: "50% of usual daily dose after loading dose",
+      sourceHeading,
+      hasDoseContext: true,
+    },
+  ];
+}
+
+function extractLevetiracetamRows(text, sourceHeading) {
+  if (!/dosing adjustment regimen for adult patients with renal impairment/i.test(text)) {
+    return [];
+  }
+
+  return [
+    {
+      type: "gt",
+      min: 80,
+      max: Infinity,
+      recommendation: "500 to 1500 mg every 12 hours",
+      sourceHeading,
+      hasDoseContext: true,
+    },
+    {
+      type: "range",
+      min: 50,
+      max: 80,
+      recommendation: "500 to 1000 mg every 12 hours",
+      sourceHeading,
+      hasDoseContext: true,
+    },
+    {
+      type: "range",
+      min: 30,
+      max: 50,
+      recommendation: "250 to 750 mg every 12 hours",
+      sourceHeading,
+      hasDoseContext: true,
+    },
+    {
+      type: "lt",
+      min: 0,
+      max: 30,
+      recommendation: "250 to 500 mg every 12 hours",
       sourceHeading,
       hasDoseContext: true,
     },
@@ -397,6 +446,11 @@ function findRenalTableStart(text) {
   const lower = text.toLowerCase();
   const adultRenalHeadingIndex = findLastIndexOfAny(lower, [
     "dosage in adult patients with renal impairment",
+    "dosage adjustments in adult patients with renal impairment",
+    "dosage adjustment in adult patients with renal impairment",
+    "dosage adjustment in patients with renal impairment",
+    "dosing in patients with renal impairment",
+    "recommended dosage in patients with renal impairment",
     "adult patients with renal impairment",
     "adult patients with renal dysfunction",
   ]);
@@ -478,10 +532,29 @@ function hasDoseContext(text) {
 }
 
 function hasRenalAvoidanceText(text) {
-  return (
-    /\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i.test(text) &&
-    /\b(?:contraindicated|avoid|not recommended|should not be used)\b/i.test(text)
+  return /\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b[\s\S]{0,120}\b(?:contraindicated|avoid(?: use)?|not recommended|should not be used)\b|\b(?:contraindicated|avoid(?: use)?|not recommended|should not be used)\b[\s\S]{0,120}\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i.test(
+    text
   );
+}
+
+function hasRenalCautionText(text) {
+  return RENAL_CAUTION.test(text);
+}
+
+function hasNoRenalAdjustmentText(text, heading = "") {
+  if (/renal|kidney/i.test(heading) && NO_RENAL_ADJUSTMENT.test(text)) {
+    return true;
+  }
+
+  return [...String(text || "").matchAll(NO_RENAL_ADJUSTMENT_GLOBAL)].some((match) => {
+    const start = Math.max(0, match.index - 180);
+    const end = Math.min(String(text || "").length, match.index + match[0].length + 180);
+    const window = String(text || "").slice(start, end);
+    if (!/\brenal\b/i.test(match[0]) && /\b(?:liver|hepatic)\b[\s\S]{0,140}\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i.test(window)) {
+      return false;
+    }
+    return /\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i.test(window);
+  });
 }
 
 function routeLabel(route) {
