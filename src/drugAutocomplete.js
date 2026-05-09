@@ -50,7 +50,7 @@ const PRIORITY_ALIASES = [
 const LABEL_ENTRIES = DRUG_AUTOCOMPLETE_ITEMS.map((item) => ({
   label: item.name,
   value: item.name,
-  aliases: [],
+  aliases: item.aliases || [],
   source: item.source,
   count: item.count,
 }));
@@ -107,6 +107,8 @@ function buildSearchIndex(entries) {
     const existing = seen.get(key);
     if (existing) {
       existing.aliases = Array.from(new Set([...existing.aliases, ...aliases]));
+      existing.aliasKeys = existing.aliases.map((alias) => normalizeDrugKey(alias)).filter(Boolean);
+      existing.aliasLower = existing.aliases.map((alias) => alias.toLowerCase());
       existing.count = Math.max(existing.count || 0, entry.count || 0);
       continue;
     }
@@ -165,11 +167,17 @@ function scoreEntry(entry, queryKey, queryLower) {
 }
 
 function sourceDescription(entry) {
-  if (entry.source === "brand") {
+  if (entry.source?.includes("brand")) {
     return "Local brand-name suggestion";
   }
-  if (entry.source === "generic") {
+  if (entry.source?.includes("generic")) {
     return "Local generic-name suggestion";
+  }
+  if (entry.source?.includes("substance")) {
+    return "Local label-ingredient suggestion";
+  }
+  if (entry.source?.startsWith("rxnorm")) {
+    return "Local RxNorm suggestion";
   }
   return "Local shorthand suggestion";
 }

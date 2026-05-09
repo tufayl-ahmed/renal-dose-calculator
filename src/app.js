@@ -12,7 +12,7 @@ import { buildDailyMedSearchUrl } from "./drugLookup.js?v=20260508-1";
 import { requestLlmDoseAssist } from "./llmDoseAssist.js?v=20260509-1";
 import { normalizeDrugQuery } from "./drugNormalizer.js?v=20260508-2";
 import { parseQuickInput } from "./quickInput.js?v=20260509-2";
-import { getDrugAutocompleteSuggestions } from "./drugAutocomplete.js?v=20260509-1";
+import { getDrugAutocompleteSuggestions } from "./drugAutocomplete.js?v=20260509-2";
 
 const form = document.querySelector("#renal-form");
 const egfrValue = document.querySelector("#egfr-value");
