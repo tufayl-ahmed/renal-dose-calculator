@@ -35,6 +35,7 @@ export async function onRequestPost(context) {
   }
 
   const messages = extractWhatsAppTextMessages(payload);
+  const statuses = extractWhatsAppStatuses(payload);
   const deliveries = [];
 
   for (const message of messages) {
@@ -54,8 +55,9 @@ export async function onRequestPost(context) {
   }
 
   logWebhookDeliveries(messages, deliveries);
+  logWebhookStatuses(statuses);
 
-  return jsonResponse({ ok: true, received: messages.length, deliveries }, 200);
+  return jsonResponse({ ok: true, received: messages.length, statuses: statuses.length, deliveries }, 200);
 }
 
 export async function buildDoseReplyFromText(text, context, options = {}) {
@@ -90,6 +92,31 @@ export function extractWhatsAppTextMessages(payload) {
     }
   }
   return messages;
+}
+
+export function extractWhatsAppStatuses(payload) {
+  const statuses = [];
+  for (const entry of payload?.entry || []) {
+    for (const change of entry?.changes || []) {
+      if (change?.field && change.field !== "messages") {
+        continue;
+      }
+      const value = change?.value || {};
+      for (const status of value.statuses || []) {
+        const firstError = Array.isArray(status.errors) ? status.errors[0] : null;
+        statuses.push({
+          id: status.id || "",
+          recipientId: status.recipient_id || "",
+          status: status.status || "",
+          timestamp: status.timestamp || "",
+          errorCode: firstError?.code || null,
+          errorTitle: firstError?.title || "",
+          errorMessage: firstError?.message || firstError?.details || "",
+        });
+      }
+    }
+  }
+  return statuses;
 }
 
 export async function sendWhatsAppText({ env, to, body, replyMessageId = "" }) {
@@ -157,6 +184,29 @@ function logWebhookDeliveries(messages, deliveries) {
     console.log("whatsapp_delivery", JSON.stringify(summary));
   } catch {
     console.log("whatsapp_delivery", JSON.stringify({ received: messages.length, logError: true }));
+  }
+}
+
+function logWebhookStatuses(statuses) {
+  if (!statuses.length) {
+    return;
+  }
+  try {
+    console.log(
+      "whatsapp_status",
+      JSON.stringify({
+        statuses: statuses.map((status) => ({
+          id: tailId(status.id),
+          recipientId: tailId(status.recipientId),
+          status: status.status,
+          errorCode: status.errorCode,
+          errorTitle: status.errorTitle,
+          errorMessage: status.errorMessage,
+        })),
+      })
+    );
+  } catch {
+    console.log("whatsapp_status", JSON.stringify({ count: statuses.length, logError: true }));
   }
 }
 

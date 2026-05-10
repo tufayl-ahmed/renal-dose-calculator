@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildDoseReplyFromText,
+  extractWhatsAppStatuses,
   extractWhatsAppTextMessages,
   onRequestGet,
   onRequestPost,
@@ -65,6 +66,49 @@ test("extracts inbound WhatsApp text messages from webhook payload", () => {
       from: "911234567890",
       text: "45 M 2.1 70 meropenem IV",
       timestamp: "1710000000",
+    },
+  ]);
+});
+
+test("extracts WhatsApp status callbacks for delivery debugging", () => {
+  const statuses = extractWhatsAppStatuses({
+    entry: [
+      {
+        changes: [
+          {
+            field: "messages",
+            value: {
+              statuses: [
+                {
+                  id: "wamid.out",
+                  recipient_id: "911234567890",
+                  status: "failed",
+                  timestamp: "1710000001",
+                  errors: [
+                    {
+                      code: 131047,
+                      title: "Re-engagement message",
+                      message: "More than 24 hours have passed.",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  });
+
+  assert.deepEqual(statuses, [
+    {
+      id: "wamid.out",
+      recipientId: "911234567890",
+      status: "failed",
+      timestamp: "1710000001",
+      errorCode: 131047,
+      errorTitle: "Re-engagement message",
+      errorMessage: "More than 24 hours have passed.",
     },
   ]);
 });
