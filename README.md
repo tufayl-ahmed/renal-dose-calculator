@@ -194,5 +194,8 @@ Secret scans have been run locally with `gitleaks` before deployment setup.
 
 ## License
 
-No open-source license has been selected yet. All rights reserved unless a
-license is added later.
+MIT License. See [LICENSE](LICENSE).
+
+The MIT license covers the software code. The clinical disclaimer still applies:
+this app is educational only, results are estimates, and outputs are not for
+prescribing.
