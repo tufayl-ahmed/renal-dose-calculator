@@ -14,7 +14,7 @@ const VAGUE_DOSE =
 const DOSE_UNIT = /\b\d+(?:\.\d+)?\s*(?:(?:mg|g|gram|grams|mcg|units?|iu|meq|mmol|ml|percent)\b|%)/i;
 const DOSE_DEPENDENT_PHRASE = /\b\d+(?:\.\d+)?\s*%\s+of\s+(?:the\s+)?(?:usual|daily)\s+dose\b/i;
 const RENAL_ACTION_PHRASE =
-  /\b(?:do not initiate|contraindicated|discontinue|do not use|avoid(?: use)?|restriction language|product restriction|renal caution|use with caution|monitor renal function|dose-reduction language|dose reduction|dose decrease|dose limit|lower dose|lower individual doses|slower titration|not recommended|no renal-specific dose adjustment found|no renal dose adjustment|no dose adjustment|reduce dose|reduce(?:\s+\w+){0,4}\s+dose by \d+%|dose should not exceed)\b/i;
+  /\b(?:do not initiate|contraindicated|discontinue|do not use|avoid(?: use)?|restriction language|product restriction|renal caution|renal adjustment|renal dose reduction|renal dosing|monitor(?:ing)?(?:-based)? dosing|monitor (?:drug )?levels|monitor renal function|use lower starting dose|use lower dose|use oral route|use with caution|dose-reduction language|dose reduction|dose decrease|dose limit|lower dose|lower individual doses|slower titration|indication-specific renal adjustment|dialysis-specific renal dosing|not recommended|not established|no recommended dose|no renal-specific dose adjustment found|no renal dose adjustment|no dose adjustment|reduce dose|reduce(?:\s+\w+){0,4}\s+dose by \d+%|dose should not exceed)\b/i;
 const FREQUENCY_SIGNAL =
   /\b(?:every\s+\d+\s+hours?|q\s*\d+\s*h|once daily|twice daily|three times daily|four times daily|daily|weekly|single dose|after dialysis|following dialysis|with each dialysis|bid|tid|qid|q24h|q12h|q8h|q6h|q48h|q72h)\b/i;
 const NO_ADJUSTMENT =

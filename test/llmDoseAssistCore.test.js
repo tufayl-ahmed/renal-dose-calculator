@@ -496,6 +496,18 @@ test("backend openFDA search retries without dosage-form qualifiers", () => {
   assert.ok(searches.some((search) => /HUMAN OTC DRUG/.test(search)));
 });
 
+test("backend openFDA search normalizes autocomplete strength suffixes and common typos", () => {
+  const ketoconazole = buildOpenFdaSearches("Ketoconazole 2", "ALL").join("\n");
+  const isolyte = buildOpenFdaSearches("Isolyte S Ph 7 4", "ALL").join("\n");
+  const estratest = buildOpenFdaSearches("Estratest H S", "ALL").join("\n");
+  const typo = buildOpenFdaSearches("Amlodipine and Olmesartran Medoxomil", "ALL").join("\n");
+
+  assert.match(ketoconazole, /openfda\.generic_name:"Ketoconazole"/);
+  assert.match(isolyte, /openfda\.brand_name:"Isolyte S"/);
+  assert.match(estratest, /openfda\.brand_name:"Estratest"/);
+  assert.match(typo, /olmesartan medoxomil/i);
+});
+
 test("backend route lookup can find IV label before oral labels for same drug", async () => {
   const originalFetch = globalThis.fetch;
   const requestedUrls = [];
@@ -959,6 +971,66 @@ test("backend special handlers cover 30-case antibiotic QA warnings", () => {
     assert.match(result.frequency, frequencyPattern, drug);
     assert.doesNotMatch(`${result.dose} ${result.frequency}`, /recommended dose|review_source|dose_found|no_renal_adjustment/i);
   }
+});
+
+test("backend special handlers cover full autocomplete QA warning reductions", () => {
+  const sourceUrl = "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=test";
+  const cases = [
+    ["voriconazole", "Vfend", "IV", 34.2, /Use oral route/i, /vehicle accumulates/i],
+    ["Ciprofolxacin", "Ciprofloxacin", "ORAL", 28.2, /250-500 mg/i, /every 18 hours/i],
+    ["hydroxyurea", "Hydroxyurea", "ORAL", 32.7, /7\.5 mg\/kg/i, /hemodialysis/i],
+    ["cobicistat", "Tybost", "ORAL", 26.4, /150 mg/i, /not recommended with TDF/i],
+    ["Lorlatinib", "Lorbrena", "ORAL", 29.5, /75 mg/i, /once daily/i],
+    ["Olmesartan Medoxomil / Amlodipine / Hydrochlorothiazide", "Tribenzor", "ORAL", 28.4, /Avoid use/i, /alternative antihypertensive/i],
+    ["Amlodipine and Olmesartran Medoxomil", "Amlodipine and Olmesartan", "ORAL", 9.9, /No CrCl dose table/i, /5\/20 mg once daily/i],
+    ["gentamicin", "Gentamicin", "IV", 22.5, /Monitor levels/i, /protocol/i],
+    ["capecitabine", "Xeloda", "ORAL", 38.4, /75% of usual starting dose/i, /regimen schedule/i],
+    ["eribulin", "Halaven", "IV", 28.7, /1\.1 mg\/m2/i, /21-day cycle/i],
+    ["entecavir", "Baraclude", "ORAL", 34.9, /Reduce dose or extend interval/i, /48 hours/i],
+    ["tenofovir disoproxil", "Viread", "ORAL", 35.4, /300 mg/i, /48 hours/i],
+    ["ertapenem", "Invanz", "IV", 22.8, /500 mg/i, /once daily/i],
+    ["cefepime", "Cefepime", "IV", 44.1, /Renal adjustment needed/i, /maintenance table/i],
+    ["famciclovir", "Famvir", "ORAL", 42.8, /Indication-specific renal adjustment/i, /zoster/i],
+    ["plerixafor", "Mozobil", "SC", 40.2, /0\.16 mg\/kg/i, /apheresis/i],
+    ["lorbrena", "Lorbrena", "ORAL", 24.8, /75 mg/i, /once daily/i],
+    ["trimethoprim", "Trimethoprim", "ORAL", 22.1, /50% of usual dose/i, /usual interval/i],
+    ["aloprim", "Aloprim", "IV", 33.5, /Use lower starting dose/i, /Titrate cautiously/i],
+    ["topotecan", "Topotecan", "IV", 31.9, /Renal dose reduction needed/i, /product-specific/i],
+  ];
+
+  for (const [drug, title, route, crcl, dosePattern, frequencyPattern] of cases) {
+    const result = buildSpecialDrugResult({
+      label: { title, genericName: drug, sourceUrl },
+      patient: { drug, route, crcl },
+    });
+    assert.ok(result, `${drug} should return a deterministic result`);
+    assert.notEqual(result.status, "review_source", `${drug} should avoid source-review fallback`);
+    assert.match(result.dose, dosePattern, drug);
+    assert.match(result.frequency, frequencyPattern, drug);
+    assert.doesNotMatch(`${result.dose} ${result.frequency}`, /recommended dose|review_source|dose_found|no_renal_adjustment/i);
+  }
+});
+
+test("backend special handler uses typo-corrected normalized QA names", () => {
+  const result = buildSpecialDrugResult({
+    label: {
+      title: "Ciprofloxacin",
+      genericName: "CIPROFLOXACIN",
+      sourceUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=test",
+    },
+    patient: {
+      drug: "Ciprofolxacin",
+      normalizedDrug: {
+        searchTerm: "Ciprofolxacin",
+        displayName: "Ciprofolxacin",
+      },
+      route: "ALL",
+      crcl: 61.8,
+    },
+  });
+
+  assert.equal(result.status, "no_renal_adjustment");
+  assert.match(result.dose, /No renal dose adjustment/i);
 });
 
 test("backend special handlers avoid raw review tokens for no-adjustment drugs", () => {

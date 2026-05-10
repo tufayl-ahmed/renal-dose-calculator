@@ -371,7 +371,7 @@ async function fetchOpenFdaLabels(drug, route) {
 
 export function buildOpenFdaSearches(drug, route) {
   const routeClause = buildOpenFdaRouteClause(route);
-  const terms = uniqueSearchTerms([drug, stripDoseFormQualifiers(drug)]);
+  const terms = buildDrugSearchTerms(drug);
   const searches = [];
   for (const productType of ["prescription", "otc"]) {
     const builtSearches = terms.map((term) => ({
@@ -390,6 +390,23 @@ export function buildOpenFdaSearches(drug, route) {
     }
   }
   return [...new Set(searches.filter(Boolean))];
+}
+
+function buildDrugSearchTerms(drug) {
+  const corrected = correctCommonLookupTypo(drug);
+  const doseStripped = stripDoseFormQualifiers(drug);
+  const strengthStripped = stripStrengthSuffixes(drug);
+  const correctedStrengthStripped = stripStrengthSuffixes(corrected);
+  const phNormalized = normalizePhStrength(drug);
+  return uniqueSearchTerms([
+    drug,
+    corrected,
+    doseStripped,
+    strengthStripped,
+    correctedStrengthStripped,
+    phNormalized,
+    stripStrengthSuffixes(phNormalized),
+  ]);
 }
 
 function buildOpenFdaRouteClause(route) {
@@ -425,6 +442,53 @@ function stripDoseFormQualifiers(value) {
     .replace(/\b(?:oral|po|intravenous|iv|i\.v\.|injection|injectable|tablets?|tabs?|capsules?|caps?|solution|suspension|powder|vials?|prefilled|syringe|er|xr|dr|ir)\b/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function stripStrengthSuffixes(value) {
+  return compactText(value)
+    .replace(/\bp\s*h\s*\d+(?:\s+\d+)?\s*$/i, " ")
+    .replace(/\b(?:h\s*s|f\s*s)\s*$/i, " ")
+    .replace(/\b\d+(?:\s+\d+){0,2}\s*$/i, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizePhStrength(value) {
+  return compactText(value)
+    .replace(/\bp\s*h\s+(\d+)\s+(\d+)\b/gi, "pH $1.$2")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function correctCommonLookupTypo(value) {
+  const key = normalizeNameForScore(value);
+  const corrections = [
+    ["ciprofolxacin", "ciprofloxacin"],
+    ["tizanidne", "tizanidine"],
+    ["oseltamavir", "oseltamivir"],
+    ["fosinopirl", "fosinopril"],
+    ["olmesartran medoxomil", "olmesartan medoxomil"],
+    ["amlodipine and olmesartran medoxomil", "amlodipine and olmesartan medoxomil"],
+    ["llevofloxacin", "levofloxacin"],
+    ["felopdipine", "felodipine"],
+    ["nalxone", "naloxone"],
+    ["scolopamine transdermal system", "scopolamine transdermal system"],
+    ["gaunfacine", "guanfacine"],
+  ];
+  const exact = corrections.find(([typo]) => typo === key);
+  if (exact) {
+    return exact[1];
+  }
+
+  let corrected = compactText(value);
+  for (const [typo, replacement] of corrections) {
+    corrected = corrected.replace(new RegExp(`\\b${escapeRegExp(typo)}\\b`, "gi"), replacement);
+  }
+  return corrected;
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function buildOpenFdaExactSearch(drug, productType = "prescription") {
@@ -978,9 +1042,13 @@ export function buildSpecialDrugResult({ label, patient }) {
   const requestedName = compactText(
     `${patient.drug || ""} ${patient.normalizedDrug?.searchTerm || ""} ${patient.normalizedDrug?.displayName || ""}`
   ).toLowerCase();
+  const correctedRequestedName = correctCommonLookupTypo(requestedName);
   const labelName = compactText(`${label.title || ""} ${label.genericName || ""}`).toLowerCase();
   const name = `${requestedName} ${labelName}`;
-  const matchesRequested = (pattern) => pattern.test(requestedName) || (!requestedName && pattern.test(labelName));
+  const matchesRequested = (pattern) =>
+    pattern.test(requestedName) ||
+    (correctedRequestedName !== requestedName && pattern.test(correctedRequestedName)) ||
+    (!requestedName && pattern.test(labelName));
   const base = {
     drugName: label.title || patient.drug || "Selected drug",
     route: routeDisplayName(patient.route),
@@ -1078,6 +1146,104 @@ export function buildSpecialDrugResult({ label, patient }) {
 
   if (matchesRequested(/\btadalafil\b|\bcialis\b|\badcirca\b|\balyq\b/)) {
     const dose = buildTadalafilDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bvoriconazole\b|\bvfend\b/)) {
+    const dose = buildVoriconazoleDose(patient.crcl, patient.route);
+    return buildCrclSpecialResult({ base, route: patient.route === "IV" ? "IV" : "Oral/IV", dose });
+  }
+
+  if (matchesRequested(/\bgentamicin\b|\bamikacin\b|\btobramycin\b|\bplazomicin\b/)) {
+    const dose = buildAminoglycosideDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV/IM", dose });
+  }
+
+  if (matchesRequested(/\bcapecitabine\b|\bxeloda\b/)) {
+    const dose = buildCapecitabineDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\beribulin\b|\bhalaven\b/)) {
+    const dose = buildEribulinDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV", dose });
+  }
+
+  if (matchesRequested(/\bentecavir\b|\bbaraclude\b/)) {
+    const dose = buildEntecavirDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\btenofovir\s+disoproxil\b|\bviread\b/)) {
+    const dose = buildTenofovirDisoproxilDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bertapenem\b|\binvanz\b/)) {
+    const dose = buildErtapenemDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV/IM", dose });
+  }
+
+  if (matchesRequested(/\bcefepime\b|\bmaxipime\b/)) {
+    const dose = buildCefepimeDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV/IM", dose });
+  }
+
+  if (matchesRequested(/\bfamciclovir\b|\bfamvir\b/)) {
+    const dose = buildFamciclovirDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bplerixafor\b|\bmozobil\b/)) {
+    const dose = buildPlerixaforDose(patient.crcl, patient.weight);
+    return buildCrclSpecialResult({ base, route: "Subcutaneous", dose });
+  }
+
+  if (matchesRequested(/\bdocetaxel\b|\btaxotere\b/)) {
+    return buildNoAdjustmentSpecialResult({
+      base: { ...base, route: "IV" },
+      band: Number.isFinite(patient.crcl) ? `CrCl ${formatNumber(patient.crcl)} mL/min` : "CrCl not available",
+      caution: "Docetaxel labeling does not provide a simple CrCl dose adjustment; hepatic function and regimen context drive dosing.",
+    });
+  }
+
+  if (matchesRequested(/\blorlatinib\b|\blorbrena\b/)) {
+    const dose = buildLorlatinibDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\btrimethoprim\b|\bproloprim\b/)) {
+    const dose = buildTrimethoprimDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\ballopurinol\b|\baloprim\b|\bzyloprim\b/)) {
+    const dose = buildAllopurinolDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: patient.route === "IV" ? "IV" : "Oral/IV", dose });
+  }
+
+  if (matchesRequested(/\btopotecan\b|\bhycamtin\b/)) {
+    const dose = buildTopotecanDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV/Oral", dose });
+  }
+
+  if (matchesRequested(/\bhydroxyurea\b|\bhydrea\b|\bdroxia\b|\bsiklos\b/)) {
+    const dose = buildHydroxyureaDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bcobicistat\b|\btybost\b/)) {
+    const dose = buildCobicistatDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bolmesartan\b.*\bamlodipine\b.*\bhydrochlorothiazide\b|\bolmesartan\b.*\bhydrochlorothiazide\b.*\bamlodipine\b|\bamlodipine\b.*\bolmesartan\b.*\bhydrochlorothiazide\b|\btribenzor\b/)) {
+    const dose = buildOlmesartanAmlodipineHctzDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bamlodipine\b.*\bolmesartan\b|\bolmesartan\b.*\bamlodipine\b|\bazor\b/)) {
+    const dose = buildAmlodipineOlmesartanDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
 
@@ -2199,6 +2365,444 @@ function buildTadalafilDose(crcl) {
     dose: "Severe renal impairment product restriction",
     frequency: "Use product-specific DailyMed limits; some once-daily/PAH uses are not recommended.",
     cautions: ["Tadalafil recommendations differ by product and indication."],
+  };
+}
+
+function buildVoriconazoleDose(crcl, route) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and review the voriconazole renal impairment section.");
+  }
+  if (route === "ORAL") {
+    return {
+      status: "no_renal_adjustment",
+      band: `CrCl ${formatNumber(crcl)} mL/min`,
+      dose: "No renal dose adjustment for oral dosing",
+      frequency: "Use usual oral schedule by indication.",
+      cautions: ["IV voriconazole has a renal vehicle caution; route matters."],
+    };
+  }
+  if (crcl < 50) {
+    return {
+      status: "dose_found",
+      band: "CrCl < 50 mL/min",
+      dose: "Use oral route when possible",
+      frequency: "IV vehicle accumulates; use IV only if benefit justifies risk.",
+      cautions: ["Review selected voriconazole product and renal vehicle warning."],
+    };
+  }
+  return {
+    status: "no_renal_adjustment",
+    band: "CrCl >= 50 mL/min",
+    dose: "No renal dose adjustment",
+    frequency: "Use usual schedule by route and indication.",
+    cautions: ["Review hepatic function and therapeutic drug monitoring context."],
+  };
+}
+
+function buildAminoglycosideDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use institution-specific aminoglycoside dosing with levels.");
+  }
+  return {
+    status: "dose_found",
+    band: `CrCl ${formatNumber(crcl)} mL/min`,
+    dose: "Monitor levels and adjust dose",
+    frequency: "Use extended-interval or conventional dosing protocol by CrCl and serum levels.",
+    cautions: ["Aminoglycoside dosing should not be reduced to one fixed CrCl dose line."],
+  };
+}
+
+function buildCapecitabineDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before capecitabine dosing.");
+  }
+  if (crcl > 50) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 50 mL/min",
+      dose: "No renal starting-dose adjustment",
+      frequency: "Use usual regimen by oncology protocol.",
+    };
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl 30-50 mL/min",
+      dose: "75% of usual starting dose",
+      frequency: "Use regimen schedule by indication.",
+      cautions: ["Monitor toxicity closely; oncology regimen context is required."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 30 mL/min",
+    dose: "Contraindicated",
+    frequency: "Do not use per renal impairment labeling.",
+  };
+}
+
+function buildEribulinDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before eribulin dosing.");
+  }
+  if (crcl >= 50) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 50 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual oncology regimen.",
+    };
+  }
+  if (crcl >= 15) {
+    return {
+      status: "dose_found",
+      band: "CrCl 15-49 mL/min",
+      dose: "1.1 mg/m2",
+      frequency: "on days 1 and 8 of a 21-day cycle.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 15 mL/min",
+    dose: "Dose not established",
+    frequency: "Review oncology label and renal context.",
+  };
+}
+
+function buildEntecavirDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the entecavir renal table.");
+  }
+  if (crcl >= 50) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 50 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual daily dose by indication.",
+    };
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl 30-49 mL/min",
+      dose: "Reduce dose or extend interval",
+      frequency: "Use 50% daily dose or usual dose every 48 hours.",
+    };
+  }
+  if (crcl >= 10) {
+    return {
+      status: "dose_found",
+      band: "CrCl 10-29 mL/min",
+      dose: "Reduce dose or extend interval",
+      frequency: "Use reduced daily dose or usual dose every 72 hours.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 10 mL/min or dialysis",
+    dose: "Reduce dose or extend interval",
+    frequency: "Use label dialysis row; give after hemodialysis when applicable.",
+  };
+}
+
+function buildTenofovirDisoproxilDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use tenofovir disoproxil renal dosing.");
+  }
+  if (crcl >= 50) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 50 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "300 mg once daily.",
+    };
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl 30-49 mL/min",
+      dose: "300 mg",
+      frequency: "every 48 hours.",
+    };
+  }
+  if (crcl >= 10) {
+    return {
+      status: "dose_found",
+      band: "CrCl 10-29 mL/min",
+      dose: "300 mg",
+      frequency: "every 72-96 hours.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 10 mL/min or hemodialysis",
+    dose: "Dialysis-specific renal dosing",
+    frequency: "Review label; hemodialysis dosing differs from non-dialysis renal impairment.",
+  };
+}
+
+function buildErtapenemDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before ertapenem dosing.");
+  }
+  if (crcl > 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "1 g once daily.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl <= 30 mL/min or ESRD",
+    dose: "500 mg",
+    frequency: "once daily.",
+    cautions: ["For hemodialysis, review supplemental timing if dose is given before dialysis."],
+  };
+}
+
+function buildCefepimeDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the cefepime renal table.");
+  }
+  if (crcl > 60) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 60 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult regimen by indication.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: `CrCl ${formatNumber(crcl)} mL/min`,
+    dose: "Renal adjustment needed",
+    frequency: "Use cefepime maintenance table for the intended normal-renal regimen.",
+    cautions: ["Cefepime renal dose depends on the original indication-specific regimen."],
+  };
+}
+
+function buildFamciclovirDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the famciclovir indication-specific renal table.");
+  }
+  if (crcl >= 60) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 60 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use indication-specific usual regimen.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: `CrCl ${formatNumber(crcl)} mL/min`,
+    dose: "Indication-specific renal adjustment needed",
+    frequency: "Use the herpes zoster, recurrent genital herpes, or suppression row for this CrCl band.",
+  };
+}
+
+function buildPlerixaforDose(crcl, weight) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before plerixafor dosing.");
+  }
+  if (crcl > 50) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 50 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "0.24 mg/kg once daily before apheresis.",
+    };
+  }
+  const maxNote = Number.isFinite(weight) && weight > 0 ? "; do not exceed label maximum" : "";
+  return {
+    status: "dose_found",
+    band: "CrCl <= 50 mL/min",
+    dose: "0.16 mg/kg",
+    frequency: `once daily before apheresis${maxNote}.`,
+  };
+}
+
+function buildLorlatinibDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the lorlatinib renal impairment section.");
+  }
+  if (crcl >= 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult schedule.",
+    };
+  }
+  if (crcl >= 15) {
+    return {
+      status: "dose_found",
+      band: "CrCl 15-<30 mL/min",
+      dose: "75 mg",
+      frequency: "once daily.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 15 mL/min",
+    dose: "No recommended dose",
+    frequency: "Review oncology label and renal context.",
+  };
+}
+
+function buildTrimethoprimDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before trimethoprim dosing.");
+  }
+  if (crcl > 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult regimen.",
+    };
+  }
+  if (crcl >= 15) {
+    return {
+      status: "dose_found",
+      band: "CrCl 15-30 mL/min",
+      dose: "50% of usual dose",
+      frequency: "Use usual interval unless label/product specifies otherwise.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 15 mL/min",
+    dose: "Not recommended",
+    frequency: "Avoid use unless specialist/source review supports it.",
+  };
+}
+
+function buildAllopurinolDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before allopurinol dosing.");
+  }
+  if (crcl >= 60) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 60 mL/min",
+      dose: "No renal starting-dose reduction",
+      frequency: "Titrate by uric acid/indication and tolerability.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: `CrCl ${formatNumber(crcl)} mL/min`,
+    dose: "Use lower starting dose",
+    frequency: "Titrate cautiously with renal function and uric acid monitoring.",
+  };
+}
+
+function buildTopotecanDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use product-specific topotecan renal dosing.");
+  }
+  if (crcl >= 40) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 40 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual oncology regimen by product.",
+    };
+  }
+  if (crcl >= 20) {
+    return {
+      status: "dose_found",
+      band: "CrCl 20-39 mL/min",
+      dose: "Renal dose reduction needed",
+      frequency: "Use IV/oral product-specific renal row.",
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 20 mL/min",
+    dose: "No recommended dose",
+    frequency: "Review oncology label; renal dosing is not established.",
+  };
+}
+
+function buildHydroxyureaDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before hydroxyurea dosing.");
+  }
+  if (crcl >= 60) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 60 mL/min",
+      dose: "15 mg/kg",
+      frequency: "once daily initial dose; individualize by indication and blood counts.",
+      cautions: ["Base dose on actual or ideal body weight, whichever is less, per label."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 60 mL/min or ESRD",
+    dose: "7.5 mg/kg",
+    frequency: "once daily initial dose; give after hemodialysis on dialysis days.",
+    cautions: ["This corresponds to a 50% renal dose reduction; monitor hematologic parameters closely."],
+  };
+}
+
+function buildCobicistatDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl/eCrCl before cobicistat-containing therapy.");
+  }
+  if (crcl < 70) {
+    return {
+      status: "dose_found",
+      band: "CrCl < 70 mL/min",
+      dose: "150 mg",
+      frequency: "once daily with atazanavir or darunavir and food; not recommended with TDF when CrCl is below 70 mL/min.",
+      cautions: ["Cobicistat is a booster; review the coadministered antiretroviral label."],
+    };
+  }
+  return {
+    status: "no_renal_adjustment",
+    band: "CrCl >= 70 mL/min",
+    dose: "150 mg",
+    frequency: "once daily with atazanavir or darunavir and food.",
+    cautions: ["Assess CrCl and review other antiretrovirals in the regimen."],
+  };
+}
+
+function buildOlmesartanAmlodipineHctzDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before olmesartan/amlodipine/hydrochlorothiazide use.");
+  }
+  if (crcl <= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl <= 30 mL/min",
+      dose: "Avoid use",
+      frequency: "Use an alternative antihypertensive plan; hydrochlorothiazide-containing label advises avoiding this renal band.",
+    };
+  }
+  return {
+    status: "no_renal_adjustment",
+    band: "CrCl > 30 mL/min",
+    dose: "No renal dose adjustment",
+    frequency: "Dose once daily; titrate every 2 weeks up to 40/10/25 mg if appropriate.",
+    cautions: ["Dose selection should be individualized based on previous therapy."],
+  };
+}
+
+function buildAmlodipineOlmesartanDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and review renal function context.");
+  }
+  return {
+    status: "no_renal_adjustment",
+    band: `CrCl ${formatNumber(crcl)} mL/min`,
+    dose: "No CrCl dose table in label",
+    frequency: "Usual starting dose is 5/20 mg once daily; titrate up to 10/40 mg once daily if appropriate.",
+    cautions: ["Monitor renal function in severe renal impairment and review pregnancy warning."],
   };
 }
 
