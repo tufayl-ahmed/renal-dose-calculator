@@ -77,8 +77,8 @@ test("WhatsApp reply returns kidney-only values when no drug is supplied", async
 
   assert.match(reply, /\*Patient\*/);
   assert.match(reply, /Kidney/);
-  assert.match(reply, /eGFR 38\.8/);
-  assert.match(reply, /CrCl 44\.0/);
+  assert.match(reply, /\*eGFR:\* 38\.8/);
+  assert.match(reply, /\*CrCl:\* 44\.0/);
   assert.doesNotMatch(reply, /Made by Dr\. Tufayl/);
 });
 
@@ -89,7 +89,8 @@ test("WhatsApp hi reply explains the bot and includes the form option", async ()
   });
 
   assert.match(reply, /Adult eGFR \+ Cockcroft-Gault CrCl/);
-  assert.match(reply, /FORM - copy-paste template/);
+  assert.match(reply, /\*FORM:\* copy-paste template/);
+  assert.match(reply, /```45 M 2\.1 70 meropenem IV```/);
   assert.match(reply, /Made by Dr\. Tufayl \(Cortex Labs\)/);
 });
 
@@ -100,9 +101,10 @@ test("WhatsApp form reply sends a copy-paste renal calculator template", async (
   });
 
   assert.match(reply, /Age:/);
-  assert.match(reply, /S\. Creatinine mg\/dL:/);
-  assert.match(reply, /Drug: optional/);
-  assert.match(reply, /Route: Oral\/IV optional/);
+  assert.match(reply, /\*S\. Creatinine mg\/dL:\*/);
+  assert.match(reply, /\*Drug:\* optional/);
+  assert.match(reply, /\*Route:\* Oral\/IV optional/);
+  assert.match(reply, /```Age: 45/);
   assert.match(reply, /Made by Dr\. Tufayl \(Cortex Labs\)/);
 });
 
@@ -137,10 +139,12 @@ test("WhatsApp reply parses a filled copy-paste form", async () => {
     }
   );
 
-  assert.match(reply, /Meropenem \| IV/);
-  assert.match(reply, /\*Kidney\*/);
-  assert.match(reply, /eGFR 38\.8/);
-  assert.match(reply, /Dose: 500 mg.*q12h/);
+  assert.match(reply, /\*Drug:\* Meropenem/);
+  assert.match(reply, /\*Route:\* IV/);
+  assert.match(reply, /\*Kidney Function\*/);
+  assert.match(reply, /\*eGFR:\* 38\.8/);
+  assert.match(reply, /\*Dose:\* 500 mg/);
+  assert.match(reply, /\*Frequency:\* q12h/);
   assert.doesNotMatch(reply, /Made by Dr\. Tufayl/);
 });
 
@@ -170,9 +174,11 @@ test("WhatsApp reply uses renal dose assist output for drug messages", async () 
     }
   );
 
-  assert.match(reply, /Piperacillin and tazobactam \| IV/);
-  assert.match(reply, /Dose: 3\.375 g.*q6h/);
-  assert.match(reply, /DailyMed:/);
+  assert.match(reply, /\*Drug:\* Piperacillin and tazobactam/);
+  assert.match(reply, /\*Route:\* IV/);
+  assert.match(reply, /\*Dose:\* 3\.375 g/);
+  assert.match(reply, /\*Frequency:\* q6h/);
+  assert.match(reply, /\*DailyMed:\*/);
   assert.doesNotMatch(reply, /Made by Dr\. Tufayl/);
 });
 
@@ -200,10 +206,12 @@ test("WhatsApp reply keeps drug messages compact for doctors", async () => {
     }
   );
 
-  assert.match(reply, /eGFR 38\.8/);
-  assert.match(reply, /Band: CrCl 26-50 mL\/min/);
-  assert.match(reply, /Dose: 500 mg.*q12h/);
-  assert.match(reply, /Notes: Dialysis:/);
+  assert.match(reply, /\*eGFR:\* 38\.8/);
+  assert.match(reply, /\*Renal band:\* CrCl 26-50 mL\/min/);
+  assert.match(reply, /\*Dose:\* 500 mg/);
+  assert.match(reply, /\*Frequency:\* q12h/);
+  assert.match(reply, /\*Notes\*/);
+  assert.match(reply, /_- Dialysis:/);
   assert.ok(reply.length < 900);
 });
 
@@ -230,9 +238,9 @@ test("WhatsApp review-source replies show an action instead of fake dose", async
     }
   );
 
-  assert.match(reply, /Action: Review DailyMed source/);
-  assert.match(reply, /Interval: Indication-specific dosing requires source review/);
-  assert.doesNotMatch(reply, /Dose: Review DailyMed source/);
+  assert.match(reply, /\*Action:\* Review DailyMed source/);
+  assert.match(reply, /\*Details:\* Indication-specific dosing requires source review/);
+  assert.doesNotMatch(reply, /\*Dose:\* Review DailyMed source/);
 });
 
 test("sendWhatsAppText skips safely until credentials are configured", async () => {

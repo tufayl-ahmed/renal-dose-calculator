@@ -82,77 +82,83 @@ function buildWelcomeReply({ platform = "WhatsApp" } = {}) {
   return [
     heading("Renal Dose Calculator", platform),
     "",
-    `Adult eGFR + Cockcroft-Gault CrCl + optional DailyMed renal-dose summary.`,
+    italic("Adult eGFR + Cockcroft-Gault CrCl + DailyMed renal-dose helper.", platform),
     "",
-    "Fast input:",
-    "45 M 2.1 70 meropenem IV",
+    heading("Send Like This", platform),
+    codeLine("45 M 2.1 70 meropenem IV", platform),
     "",
-    "Format:",
-    "age sex S.Creatinine weight drug route",
+    heading("Format", platform),
+    codeLine("age sex S.Creatinine weight drug route", platform),
+    formatLabelLine("Route", "Oral by default. Write IV for injection labels.", platform),
+    formatLabelLine("Required", "Age, sex, S. Creatinine, weight.", platform),
+    formatLabelLine("Optional", "Drug and height.", platform),
     "",
-    "Drug and height are optional. Route is Oral by default; write IV when needed. Weight is required for CrCl.",
-    "",
-    "Commands:",
-    "FORM - copy-paste template",
-    "WEB - open calculator",
+    heading("Commands", platform),
+    formatLabelLine("FORM", "copy-paste template", platform),
+    formatLabelLine("WEB", "open calculator", platform),
     "",
     APP_URL,
     "",
-    EDUCATIONAL_DISCLAIMER,
-    BRAND_LINE,
+    italic(EDUCATIONAL_DISCLAIMER, platform),
+    italic(BRAND_LINE, platform),
   ].join("\n");
 }
 
 function buildFormReply() {
   return [
-    "Renal Dose Calculator form",
+    heading("Renal Dose Calculator Form", "WhatsApp"),
     "",
-    "Copy, fill, send:",
+    italic("Copy, fill, and send:", "WhatsApp"),
     "",
-    "Age:",
-    "Sex: M/F",
-    "S. Creatinine mg/dL:",
-    "Weight kg:",
-    "Height cm: optional",
-    "Drug: optional",
-    "Route: Oral/IV optional",
+    formatLabelLine("Age", "", "WhatsApp"),
+    formatLabelLine("Sex", "M/F", "WhatsApp"),
+    formatLabelLine("S. Creatinine mg/dL", "", "WhatsApp"),
+    formatLabelLine("Weight kg", "", "WhatsApp"),
+    formatLabelLine("Height cm", "optional", "WhatsApp"),
+    formatLabelLine("Drug", "optional", "WhatsApp"),
+    formatLabelLine("Route", "Oral/IV optional", "WhatsApp"),
     "",
-    "Example:",
-    "Age: 45",
-    "Sex: Male",
-    "S. Creatinine mg/dL: 2.1",
-    "Weight kg: 70",
-    "Height cm: 170",
-    "Drug: meropenem",
-    "Route: IV",
+    heading("Example", "WhatsApp"),
+    codeLine(
+      [
+        "Age: 45",
+        "Sex: Male",
+        "S. Creatinine mg/dL: 2.1",
+        "Weight kg: 70",
+        "Height cm: 170",
+        "Drug: meropenem",
+        "Route: IV",
+      ].join("\n"),
+      "WhatsApp"
+    ),
     "",
-    EDUCATIONAL_DISCLAIMER,
-    BRAND_LINE,
+    italic(EDUCATIONAL_DISCLAIMER, "WhatsApp"),
+    italic(BRAND_LINE, "WhatsApp"),
   ].join("\n");
 }
 
 function buildWebReply() {
   return [
-    "Open the web calculator:",
+    heading("Open Web Calculator", "WhatsApp"),
     APP_URL,
     "",
-    EDUCATIONAL_DISCLAIMER,
+    italic(EDUCATIONAL_DISCLAIMER, "WhatsApp"),
   ].join("\n");
 }
 
 function buildInputErrorReply(errorMessage, { platform = "WhatsApp" } = {}) {
   return [
-    "Could not calculate.",
+    heading("Could Not Calculate", platform),
     "",
-    `Reason: ${cleanReplyText(errorMessage)}`,
+    formatLabelLine("Reason", cleanReplyText(errorMessage), platform),
     "",
-    "Use this format:",
-    "45 M 2.1 70 meropenem IV",
+    heading("Use This Format", platform),
+    codeLine("45 M 2.1 70 meropenem IV", platform),
     "",
     `Or send FORM for the ${platform} template.`,
     "",
-    EDUCATIONAL_DISCLAIMER,
-    BRAND_LINE,
+    italic(EDUCATIONAL_DISCLAIMER, platform),
+    italic(BRAND_LINE, platform),
   ].join("\n");
 }
 
@@ -163,13 +169,16 @@ function formatKidneyOnlyReply(values, options = {}) {
     heading("Renal Dose Calculator", platform),
     "",
     heading("Patient", platform),
-    formatPatientLine(values),
+    ...formatPatientLines(values, platform),
     "",
-    heading("Kidney", platform),
-    `eGFR ${formatNumber(values.egfr)} mL/min/1.73 m2 (CKD ${stage.stage})`,
-    `CrCl ${formatNumber(values.crcl)} mL/min (Cockcroft-Gault)`,
+    heading("Kidney Function", platform),
+    formatLabelLine("eGFR", `${formatNumber(values.egfr)} mL/min/1.73 m2`, platform),
+    formatLabelLine("CKD", `${stage.stage} - ${stage.label}`, platform),
+    formatLabelLine("CrCl", `${formatNumber(values.crcl)} mL/min`, platform),
+    formatLabelLine("Method", "Cockcroft-Gault", platform),
     "",
-    EDUCATIONAL_DISCLAIMER,
+    heading("Disclaimer", platform),
+    italic(EDUCATIONAL_DISCLAIMER, platform),
   ];
 
   return limitText(compactOptionalLines(lines).join("\n"), options.maxLength);
@@ -192,33 +201,36 @@ function formatDoseAssistReply({
   const sourceUrl = result.sourceUrl || assist?.sourceUrl || "";
   const renalBand = cleanReplyText(result.renalBand || `CrCl ${formatNumber(values.crcl)} mL/min`);
   const status = result.status || "";
-  const actionLine = guidanceActionLine(status, dose, frequency);
-  const note = [
+  const guidanceLines = buildGuidanceLines(status, dose, frequency, platform);
+  const noteLines = [
     result.dialysisNote ? `Dialysis: ${cleanReplyText(result.dialysisNote)}` : "",
     ...cautions.slice(0, 2).map((caution) => cleanReplyText(caution)),
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean);
 
   const lines = [
     heading("Renal Dose Calculator", platform),
     "",
     heading("Patient", platform),
-    formatPatientLine(values),
+    ...formatPatientLines(values, platform),
     "",
-    heading("Kidney", platform),
-    `eGFR ${formatNumber(values.egfr)} mL/min/1.73 m2 (CKD ${stage.stage})`,
-    `CrCl ${formatNumber(values.crcl)} mL/min (Cockcroft-Gault)`,
+    heading("Kidney Function", platform),
+    formatLabelLine("eGFR", `${formatNumber(values.egfr)} mL/min/1.73 m2 | CKD ${stage.stage}`, platform),
+    formatLabelLine("CrCl", `${formatNumber(values.crcl)} mL/min | Cockcroft-Gault`, platform),
     "",
-    heading("Dose guidance", platform),
-    `${drugName} | ${route}`,
-    renalBand ? `Band: ${renalBand}` : null,
-    actionLine,
-    shouldShowSeparateInterval(status, frequency) ? `Interval: ${compactFrequency(frequency)}` : null,
-    note ? `Notes: ${note}` : null,
-    sourceUrl ? `DailyMed: ${sourceUrl}` : null,
+    heading("Dose Guidance", platform),
+    formatLabelLine("Drug", drugName, platform),
+    formatLabelLine("Route", route, platform),
+    renalBand ? formatLabelLine("Renal band", renalBand, platform) : null,
+    ...guidanceLines,
+    noteLines.length ? "" : null,
+    noteLines.length ? heading("Notes", platform) : null,
+    ...noteLines.map((note) => italic(`- ${note}`, platform)),
+    sourceUrl ? "" : null,
+    sourceUrl ? heading("Source", platform) : null,
+    sourceUrl ? formatLabelLine("DailyMed", sourceUrl, platform) : null,
     "",
-    AI_DISCLAIMER,
+    heading("Disclaimer", platform),
+    italic(AI_DISCLAIMER, platform),
   ];
 
   return limitText(compactOptionalLines(lines).join("\n"), maxLength);
@@ -244,35 +256,55 @@ export function limitText(value, maxLength = DEFAULT_MAX_TEXT_LENGTH) {
   return `${text.slice(0, maxLength - 18).trim()}\n...[truncated]`;
 }
 
-function formatPatientLine(values) {
-  const parts = [
-    `${formatNumber(values.age, 0)} yr ${sexLabel(values.sex)}`,
-    `SCr ${formatCompactNumber(values.creatinine)} mg/dL`,
-    `Wt ${formatCompactNumber(values.weight)} kg`,
-    values.height ? `Ht ${formatNumber(values.height, 0)} cm` : "",
+function formatPatientLines(values, platform) {
+  return [
+    formatLabelLine("Age/Sex", `${formatNumber(values.age, 0)} yr ${sexLabel(values.sex)}`, platform),
+    formatLabelLine("S. Creatinine", `${formatCompactNumber(values.creatinine)} mg/dL`, platform),
+    formatLabelLine("Weight", `${formatCompactNumber(values.weight)} kg`, platform),
+    values.height ? formatLabelLine("Height", `${formatNumber(values.height, 0)} cm`, platform) : null,
   ].filter(Boolean);
-  return parts.join(" | ");
 }
 
 function heading(value, platform) {
   return platform === "WhatsApp" ? `*${value}*` : value;
 }
 
-function guidanceActionLine(status, dose, frequency) {
-  if (status === "not_found") {
-    return `Action: ${dose || "Drug label not found"}`;
-  }
-  if (status === "review_source") {
-    return `Action: ${dose || "Review DailyMed source"}`;
-  }
-  if (status === "no_renal_adjustment") {
-    return `Dose: ${dose || "No renal dose adjustment found in supplied label text"}`;
-  }
-  return `Dose: ${dose}${frequency ? ` | ${compactFrequency(frequency)}` : ""}`;
+function formatLabelLine(label, value, platform) {
+  const prefix = platform === "WhatsApp" ? `*${label}:*` : `${label}:`;
+  return value ? `${prefix} ${value}` : prefix;
 }
 
-function shouldShowSeparateInterval(status, frequency) {
-  return ["not_found", "review_source", "no_renal_adjustment"].includes(status) && Boolean(frequency);
+function italic(value, platform) {
+  return platform === "WhatsApp" ? `_${value}_` : value;
+}
+
+function codeLine(value, platform) {
+  return platform === "WhatsApp" ? `\`\`\`${value}\`\`\`` : value;
+}
+
+function buildGuidanceLines(status, dose, frequency, platform) {
+  if (status === "not_found") {
+    return [
+      formatLabelLine("Action", dose || "Drug label not found", platform),
+      formatLabelLine("Details", compactFrequency(frequency), platform),
+    ].filter(Boolean);
+  }
+  if (status === "review_source") {
+    return [
+      formatLabelLine("Action", dose || "Review DailyMed source", platform),
+      formatLabelLine("Details", compactFrequency(frequency), platform),
+    ].filter(Boolean);
+  }
+  if (status === "no_renal_adjustment") {
+    return [
+      formatLabelLine("Action", dose || "No renal dose adjustment found in supplied label text", platform),
+      frequency ? formatLabelLine("Details", compactFrequency(frequency), platform) : null,
+    ].filter(Boolean);
+  }
+  return [
+    formatLabelLine("Dose", dose, platform),
+    frequency ? formatLabelLine("Frequency", compactFrequency(frequency), platform) : null,
+  ].filter(Boolean);
 }
 
 function compactFrequency(value) {
