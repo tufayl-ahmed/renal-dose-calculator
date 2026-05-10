@@ -11,8 +11,10 @@
     "cf:dev": "wrangler pages dev . --compatibility-date=2026-05-06",
     "deploy": "wrangler pages deploy . --project-name renal-dose-calculator --commit-dirty=true",
     "qa:live200": "node scripts/qa-live-200.mjs --limit=200 --concurrency=2",
-    "qa:autocomplete200": "node scripts/qa-live-200.mjs --source=autocomplete --route-mode=all --limit=200 --concurrency=2",
+    "qa:autocomplete200": "node scripts/qa-live-200.mjs --source=autocomplete --route-mode=ivoral --limit=200 --concurrency=2",
     "validation:table": "node scripts/generate-clinical-validation-table.mjs",
+    "validation:renal:mdcalc": "node scripts/validate-renal-against-mdcalc.mjs",
+    "validation:dailymed:routes": "node scripts/validate-dailymed-route-dosing.mjs",
     "test": "node --test"
   },
   "devDependencies": {

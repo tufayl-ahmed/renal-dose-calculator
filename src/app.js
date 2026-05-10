@@ -9,9 +9,9 @@ import {
   parseClinicalInput,
 } from "./renal.js";
 import { buildDailyMedSearchUrl } from "./drugLookup.js?v=20260508-1";
-import { requestLlmDoseAssist } from "./llmDoseAssist.js?v=20260509-1";
+import { requestLlmDoseAssist } from "./llmDoseAssist.js?v=20260510-1";
 import { normalizeDrugQuery } from "./drugNormalizer.js?v=20260508-2";
-import { parseQuickInput } from "./quickInput.js?v=20260509-2";
+import { parseQuickInput } from "./quickInput.js?v=20260510-1";
 import { getDrugAutocompleteSuggestions } from "./drugAutocomplete.js?v=20260509-2";
 
 const form = document.querySelector("#renal-form");
@@ -69,6 +69,7 @@ const ibwValue = document.querySelector("#ibw-value");
 const abwValue = document.querySelector("#abw-value");
 const telegramWebApp = window.Telegram?.WebApp || null;
 const isTelegramMiniApp = detectTelegramMiniApp();
+const DEFAULT_ROUTE = "ORAL";
 const fields = {
   age: document.querySelector("#age"),
   creatinine: document.querySelector("#creatinine"),
@@ -88,7 +89,7 @@ let latestCockpitState = {
   dose: "",
   decisionLabel: "Awaiting inputs",
   decisionTone: "neutral",
-  route: "ALL",
+  route: DEFAULT_ROUTE,
 };
 let drugAutocompleteState = {
   activeIndex: -1,
@@ -207,7 +208,7 @@ function renderRenalResults({ values, egfr, crcl, stage, crclTone }) {
     crcl,
     ckd: stage.stage,
     drug: values.drug || latestCockpitState.drug || "",
-    route: values.route || latestCockpitState.route || "ALL",
+    route: values.route || latestCockpitState.route || DEFAULT_ROUTE,
   };
   renderMobileResultStrip();
 }
@@ -1085,7 +1086,9 @@ function fillClinicalFields(parsed) {
   fields.weight.value = parsed.weight || "";
   fields.height.value = parsed.height || "";
   fields.drug.value = parsed.drug || "";
-  setRoute(parsed.route || "ALL");
+  if (parsed.route) {
+    setRoute(parsed.route);
+  }
 }
 
 function setSex(sex) {
@@ -1096,7 +1099,8 @@ function setSex(sex) {
 }
 
 function setRoute(route) {
-  const routeInput = form.querySelector(`input[name="route"][value="${route}"]`);
+  const normalizedRoute = normalizeUiRoute(route);
+  const routeInput = form.querySelector(`input[name="route"][value="${normalizedRoute}"]`);
   if (routeInput) {
     routeInput.checked = true;
   }
@@ -1398,7 +1402,7 @@ function renderError(message) {
     dose: "Check input",
     decisionLabel: "Check input",
     decisionTone: "danger",
-    route: "ALL",
+    route: DEFAULT_ROUTE,
   };
   renderMobileResultStrip();
 }
@@ -1431,7 +1435,7 @@ function resetUi() {
     dose: "",
     decisionLabel: "Awaiting inputs",
     decisionTone: "neutral",
-    route: "ALL",
+    route: DEFAULT_ROUTE,
   };
   renderMobileResultStrip();
   resetDrugUi();
@@ -1598,7 +1602,11 @@ function routeDisplayName(route) {
   if (route === "IM") {
     return "IM";
   }
-  return "All routes";
+  return "Oral";
+}
+
+function normalizeUiRoute(route) {
+  return route === "IV" ? "IV" : DEFAULT_ROUTE;
 }
 
 function formatNormalizationMeta(normalization) {

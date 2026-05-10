@@ -6,6 +6,7 @@ import {
   calculateEgfrCkdEpi2021,
   calculateIdealBodyWeight,
   getCkdStage,
+  parseClinicalInput,
 } from "../src/renal.js";
 
 test("calculates CKD-EPI 2021 eGFR for an adult male", () => {
@@ -77,4 +78,25 @@ test("rejects pediatric age for adult-only MVP", () => {
       }),
     /Adult age/
   );
+});
+
+test("clinical form defaults missing route to oral", () => {
+  const formData = new FormData();
+  formData.set("age", "45");
+  formData.set("sex", "male");
+  formData.set("creatinine", "2.1");
+  formData.set("weight", "70");
+
+  assert.equal(parseClinicalInput(formData).route, "ORAL");
+});
+
+test("clinical form only accepts oral or IV route", () => {
+  const formData = new FormData();
+  formData.set("age", "45");
+  formData.set("sex", "male");
+  formData.set("creatinine", "2.1");
+  formData.set("weight", "70");
+  formData.set("route", "ALL");
+
+  assert.throws(() => parseClinicalInput(formData), /oral or IV route/i);
 });

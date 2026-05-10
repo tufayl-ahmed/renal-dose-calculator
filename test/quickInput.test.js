@@ -73,3 +73,10 @@ test("quick input parses WhatsApp copy-paste form labels", () => {
   assert.equal(parsed.drug, "meropenem");
   assert.equal(parsed.route, "IV");
 });
+
+test("quick input does not infer an unsupported all-routes mode", () => {
+  const parsed = parseQuickInput("45 M 2.1 70 metformin all");
+
+  assert.equal(parsed.drug, "metformin");
+  assert.equal(parsed.route, "");
+});

@@ -1,5 +1,5 @@
 import { deriveRenalDoseGuidance } from "./doseGuidance.js?v=20260509-4";
-import { buildDailyMedSearchUrl, lookupDrugLabel } from "./drugLookup.js?v=20260508-1";
+import { buildDailyMedSearchUrl, lookupDrugLabel } from "./drugLookup.js?v=20260510-1";
 import {
   buildAssistGuidance,
   createNoLabelAssistResult,
@@ -32,7 +32,7 @@ export function buildAssistPayload(values) {
   return {
     drug: values.drug,
     normalizedDrug: values.normalizedDrug || null,
-    route: values.route || "ALL",
+    route: values.route || "ORAL",
     crcl: values.crcl,
     egfr: values.egfr,
     age: values.age,
@@ -227,7 +227,7 @@ function routeDisplayName(route) {
   if (route === "ORAL") {
     return "Oral";
   }
-  return "All routes";
+  return "Oral";
 }
 
 function formatNumber(value) {

@@ -35,7 +35,7 @@ export function parseQuickInput(value) {
     weight: "",
     height: "",
     drug: "",
-    route: "ALL",
+    route: "",
   };
   const used = new Set();
 
@@ -90,7 +90,6 @@ function parseDirectTokens(tokens, used, result) {
       return;
     }
     if (isAllRoute(token.lower)) {
-      result.route = "ALL";
       used.add(index);
       return;
     }

@@ -115,7 +115,7 @@ export function parseClinicalInput(formData) {
     weight: toNumber(formData.get("weight")),
     height: toOptionalNumber(formData.get("height")),
     drug: String(formData.get("drug") || "").trim(),
-    route: String(formData.get("route") || "ALL").trim(),
+    route: normalizeRoute(formData.get("route")),
     dialysis: String(formData.get("dialysis") || "none").trim(),
     indication: String(formData.get("indication") || "any").trim(),
     formulation: String(formData.get("formulation") || "any").trim(),
@@ -141,6 +141,9 @@ export function validateParsedInputs(values) {
   if (values.height !== null && (values.height < 100 || values.height > 230)) {
     throw new Error("Height is optional. If entered, use centimeters.");
   }
+  if (values.route !== "ORAL" && values.route !== "IV") {
+    throw new Error("Select either oral or IV route for DailyMed dose lookup.");
+  }
 }
 
 function assertAdultInputs({ age, sex, creatinine }) {
@@ -165,6 +168,11 @@ function toOptionalNumber(value) {
     return null;
   }
   return toNumber(value);
+}
+
+function normalizeRoute(value) {
+  const route = String(value || "ORAL").trim().toUpperCase();
+  return route || "ORAL";
 }
 
 function roundTo(value, decimals) {

@@ -310,7 +310,7 @@ export async function lookupDrugLabel({ drug, route }) {
       title: drug,
       route: routeDisplayName(route),
       sourceUrl: buildDailyMedSearchUrl(drug),
-      message: `No ${routeDisplayName(route).toLowerCase()} human DailyMed label was found for ${drug}.`,
+      message: `No ${routeSentenceName(route)} human DailyMed label was found for ${drug}.`,
       sections: [],
     };
   }
@@ -748,6 +748,18 @@ function routeDisplayName(route) {
   return "All routes";
 }
 
+function selectedRouteDisplayName(route, fallbackRoute) {
+  if (route === "IV" || route === "ORAL") {
+    return routeDisplayName(route);
+  }
+  return fallbackRoute || routeDisplayName(route);
+}
+
+function routeSentenceName(route) {
+  const label = routeDisplayName(route);
+  return label === "IV" ? "IV" : label.toLowerCase();
+}
+
 function compactText(value) {
   return String(value || "")
     .replace(/\s+/g, " ")
@@ -828,8 +840,8 @@ function createRouteUnavailableAssistResult({ drugName, route, sourceUrl, messag
     route: routeLabel,
     renalMetricUsed: "crcl",
     renalBand: "",
-    dose: `No ${routeLabel.toLowerCase()} DailyMed label found`,
-    frequency: message || "Try All routes or select an available route.",
+    dose: `No ${routeSentenceName(route)} DailyMed label found`,
+    frequency: message || "Try the other route or review DailyMed directly.",
     dialysisNote: "",
     importantCautions: [],
     sourceSetId: "",
@@ -1056,6 +1068,21 @@ export function buildSpecialDrugResult({ label, patient }) {
     sourceUrl: label.sourceUrl || "",
   };
 
+  if (matchesRequested(/\bpemetrexed\b|\balimta\b/)) {
+    const dose = buildPemetrexedDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV", dose });
+  }
+
+  if (matchesRequested(/\bpenicillin\s+g\b|\bpenicillin\b/)) {
+    const dose = buildPenicillinGDose(patient.crcl);
+    return buildCrclSpecialResult({ base: { ...base, drugName: "Penicillin G potassium" }, route: "IV/IM", dose });
+  }
+
+  if (matchesRequested(/\bcarmustine\b|\bbcnu\b/)) {
+    const dose = buildCarmustineDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV", dose });
+  }
+
   if (matchesRequested(/\bpiperacillin\b.*\btazobactam\b|\bzosyn\b|\btazocin\b|\bpiptaz\b|\bpip\s*tazo?\b/)) {
     const piptazDose = buildPiperacillinTazobactamDose(patient.crcl);
     if (!piptazDose) {
@@ -1121,7 +1148,7 @@ export function buildSpecialDrugResult({ label, patient }) {
 
   if (matchesRequested(/\blevetiracetam\b|\bkeppra\b/)) {
     const dose = buildLevetiracetamDose(patient.crcl);
-    return buildCrclSpecialResult({ base, route: patient.route === "IV" ? "IV" : "Oral/IV", dose });
+    return buildCrclSpecialResult({ base, route: selectedRouteDisplayName(patient.route, "Oral/IV"), dose });
   }
 
   if (matchesRequested(/\btopiramate\b|\btopamax\b/)) {
@@ -1151,7 +1178,7 @@ export function buildSpecialDrugResult({ label, patient }) {
 
   if (matchesRequested(/\bvoriconazole\b|\bvfend\b/)) {
     const dose = buildVoriconazoleDose(patient.crcl, patient.route);
-    return buildCrclSpecialResult({ base, route: patient.route === "IV" ? "IV" : "Oral/IV", dose });
+    return buildCrclSpecialResult({ base, route: selectedRouteDisplayName(patient.route, "Oral/IV"), dose });
   }
 
   if (matchesRequested(/\bgentamicin\b|\bamikacin\b|\btobramycin\b|\bplazomicin\b/)) {
@@ -1219,12 +1246,12 @@ export function buildSpecialDrugResult({ label, patient }) {
 
   if (matchesRequested(/\ballopurinol\b|\baloprim\b|\bzyloprim\b/)) {
     const dose = buildAllopurinolDose(patient.crcl);
-    return buildCrclSpecialResult({ base, route: patient.route === "IV" ? "IV" : "Oral/IV", dose });
+    return buildCrclSpecialResult({ base, route: selectedRouteDisplayName(patient.route, "Oral/IV"), dose });
   }
 
   if (matchesRequested(/\btopotecan\b|\bhycamtin\b/)) {
     const dose = buildTopotecanDose(patient.crcl);
-    return buildCrclSpecialResult({ base, route: "IV/Oral", dose });
+    return buildCrclSpecialResult({ base, route: selectedRouteDisplayName(patient.route, "IV/Oral"), dose });
   }
 
   if (matchesRequested(/\bhydroxyurea\b|\bhydrea\b|\bdroxia\b|\bsiklos\b/)) {
@@ -1712,6 +1739,81 @@ function buildCrclSpecialResult({ base, route, dose }) {
     frequency: dose.frequency,
     dialysisNote: dose.dialysisNote || "",
     importantCautions: dose.cautions || [],
+  };
+}
+
+function buildPemetrexedDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before using pemetrexed renal restrictions.");
+  }
+  if (crcl >= 45) {
+    return {
+      status: "dose_found",
+      band: "CrCl >= 45 mL/min",
+      dose: "500 mg/m2 IV",
+      frequency: "over 10 minutes on Day 1 of each 21-day cycle",
+      cautions: [
+        "Do not administer pemetrexed when CrCl is less than 45 mL/min.",
+        "Use indication-specific combination, folic acid, vitamin B12, and dexamethasone instructions from the full label.",
+      ],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 45 mL/min",
+    dose: "Do not administer pemetrexed",
+    frequency: "CrCl is below the labeled threshold.",
+    cautions: ["DailyMed label warns not to administer pemetrexed when CrCl is less than 45 mL/min."],
+  };
+}
+
+function buildPenicillinGDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and review the penicillin G renal impairment instructions.");
+  }
+  if (crcl < 10) {
+    return {
+      status: "dose_found",
+      band: "CrCl < 10 mL/min/1.73 m2",
+      dose: "Full loading dose, then one-half loading dose",
+      frequency: "every 8 to 10 hours",
+      cautions: ["Choose the loading dose from the infection-specific penicillin G table."],
+    };
+  }
+  return {
+    status: "review_source",
+    band: "CrCl >= 10 mL/min/1.73 m2",
+    dose: "Renal adjustment depends on uremia/severity",
+    frequency: "If uremic, label suggests full loading dose then one-half loading dose every 4 to 5 hours.",
+    cautions: [
+      "Penicillin G label states adjustment is generally required only in severe renal impairment.",
+      "Use infection-specific dose table and hepatic/renal context.",
+    ],
+  };
+}
+
+function buildCarmustineDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before using carmustine renal restrictions.");
+  }
+  if (crcl < 10) {
+    return {
+      status: "dose_found",
+      band: "CrCl < 10 mL/min",
+      dose: "Discontinue / do not administer carmustine",
+      frequency: "Renal restriction in label.",
+      cautions: ["DailyMed label says to discontinue if CrCl is less than 10 mL/min."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl >= 10 mL/min",
+    dose: "No simple renal dose reduction table",
+    frequency: "Monitor renal function and toxicity; use hematologic-response dose adjustments.",
+    cautions: [
+      "Evaluate renal function before and during treatment.",
+      "For compromised renal function, monitor toxicity more frequently.",
+    ],
   };
 }
 

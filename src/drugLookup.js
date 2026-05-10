@@ -48,7 +48,7 @@ export async function lookupDrugLabel({ drug, route }) {
     return {
       status: "route_not_found",
       title: cleanedDrug,
-      message: `No ${routeLabel(route)} human DailyMed label match was found${formatLookupSuffix(normalizedDrug)}. Try All routes or review DailyMed directly.`,
+      message: `No ${routeLabel(route)} human DailyMed label match was found${formatLookupSuffix(normalizedDrug)}. Try the other route or review DailyMed directly.`,
       sourceUrl: buildDailyMedSearchUrl(lookupTerm),
       normalization: normalizedDrug,
       sections: [],

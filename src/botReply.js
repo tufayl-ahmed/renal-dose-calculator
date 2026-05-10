@@ -40,7 +40,7 @@ export async function buildCalculatorReplyFromText(text, context, options = {}) 
     weight: Number(parsed.weight),
     height: parsed.height ? Number(parsed.height) : null,
     drug: String(parsed.drug || "").trim(),
-    route: parsed.route || "ALL",
+    route: parsed.route || "ORAL",
     dialysis: "none",
     indication: "any",
     formulation: "any",
@@ -90,7 +90,7 @@ function buildWelcomeReply({ platform = "WhatsApp" } = {}) {
     "Format:",
     "age sex S.Creatinine weight drug route",
     "",
-    "Drug, route, and height are optional. Weight is required for CrCl.",
+    "Drug and height are optional. Route is Oral by default; write IV when needed. Weight is required for CrCl.",
     "",
     "Commands:",
     "FORM - copy-paste template",
@@ -115,7 +115,7 @@ function buildFormReply() {
     "Weight kg:",
     "Height cm: optional",
     "Drug: optional",
-    "Route: All/IV/Oral optional",
+    "Route: Oral/IV optional",
     "",
     "Example:",
     "Age: 45",
@@ -300,7 +300,7 @@ function routeDisplayName(route) {
   if (route === "ORAL") {
     return "Oral";
   }
-  return "All routes";
+  return "Oral";
 }
 
 function formatNumber(value, decimals = 1) {

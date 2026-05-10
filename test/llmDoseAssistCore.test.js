@@ -794,6 +794,35 @@ test("backend route lookup does not fallback to another route for explicit route
   }
 });
 
+test("backend route-not-found message keeps IV uppercase", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () =>
+    new Response(
+      JSON.stringify({
+        results: [
+          {
+            openfda: {
+              product_type: ["HUMAN PRESCRIPTION DRUG"],
+              route: ["ORAL"],
+              generic_name: ["METFORMIN"],
+              brand_name: ["METFORMIN"],
+              spl_set_id: ["metformin-set"],
+            },
+          },
+        ],
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+
+  try {
+    const label = await lookupDrugLabel({ drug: "metformin", route: "IV" });
+    assert.equal(label.status, "route_not_found");
+    assert.match(label.message, /No IV human DailyMed label/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("backend special handler expands meropenem renal bands to concrete doses", () => {
   const label = {
     title: "Meropenem",
@@ -917,6 +946,22 @@ test("backend special handlers cover common QA renal band failures", () => {
     label: { title: "Lovastatin", genericName: "lovastatin", sourceUrl },
     patient: { drug: "lovastatin", route: "ORAL", crcl: 32.7 },
   });
+  const pemetrexed = buildSpecialDrugResult({
+    label: { title: "Pemetrexed disodium", genericName: "pemetrexed disodium", sourceUrl },
+    patient: { drug: "pemetrexed disodium", route: "IV", crcl: 56.5 },
+  });
+  const pemetrexedAvoid = buildSpecialDrugResult({
+    label: { title: "Pemetrexed disodium", genericName: "pemetrexed disodium", sourceUrl },
+    patient: { drug: "pemetrexed", route: "IV", crcl: 32.1 },
+  });
+  const penicillin = buildSpecialDrugResult({
+    label: { title: "Penicillin G Potassium", genericName: "penicillin g potassium", sourceUrl },
+    patient: { drug: "penicillin", route: "IV", crcl: 8.2 },
+  });
+  const carmustine = buildSpecialDrugResult({
+    label: { title: "Carmustine", genericName: "carmustine", sourceUrl },
+    patient: { drug: "carmustine", route: "IV", crcl: 7.8 },
+  });
 
   assert.equal(cipro.status, "no_renal_adjustment");
   assert.equal(cipro.renalBand, "CrCl > 30 mL/min");
@@ -938,6 +983,12 @@ test("backend special handlers cover common QA renal band failures", () => {
   assert.equal(oxcarbazepine.status, "dose_found");
   assert.equal(oxcarbazepine.dose, "300 mg/day");
   assert.equal(lovastatin.status, "no_renal_adjustment");
+  assert.equal(pemetrexed.status, "dose_found");
+  assert.match(pemetrexed.dose, /500 mg\/m2 IV/i);
+  assert.match(pemetrexed.frequency, /21-day cycle/i);
+  assert.match(pemetrexedAvoid.dose, /Do not administer/i);
+  assert.match(penicillin.frequency, /8 to 10 hours/i);
+  assert.match(carmustine.dose, /Discontinue|do not administer/i);
 });
 
 test("backend special handlers cover 30-case antibiotic QA warnings", () => {
@@ -1106,6 +1157,22 @@ test("parser cleanup removes leading label-reference fragments", () => {
 
   assert.ok(rows.length >= 1);
   assert.equal(rows[0].recommendation, "15 mg once daily Take with evening meal.");
+});
+
+test("backend special handlers keep displayed route aligned to selected route", () => {
+  const sourceUrl = "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=test";
+  const makeResult = (drug, route) =>
+    buildSpecialDrugResult({
+      label: { title: drug, genericName: drug, sourceUrl },
+      patient: { drug, route, crcl: 32 },
+    });
+
+  assert.equal(makeResult("levetiracetam", "ORAL").route, "Oral");
+  assert.equal(makeResult("levetiracetam", "IV").route, "IV");
+  assert.equal(makeResult("voriconazole", "ORAL").route, "Oral");
+  assert.equal(makeResult("allopurinol", "ORAL").route, "Oral");
+  assert.equal(makeResult("topotecan", "ORAL").route, "Oral");
+  assert.equal(makeResult("topotecan", "IV").route, "IV");
 });
 
 test("backend special handler avoids fake levofloxacin dose below CrCl 10", () => {

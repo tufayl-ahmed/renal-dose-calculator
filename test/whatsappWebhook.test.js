@@ -102,7 +102,7 @@ test("WhatsApp form reply sends a copy-paste renal calculator template", async (
   assert.match(reply, /Age:/);
   assert.match(reply, /S\. Creatinine mg\/dL:/);
   assert.match(reply, /Drug: optional/);
-  assert.match(reply, /Route: All\/IV\/Oral optional/);
+  assert.match(reply, /Route: Oral\/IV optional/);
   assert.match(reply, /Made by Dr\. Tufayl \(Cortex Labs\)/);
 });
 

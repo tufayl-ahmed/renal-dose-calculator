@@ -34,7 +34,7 @@ const baseUrl = args.baseUrl || DEFAULT_BASE_URL;
 const limit = Number.isFinite(args.limit) ? args.limit : 200;
 const concurrency = Number.isFinite(args.concurrency) ? args.concurrency : 4;
 const source = args.source || "curated";
-const routeMode = args.routeMode || (source === "autocomplete" ? "all" : "listed");
+const routeMode = args.routeMode || (source === "autocomplete" ? "ivoral" : "listed");
 
 const seeds = buildSeeds({ source }).slice(0, limit);
 const cases = seeds.map(buildCase);
@@ -502,6 +502,9 @@ function parseArgs(rawArgs) {
 function chooseRoute(routes, index) {
   if (routeMode === "all") {
     return "ALL";
+  }
+  if (routeMode === "ivoral") {
+    return index % 2 === 0 ? "ORAL" : "IV";
   }
   if (routeMode === "mixed") {
     if (index % 10 === 3) {

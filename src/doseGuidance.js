@@ -17,7 +17,7 @@ const MAX_QUICK_RECOMMENDATION_LENGTH = 150;
 const NON_DOSING_TEXT =
   /\b(?:study|studies|pharmacokinetic|subjects|volunteers|observed|adverse reactions?|contraindications?|warnings?)\b/i;
 const NO_RENAL_ADJUSTMENT_TEXT =
-  String.raw`\b(?:no\s+(?:renal\s+)?(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended|needed)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended|needed)|does\s+not\s+require\s+(?:dosage?|dose)\s+adjustment|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended|needed))\b`;
+  String.raw`\b(?:no\s+(?:renal\s+)?(?:dosage?|dose)\s+adjustment(?:\s+of\s+[\w\s-]+?)?\s+(?:is\s+)?(?:necessary|required|recommended|needed)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended|needed)|does\s+not\s+require\s+(?:dosage?|dose)\s+adjustment|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended|needed))\b`;
 const NO_RENAL_ADJUSTMENT = new RegExp(NO_RENAL_ADJUSTMENT_TEXT, "i");
 const NO_RENAL_ADJUSTMENT_GLOBAL = new RegExp(NO_RENAL_ADJUSTMENT_TEXT, "gi");
 const RENAL_CAUTION =

@@ -8,7 +8,7 @@
       content="Adult CKD-EPI eGFR and Cockcroft-Gault creatinine clearance calculator with renal dosing label lookup."
     />
     <title>Renal Dose Calculator</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260509-12" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260510-1" />
   </head>
   <body>
     <main class="app-shell">
@@ -199,18 +199,15 @@
                     <span>Route</span>
                     <div class="route-segment" role="radiogroup" aria-label="Route">
                       <label>
-                        <input type="radio" name="route" value="ALL" checked />
-                        <span>All routes</span>
+                        <input type="radio" name="route" value="ORAL" checked />
+                        <span>Oral</span>
                       </label>
                       <label>
                         <input type="radio" name="route" value="IV" />
                         <span>IV</span>
                       </label>
-                      <label>
-                        <input type="radio" name="route" value="ORAL" />
-                        <span>Oral</span>
-                      </label>
                     </div>
+                    <small>DailyMed lookup is matched to the selected route only.</small>
                   </fieldset>
 
                   <div class="context-controls hidden" id="dosing-context" aria-label="Dosing context">
@@ -462,6 +459,6 @@
     </main>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="./src/app.js?v=20260509-13"></script>
+    <script type="module" src="./src/app.js?v=20260510-1"></script>
   </body>
 </html>

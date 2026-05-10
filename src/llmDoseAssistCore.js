@@ -18,7 +18,7 @@ const RENAL_ACTION_PHRASE =
 const FREQUENCY_SIGNAL =
   /\b(?:every\s+\d+\s+hours?|q\s*\d+\s*h|once daily|twice daily|three times daily|four times daily|daily|weekly|single dose|after dialysis|following dialysis|with each dialysis|bid|tid|qid|q24h|q12h|q8h|q6h|q48h|q72h)\b/i;
 const NO_ADJUSTMENT =
-  /\b(?:no\s+(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended)|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended))\b/i;
+  /\b(?:no\s+(?:dosage?|dose)\s+adjustment(?:\s+of\s+[\w\s-]+?)?\s+(?:is\s+)?(?:necessary|required|recommended)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended)|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended))\b/i;
 const INTERNAL_STATUS_TOKEN = /^(?:dose_found|no_renal_adjustment|review_source|not_found)$/i;
 
 export function buildLlmDosePrompt({ label, patient }) {
