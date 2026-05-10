@@ -3,3 +3,10 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; connect-src 'self' https://api.fda.gov https://rxnav.nlm.nih.gov; img-src 'self' data:; style-src 'self'; script-src 'self' https://telegram.org; base-uri 'self'; form-action 'self'
+
+/sw.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=3600

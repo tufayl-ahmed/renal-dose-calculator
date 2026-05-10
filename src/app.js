@@ -67,6 +67,9 @@ const ckdTableMarker = document.querySelector("#ckd-table-marker");
 const bsaValue = document.querySelector("#bsa-value");
 const ibwValue = document.querySelector("#ibw-value");
 const abwValue = document.querySelector("#abw-value");
+const installAppButton = document.querySelector("#install-app");
+const pwaStatus = document.querySelector("#pwa-status");
+const pwaStatusLabel = document.querySelector("#pwa-status-label");
 const telegramWebApp = window.Telegram?.WebApp || null;
 const isTelegramMiniApp = detectTelegramMiniApp();
 const DEFAULT_ROUTE = "ORAL";
@@ -96,8 +99,10 @@ let drugAutocompleteState = {
   suggestions: [],
   useTypedInput: false,
 };
+let deferredInstallPrompt = null;
 const RECENT_KEY = "renal-dose-recent-v2";
 
+initializePwa();
 initializeTelegramMiniApp();
 
 form.addEventListener("submit", async (event) => {
@@ -1261,6 +1266,77 @@ async function handleRecentClick(event) {
 function clearRecentHistory() {
   localStorage.removeItem(RECENT_KEY);
   renderRecentHistory();
+}
+
+function initializePwa() {
+  updatePwaStatus();
+  installAppButton?.addEventListener("click", promptInstallApp);
+  window.addEventListener("online", updatePwaStatus);
+  window.addEventListener("offline", updatePwaStatus);
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateInstallButton();
+  });
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    updateInstallButton();
+    updatePwaStatus();
+  });
+
+  if ("serviceWorker" in navigator && window.isSecureContext) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then(() => updatePwaStatus())
+        .catch(() => {
+          // The app remains usable if a browser blocks service workers.
+        });
+    });
+  }
+}
+
+async function promptInstallApp() {
+  if (!deferredInstallPrompt) {
+    return;
+  }
+
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  updateInstallButton();
+  promptEvent.prompt();
+
+  try {
+    await promptEvent.userChoice;
+  } catch {
+    // Some browsers expose the prompt without a userChoice promise.
+  }
+  updatePwaStatus();
+}
+
+function updateInstallButton() {
+  if (!installAppButton) {
+    return;
+  }
+  installAppButton.classList.toggle("hidden", !deferredInstallPrompt || isPwaStandalone());
+}
+
+function updatePwaStatus() {
+  if (!pwaStatus) {
+    return;
+  }
+  const offline = navigator.onLine === false;
+  const standalone = isPwaStandalone();
+  const state = offline ? "offline" : standalone ? "installed" : "online";
+  const label = offline ? "Offline ready" : standalone ? "Installed" : "Online";
+  pwaStatus.dataset.state = state;
+  if (pwaStatusLabel) {
+    pwaStatusLabel.textContent = label;
+  }
+}
+
+function isPwaStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
 }
 
 function detectTelegramMiniApp() {

@@ -1,0 +1,45 @@
+{
+  "name": "Renal Dose Calculator",
+  "short_name": "Renal Dose",
+  "description": "Adult eGFR, Cockcroft-Gault CrCl, and DailyMed renal-dose guidance.",
+  "id": "/?app=renal-dose-calculator",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#F6F8FB",
+  "theme_color": "#0F766E",
+  "categories": ["medical", "health", "productivity"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/assets/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Renal Dose Check",
+      "short_name": "New Check",
+      "description": "Open the calculator for a new adult renal function and dose lookup.",
+      "url": "/?source=pwa-shortcut",
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

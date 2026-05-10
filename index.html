@@ -7,8 +7,15 @@
       name="description"
       content="Adult CKD-EPI eGFR and Cockcroft-Gault creatinine clearance calculator with renal dosing label lookup."
     />
+    <meta name="theme-color" content="#0F766E" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Renal Dose" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Renal Dose Calculator</title>
-    <link rel="stylesheet" href="./src/styles.css?v=20260510-1" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/pwa/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="./assets/pwa/apple-touch-icon.png" />
+    <link rel="stylesheet" href="./src/styles.css?v=20260510-2" />
   </head>
   <body>
     <main class="app-shell">
@@ -18,7 +25,21 @@
             <img class="kidney-mark" src="./assets/brand/renal-logo.png" alt="" aria-hidden="true" />
             <h1 id="app-title">Renal Dose Calculator</h1>
           </div>
-          <p class="maker-line">Made by Dr. Tufayl &middot; Cortex Labs</p>
+          <div class="topbar-actions">
+            <p class="maker-line">Made by Dr. Tufayl &middot; Cortex Labs</p>
+            <div class="status-pill pwa-status" id="pwa-status" data-state="online" aria-live="polite">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span id="pwa-status-label">Online</span>
+            </div>
+            <button class="ghost-button install-button hidden" id="install-app" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M12 3v12" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 21h14" />
+              </svg>
+              Install
+            </button>
+          </div>
         </header>
 
         <section class="warning-banner" role="note" aria-label="Educational warning">
@@ -459,6 +480,6 @@
     </main>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script type="module" src="./src/app.js?v=20260510-1"></script>
+    <script type="module" src="./src/app.js?v=20260510-2"></script>
   </body>
 </html>

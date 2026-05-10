@@ -23,6 +23,8 @@ assessment:
 - Produces a concise renal-dose guidance card when label data can be parsed or
   summarized safely.
 - Keeps a DailyMed source link visible so the original label can be reviewed.
+- Installs as a lightweight PWA with an offline app shell for kidney-function
+  calculations.
 - Includes Telegram Mini App support and a WhatsApp text webhook.
 
 ## Clinical Scope
@@ -34,7 +36,7 @@ This project is intentionally narrow in the first production track:
 - Weight is required for Cockcroft-Gault CrCl.
 - Height is optional and used for BMI, ideal body weight, and adjusted body
   weight estimates.
-- Route options: all routes, IV, or oral.
+- Route options: IV or oral.
 - Drug source target: human DailyMed/openFDA labels.
 
 **Educational purpose only. Results are estimates and are not for prescribing.**
@@ -64,6 +66,7 @@ review, but it is not the active primary dose pathway.
 ## Tech Stack
 
 - Frontend: plain HTML, CSS, and modern JavaScript.
+- App shell: installable PWA with Web App Manifest and Service Worker caching.
 - Functions: Cloudflare Pages Functions.
 - Hosting: Cloudflare Pages.
 - AI experiment: Cloudflare Workers AI with strict source-grounded output.
