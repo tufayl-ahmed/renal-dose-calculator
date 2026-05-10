@@ -53,6 +53,8 @@ export async function onRequestPost(context) {
     deliveries.push({ id: message.id, from: message.from, ...delivery });
   }
 
+  logWebhookDeliveries(messages, deliveries);
+
   return jsonResponse({ ok: true, received: messages.length, deliveries }, 200);
 }
 
@@ -133,6 +135,37 @@ async function sendWhatsAppPayload({ env, payload }) {
     status: response.status,
     response: await safeResponseJson(response),
   };
+}
+
+function logWebhookDeliveries(messages, deliveries) {
+  try {
+    const summary = {
+      received: messages.length,
+      deliveries: deliveries.map((delivery) => ({
+        id: tailId(delivery.id),
+        from: tailId(delivery.from),
+        ok: Boolean(delivery.ok),
+        skipped: Boolean(delivery.skipped),
+        status: delivery.status || null,
+        reason: delivery.reason || "",
+        errorCode: delivery.response?.error?.code || null,
+        errorSubcode: delivery.response?.error?.error_subcode || null,
+        errorType: delivery.response?.error?.type || "",
+        errorMessage: delivery.response?.error?.message || "",
+      })),
+    };
+    console.log("whatsapp_delivery", JSON.stringify(summary));
+  } catch {
+    console.log("whatsapp_delivery", JSON.stringify({ received: messages.length, logError: true }));
+  }
+}
+
+function tailId(value) {
+  const text = String(value || "");
+  if (!text) {
+    return "";
+  }
+  return text.length <= 6 ? text : `...${text.slice(-6)}`;
 }
 
 async function requestDoseAssist(values, context) {
