@@ -41,8 +41,13 @@ test("autocomplete hides non-systemic DailyMed noise while preserving free-text 
   assert.ok(LOCAL_DRUG_AUTOCOMPLETE_SEARCHABLE_COUNT < LOCAL_DRUG_AUTOCOMPLETE_COUNT);
   assert.equal(isSystemicAutocompleteCandidate({ name: "Fludeoxyglucose F 18" }), false);
   assert.equal(isSystemicAutocompleteCandidate({ name: "Oxygen Nitrogen Mixture" }), false);
+  assert.equal(isSystemicAutocompleteCandidate({ name: "Dry Eye Test" }), false);
+  assert.equal(isSystemicAutocompleteCandidate({ name: "Araneus Diadematus" }), false);
+  assert.equal(isSystemicAutocompleteCandidate({ name: "Ciprofolxacin" }), false);
   assert.equal(isSystemicAutocompleteCandidate({ name: "Metformin" }), true);
 
   assert.equal(getDrugAutocompleteSuggestions("fludeoxyglucose", { limit: 5 }).length, 0);
   assert.equal(getDrugAutocompleteSuggestions("iopidine", { limit: 5 }).length, 0);
+  assert.equal(getDrugAutocompleteSuggestions("dry eye", { limit: 5 }).length, 0);
+  assert.equal(getDrugAutocompleteSuggestions("ciprofolxacin", { limit: 5 }).length, 0);
 });

@@ -4,7 +4,7 @@ import { DRUG_AUTOCOMPLETE_ITEMS } from "./drugAutocompleteData.js";
 const MAX_DEFAULT_SUGGESTIONS = 8;
 const EXACT_ONLY_KEYS = new Set(["oxygen"]);
 const NON_SYSTEMIC_AUTOCOMPLETE_PATTERN =
-  /\b(?:topical|cream|ointment|gel|lotion|foam|shampoo|patch|transdermal|ophthalmic|otic|nasal|inhalation|vaginal|rectal|enema|suppository|rinse|mouthwash|toothpaste|fluoride|irrigation|oxygen|nitrogen|carbon dioxide|extract|allergen|antigen|pollen|leaf|root|flower|feather|hair|skin|homeopathic|technetium|diagnostic|device|citrate phosphate|zinc oxide|calcium carbonate|citric acid|sodium citrate|phosphate|vitamin|mineral|fludeoxyglucose|gallium|gadoterate|gadobutrol|iopidine)\b/i;
+  /\b(?:topical|cream|ointment|gel|lotion|foam|shampoo|patch|transdermal|ophthalmic|otic|nasal|inhalation|vaginal|rectal|enema|suppository|rinse|mouthwash|toothpaste|fluoride|irrigation|oxygen|nitrogen|carbon dioxide|extract|allergen|antigen|pollen|leaf|root|flower|feather|hair|skin|homeopathic|technetium|diagnostic|device|test|assay|citrate phosphate|zinc oxide|calcium carbonate|citric acid|sodium citrate|sodium chloride|calcium chloride|magnesium chloride|phosphate|vitamin|mineral|fludeoxyglucose|gallium|gadolinium|gadoterate|gadobutrol|gadodiamide|iopidine|ammonia n 13|dry eye|ciprofolxacin|llevofloxacin|nalxone|araneus|bos taurus|sus scrofa|cairina|anemone|lytta|mercurius|goldenseal|gamboge|rhubarb|garlic|turmeric|black pepper|autolysate|thiamine|riboflavin|niacinamide|cobalamin|methylcobalamin|levomefolic|levomefolate|pantothenate|beta carotene|ascorbic acid|tocopherol|selenium|chromium|copper|cupric|manganese|molybdenum|vanadyl|zinc|arginine|choline|inulin|silicon dioxide|dextrose)\b/i;
 
 const PRIORITY_ALIASES = [
   {

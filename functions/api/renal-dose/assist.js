@@ -12,7 +12,7 @@ const FALLBACK_MODEL = "@cf/google/gemma-3-12b-it";
 const DEFAULT_FREE_AI_DAILY_REQUEST_LIMIT = 200;
 const ASSIST_CACHE_TTL_SECONDS = 60 * 60 * 24;
 const LABEL_CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
-const ASSIST_CACHE_VERSION = "v20-qa-clarity-retry";
+const ASSIST_CACHE_VERSION = "v21-full-sweep-fixes";
 const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 const LABEL_FIELDS = [
@@ -663,15 +663,27 @@ function filterByRoute(labels, route) {
     return labels;
   }
   return labels.filter((label) => {
-    const routes = getRouteEvidence(label).map((value) => value.toUpperCase());
+    const routes = getRouteEvidence(label);
     if (route === "IV") {
-      return routes.some((value) => /\b(?:INTRAVENOUS|IV|I\.V\.)\b/.test(value));
+      return routes.some(hasIvRouteEvidence);
     }
     if (route === "ORAL") {
-      return routes.some((value) => /\b(?:ORAL|TABLET|TABLETS|CAPSULE|CAPSULES|BY MOUTH)\b/.test(value));
+      return routes.some(hasOralRouteEvidence);
     }
     return true;
   });
+}
+
+function hasIvRouteEvidence(value) {
+  return /\b(?:INTRAVENOUS|IV|I\.V\.)\b/i.test(String(value || ""));
+}
+
+function hasOralRouteEvidence(value) {
+  const text = String(value || "");
+  if (/\b(?:ORAL INHALATION|FOR ORAL INHALATION|INHALATION|INHALED|NEBULIZ)/i.test(text)) {
+    return false;
+  }
+  return /\b(?:ORAL|TABLET|TABLETS|CAPSULE|CAPSULES|BY MOUTH)\b/i.test(text);
 }
 
 function getRouteEvidence(label) {
@@ -904,7 +916,10 @@ function shouldUseParserFallback(aiResult, parserFallback) {
 
 function isCleanParserResult(result) {
   return (
-    (result?.status === "dose_found" && !hasUnresolvedDosePhrase(result.dose)) ||
+    (result?.status === "dose_found" &&
+      !hasUnresolvedDosePhrase(result.dose) &&
+      !hasVagueParserFrequency(result.frequency) &&
+      !hasParserFragmentDose(result.dose)) ||
     result?.status === "no_renal_adjustment"
   );
 }
@@ -912,6 +927,17 @@ function isCleanParserResult(result) {
 function hasUnresolvedDosePhrase(value) {
   const text = compactText(value).toLowerCase();
   return /\b(?:recommended dose|usual recommended dose|usual dose|one-half recommended dose|half recommended dose|one-quarter recommended dose|quarter recommended dose)\b/.test(text);
+}
+
+function hasVagueParserFrequency(value) {
+  return /^(?:by indication|use usual adult schedule by indication|usual fixed interval)$/i.test(compactText(value));
+}
+
+function hasParserFragmentDose(value) {
+  const text = compactText(value);
+  return /^(?:renal impairment|patients with renal impairment|use in specific populations)\b/i.test(text) ||
+    /\b(?:CrCl|CLcr|creatinine clearance)\s*$/i.test(text) ||
+    /[(\[][^)\]]*$/.test(text);
 }
 
 function buildParserFallbackResult({ label, patient }) {
@@ -1100,6 +1126,24 @@ export function buildSpecialDrugResult({ label, patient }) {
     sourceUrl: label.sourceUrl || "",
   };
 
+  if (matchesRequested(/\bpertuzumab\b|\bperjeta\b/)) {
+    return {
+      status: "review_source",
+      ...base,
+      route: selectedRouteDisplayName(patient.route, "IV"),
+      renalMetricUsed: "crcl",
+      renalBand: Number.isFinite(patient.crcl) ? `CrCl ${formatNumber(patient.crcl)} mL/min` : "CrCl not available",
+      dose: "Review oncology label",
+      frequency: "No quick renal dose line should be inferred from the label fragment.",
+      dialysisNote: "",
+      importantCautions: [
+        "Pertuzumab/Perjeta renal labeling is not a simple CrCl dose table; verify full oncology context.",
+      ],
+      sourceSetId: label.setId || "",
+      sourceUrl: label.sourceUrl || "",
+    };
+  }
+
   if (matchesRequested(/\bpemetrexed\b|\balimta\b/)) {
     const dose = buildPemetrexedDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "IV", dose });
@@ -1219,8 +1263,8 @@ export function buildSpecialDrugResult({ label, patient }) {
   }
 
   if (matchesRequested(/\bgentamicin\b|\bamikacin\b|\btobramycin\b|\bplazomicin\b/)) {
-    const dose = buildAminoglycosideDose(patient.crcl);
-    return buildCrclSpecialResult({ base, route: "IV/IM", dose });
+    const dose = buildAminoglycosideDose(patient.crcl, patient.route);
+    return buildCrclSpecialResult({ base, route: patient.route === "ORAL" ? "Oral" : "IV/IM", dose });
   }
 
   if (matchesRequested(/\bcapecitabine\b|\bxeloda\b/)) {
@@ -1276,7 +1320,23 @@ export function buildSpecialDrugResult({ label, patient }) {
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
 
-  if (matchesRequested(/\btrimethoprim\b|\bproloprim\b/)) {
+  if (
+    matchesRequested(/\btrimethoprim\b|\bproloprim\b/) &&
+    !matchesRequested(/\bsulfamethoxazole\b|\bbactrim\b|\bseptra\b|\bco-?trimoxazole\b|\btmp\s*[-/]?\s*smx\b/)
+  ) {
+    if (patient.route === "IV") {
+      return buildCrclSpecialResult({
+        base,
+        route: "IV",
+        dose: {
+          status: "review_source",
+          band: Number.isFinite(patient.crcl) ? `CrCl ${formatNumber(patient.crcl)} mL/min` : "CrCl not available",
+          dose: "Review DailyMed source",
+          frequency: "Trimethoprim-only IV renal guidance was not cleanly matched; verify whether TMP-SMX was intended.",
+          cautions: ["Do not apply oral trimethoprim-only dosing to an IV request."],
+        },
+      });
+    }
     const dose = buildTrimethoprimDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
@@ -1313,6 +1373,11 @@ export function buildSpecialDrugResult({ label, patient }) {
 
   if (matchesRequested(/\bamoxicillin\b(?!.*clavulanate)|\bamoxil\b/)) {
     const dose = buildAmoxicillinDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
+  if (matchesRequested(/\bcephalexin\b|\bkeflex\b/)) {
+    const dose = buildCephalexinDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
 
@@ -1375,6 +1440,19 @@ export function buildSpecialDrugResult({ label, patient }) {
   }
 
   if (matchesRequested(/\baztreonam\b|\bazactam\b/)) {
+    if (patient.route === "ORAL") {
+      return buildCrclSpecialResult({
+        base,
+        route: "Oral",
+        dose: {
+          status: "review_source",
+          band: Number.isFinite(patient.crcl) ? `CrCl ${formatNumber(patient.crcl)} mL/min` : "CrCl not available",
+          dose: "No oral systemic aztreonam dose",
+          frequency: "Review DailyMed source; inhaled aztreonam products should not be treated as oral renal-dose guidance.",
+          cautions: ["Select IV if parenteral aztreonam renal dosing is intended."],
+        },
+      });
+    }
     const dose = buildAztreonamDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "IV/IM", dose });
   }
@@ -1512,6 +1590,7 @@ export function buildSpecialDrugResult({ label, patient }) {
     return {
       status: tmpSmxDose.status,
       ...base,
+      route: selectedRouteDisplayName(patient.route, "Oral/IV"),
       renalMetricUsed: "crcl",
       renalBand: tmpSmxDose.band,
       dose: tmpSmxDose.dose,
@@ -1904,6 +1983,55 @@ function buildAmoxicillinDose(crcl) {
     dose: "250 mg or 500 mg, depending on infection severity",
     frequency: "every 24 hours",
     cautions: ["Hemodialysis labels add doses during and at the end of dialysis; verify if applicable."],
+  };
+}
+
+function buildCephalexinDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the cephalexin renal table.");
+  }
+  if (crcl >= 60) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl >= 60 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use usual adult oral regimen by indication.",
+      cautions: ["Avoid reducing cephalexin to a vague 'by indication' line without the renal band."],
+    };
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl 30-59 mL/min",
+      dose: "Maximum daily dose 1 g/day",
+      frequency: "divide per indication-specific regimen",
+      cautions: ["Use the infection-specific usual regimen but do not exceed the renal maximum."],
+    };
+  }
+  if (crcl >= 15) {
+    return {
+      status: "dose_found",
+      band: "CrCl 15-29 mL/min",
+      dose: "250 mg",
+      frequency: "every 8 to 12 hours",
+      cautions: [],
+    };
+  }
+  if (crcl >= 5) {
+    return {
+      status: "dose_found",
+      band: "CrCl 5-14 mL/min",
+      dose: "250 mg",
+      frequency: "every 24 hours",
+      cautions: [],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl 1-4 mL/min",
+    dose: "250 mg",
+    frequency: "every 48 to 60 hours",
+    cautions: [],
   };
 }
 
@@ -2560,15 +2688,24 @@ function buildVoriconazoleDose(crcl, route) {
   };
 }
 
-function buildAminoglycosideDose(crcl) {
+function buildAminoglycosideDose(crcl, route) {
   if (!Number.isFinite(crcl)) {
     return buildMissingCrclReview("Calculate CrCl and use institution-specific aminoglycoside dosing with levels.");
   }
+  if (route === "ORAL") {
+    return {
+      status: "review_source",
+      band: `CrCl ${formatNumber(crcl)} mL/min`,
+      dose: "Route/product-specific review",
+      frequency: "Do not apply IV/IM aminoglycoside renal dosing to an oral or inhaled product.",
+      cautions: ["Verify the selected DailyMed product and route before using aminoglycoside guidance."],
+    };
+  }
   return {
-    status: "dose_found",
+    status: "review_source",
     band: `CrCl ${formatNumber(crcl)} mL/min`,
-    dose: "Monitor levels and adjust dose",
-    frequency: "Use extended-interval or conventional dosing protocol by CrCl and serum levels.",
+    dose: "Monitoring-based aminoglycoside dosing",
+    frequency: "Use institutional extended-interval or conventional dosing protocol with serum levels.",
     cautions: ["Aminoglycoside dosing should not be reduced to one fixed CrCl dose line."],
   };
 }

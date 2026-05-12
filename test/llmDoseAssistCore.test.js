@@ -1034,7 +1034,6 @@ test("backend special handlers cover full autocomplete QA warning reductions", (
     ["Lorlatinib", "Lorbrena", "ORAL", 29.5, /75 mg/i, /once daily/i],
     ["Olmesartan Medoxomil / Amlodipine / Hydrochlorothiazide", "Tribenzor", "ORAL", 28.4, /Avoid use/i, /alternative antihypertensive/i],
     ["Amlodipine and Olmesartran Medoxomil", "Amlodipine and Olmesartan", "ORAL", 9.9, /No CrCl dose table/i, /5\/20 mg once daily/i],
-    ["gentamicin", "Gentamicin", "IV", 22.5, /Monitor levels/i, /protocol/i],
     ["capecitabine", "Xeloda", "ORAL", 38.4, /75% of usual starting dose/i, /regimen schedule/i],
     ["eribulin", "Halaven", "IV", 28.7, /1\.1 mg\/m2/i, /21-day cycle/i],
     ["entecavir", "Baraclude", "ORAL", 34.9, /Reduce dose or extend interval/i, /48 hours/i],
@@ -1060,6 +1059,52 @@ test("backend special handlers cover full autocomplete QA warning reductions", (
     assert.match(result.frequency, frequencyPattern, drug);
     assert.doesNotMatch(`${result.dose} ${result.frequency}`, /recommended dose|review_source|dose_found|no_renal_adjustment/i);
   }
+});
+
+test("full autocomplete QA fixes keep monitoring and route-sensitive drugs out of clean dose cards", () => {
+  const sourceUrl = "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=test";
+  const aminoglycoside = buildSpecialDrugResult({
+    label: { title: "Gentamicin", genericName: "gentamicin", sourceUrl },
+    patient: { drug: "gentamicin", route: "IV", crcl: 22.5 },
+  });
+  const oralAminoglycoside = buildSpecialDrugResult({
+    label: { title: "TOBI", genericName: "tobramycin", sourceUrl },
+    patient: { drug: "tobramycin", route: "ORAL", crcl: 118 },
+  });
+  const cephalexin = buildSpecialDrugResult({
+    label: { title: "Cephalexin", genericName: "cephalexin", sourceUrl },
+    patient: { drug: "cephalexin", route: "ORAL", crcl: 118 },
+  });
+  const pertuzumab = buildSpecialDrugResult({
+    label: { title: "PERJETA", genericName: "pertuzumab", sourceUrl },
+    patient: { drug: "pertuzumab", route: "IV", crcl: 32 },
+  });
+  const aztreonamOral = buildSpecialDrugResult({
+    label: { title: "Cayston", genericName: "aztreonam", sourceUrl },
+    patient: { drug: "aztreonam", route: "ORAL", crcl: 22.2 },
+  });
+  const trimethoprimIv = buildSpecialDrugResult({
+    label: { title: "Sulfamethoxazole and Trimethoprim", genericName: "trimethoprim", sourceUrl },
+    patient: { drug: "trimethoprim", route: "IV", crcl: 22.2 },
+  });
+  const tmpSmxIv = buildSpecialDrugResult({
+    label: { title: "Sulfamethoxazole and Trimethoprim", genericName: "sulfamethoxazole and trimethoprim", sourceUrl },
+    patient: { drug: "sulfamethoxazole and trimethoprim", route: "IV", crcl: 32 },
+  });
+
+  assert.equal(aminoglycoside.status, "review_source");
+  assert.match(aminoglycoside.dose, /Monitoring-based/i);
+  assert.equal(oralAminoglycoside.status, "review_source");
+  assert.match(oralAminoglycoside.frequency, /Do not apply IV\/IM/i);
+  assert.equal(cephalexin.status, "no_renal_adjustment");
+  assert.doesNotMatch(cephalexin.frequency, /^By indication$/i);
+  assert.equal(pertuzumab.status, "review_source");
+  assert.doesNotMatch(pertuzumab.dose, /^renal impairment/i);
+  assert.equal(aztreonamOral.status, "review_source");
+  assert.match(aztreonamOral.frequency, /inhaled aztreonam/i);
+  assert.equal(trimethoprimIv.status, "review_source");
+  assert.equal(trimethoprimIv.route, "IV");
+  assert.equal(tmpSmxIv.route, "IV");
 });
 
 test("backend special handler uses typo-corrected normalized QA names", () => {
