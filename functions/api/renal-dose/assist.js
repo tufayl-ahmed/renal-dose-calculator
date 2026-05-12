@@ -12,7 +12,8 @@ const FALLBACK_MODEL = "@cf/google/gemma-3-12b-it";
 const DEFAULT_FREE_AI_DAILY_REQUEST_LIMIT = 200;
 const ASSIST_CACHE_TTL_SECONDS = 60 * 60 * 24;
 const LABEL_CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
-const ASSIST_CACHE_VERSION = "v19-qa-general-parser";
+const ASSIST_CACHE_VERSION = "v20-qa-clarity-retry";
+const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 const LABEL_FIELDS = [
   "renal_impairment",
@@ -348,7 +349,7 @@ async function fetchOpenFdaLabels(drug, route) {
       }
       continue;
     }
-    const response = await fetch(url);
+    const response = await fetchWithRetry(url);
     if (response.status === 404) {
       continue;
     }
@@ -367,6 +368,37 @@ async function fetchOpenFdaLabels(drug, route) {
     }
   }
   return firstDataWithResults || { results: [] };
+}
+
+async function fetchWithRetry(url, options = {}, retryOptions = {}) {
+  const attempts = retryOptions.attempts || 4;
+  let lastResponse = null;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, options);
+      if (!TRANSIENT_HTTP_STATUSES.has(response.status) || attempt === attempts) {
+        return response;
+      }
+      lastResponse = response;
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) {
+        throw error;
+      }
+    }
+    await sleep((retryOptions.baseDelayMs || 350) * attempt);
+  }
+
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw lastError || new Error("Request failed.");
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function buildOpenFdaSearches(drug, route) {
@@ -1126,6 +1158,11 @@ export function buildSpecialDrugResult({ label, patient }) {
     };
   }
 
+  if (matchesRequested(/\bdaptomycin\b|\bcubicin\b/)) {
+    const dose = buildDaptomycinDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "IV", dose });
+  }
+
   if (matchesRequested(/\blevofloxacin\b|\blevaquin\b|\blevoflox\b/)) {
     const levofloxacinDose = buildLevofloxacinDose(patient.crcl);
     if (!levofloxacinDose) {
@@ -1722,6 +1759,28 @@ function buildPiperacillinTazobactamDose(crcl) {
     band: "CrCl < 20 mL/min",
     dose: "2.25 g",
     frequency: "every 8 hours; every 6 hours for nosocomial pneumonia",
+  };
+}
+
+function buildDaptomycinDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl and use the daptomycin indication-specific renal table.");
+  }
+  if (crcl >= 30) {
+    return {
+      status: "dose_found",
+      band: "CrCl >= 30 mL/min",
+      dose: "cSSSI: 4 mg/kg; S. aureus bloodstream infection: 6 mg/kg",
+      frequency: "every 24 hours",
+      cautions: ["Select the indication-specific row; review culture, severity, and source-control context."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl < 30 mL/min, including HD/CAPD",
+    dose: "cSSSI: 4 mg/kg; S. aureus bloodstream infection: 6 mg/kg",
+    frequency: "every 48 hours",
+    cautions: ["On hemodialysis days, administer after completion of hemodialysis when feasible."],
   };
 }
 
@@ -2747,10 +2806,11 @@ function buildLorlatinibDose(crcl) {
     };
   }
   return {
-    status: "dose_found",
+    status: "review_source",
     band: "CrCl < 15 mL/min",
-    dose: "No recommended dose",
-    frequency: "Review oncology label and renal context.",
+    dose: "Renal dosing not established",
+    frequency: "Review oncology label and specialist context.",
+    cautions: ["Do not treat this as a quick-dose recommendation."],
   };
 }
 
@@ -2823,10 +2883,11 @@ function buildTopotecanDose(crcl) {
     };
   }
   return {
-    status: "dose_found",
+    status: "review_source",
     band: "CrCl < 20 mL/min",
-    dose: "No recommended dose",
-    frequency: "Review oncology label; renal dosing is not established.",
+    dose: "Renal dosing not established",
+    frequency: "Review oncology label; no quick dose should be inferred.",
+    cautions: ["Do not treat this as a quick-dose recommendation."],
   };
 }
 

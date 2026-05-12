@@ -1189,6 +1189,39 @@ test("backend special handler avoids fake levofloxacin dose below CrCl 10", () =
   assert.match(result.dose, /dialysis-specific/i);
 });
 
+test("backend special handler renders Daptomycin indication rows cleanly", () => {
+  const sourceUrl = "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=daptomycin-set";
+  const normal = buildSpecialDrugResult({
+    label: { title: "Daptomycin", genericName: "daptomycin", sourceUrl },
+    patient: { drug: "daptomycin", route: "IV", crcl: 39.8 },
+  });
+  const severe = buildSpecialDrugResult({
+    label: { title: "Daptomycin", genericName: "daptomycin", sourceUrl },
+    patient: { drug: "daptomycin", route: "IV", crcl: 20 },
+  });
+
+  assert.equal(normal.status, "dose_found");
+  assert.equal(normal.dose, "cSSSI: 4 mg/kg; S. aureus bloodstream infection: 6 mg/kg");
+  assert.equal(normal.frequency, "every 24 hours");
+  assert.equal(severe.frequency, "every 48 hours");
+  assert.doesNotMatch(`${normal.dose} ${normal.frequency}`, /every 24 hours.*every 24 hours/i);
+});
+
+test("backend special handler keeps Topotecan severe renal impairment out of clean dose_found", () => {
+  const result = buildSpecialDrugResult({
+    label: {
+      title: "Topotecan",
+      genericName: "topotecan",
+      sourceUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=topotecan-set",
+    },
+    patient: { drug: "topotecan", route: "IV", crcl: 10 },
+  });
+
+  assert.equal(result.status, "review_source");
+  assert.match(result.dose, /not established/i);
+  assert.doesNotMatch(`${result.dose} ${result.frequency}`, /recommended dose/i);
+});
+
 test("backend special handler returns eGFR-specific metformin actions", () => {
   const label = {
     title: "Metformin",

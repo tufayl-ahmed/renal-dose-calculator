@@ -11,11 +11,7 @@ export async function requestLlmDoseAssist(values) {
   const payload = buildAssistPayload(values);
 
   try {
-    const response = await fetch("/api/renal-dose/assist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetchAssistWithRetry(payload);
 
     if (response.ok) {
       const data = await response.json();
@@ -26,6 +22,45 @@ export async function requestLlmDoseAssist(values) {
   }
 
   return buildLocalMockAssist(values);
+}
+
+async function fetchAssistWithRetry(payload) {
+  const attempts = 5;
+  let lastResponse = null;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch("/api/renal-dose/assist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!isTransientHttpStatus(response.status) || attempt === attempts) {
+        return response;
+      }
+      lastResponse = response;
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) {
+        throw error;
+      }
+    }
+    await sleep(500 * attempt);
+  }
+
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw lastError || new Error("Dose lookup failed.");
+}
+
+function isTransientHttpStatus(status) {
+  return [408, 425, 429, 500, 502, 503, 504].includes(status);
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function buildAssistPayload(values) {

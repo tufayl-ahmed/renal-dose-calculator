@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import {
   getDrugAutocompleteSuggestions,
   LOCAL_DRUG_AUTOCOMPLETE_COUNT,
+  LOCAL_DRUG_AUTOCOMPLETE_SEARCHABLE_COUNT,
+  isSystemicAutocompleteCandidate,
 } from "../src/drugAutocomplete.js";
 
 test("local autocomplete keeps 2000 distinct drug names", () => {
@@ -33,4 +35,14 @@ test("autocomplete folds salt variants into one canonical suggestion", () => {
 test("autocomplete searches hidden aliases merged into shorthand entries", () => {
   const suggestions = getDrugAutocompleteSuggestions("doxycycline h", { limit: 5 });
   assert.equal(suggestions[0].label, "Doxycycline");
+});
+
+test("autocomplete hides non-systemic DailyMed noise while preserving free-text ability", () => {
+  assert.ok(LOCAL_DRUG_AUTOCOMPLETE_SEARCHABLE_COUNT < LOCAL_DRUG_AUTOCOMPLETE_COUNT);
+  assert.equal(isSystemicAutocompleteCandidate({ name: "Fludeoxyglucose F 18" }), false);
+  assert.equal(isSystemicAutocompleteCandidate({ name: "Oxygen Nitrogen Mixture" }), false);
+  assert.equal(isSystemicAutocompleteCandidate({ name: "Metformin" }), true);
+
+  assert.equal(getDrugAutocompleteSuggestions("fludeoxyglucose", { limit: 5 }).length, 0);
+  assert.equal(getDrugAutocompleteSuggestions("iopidine", { limit: 5 }).length, 0);
 });

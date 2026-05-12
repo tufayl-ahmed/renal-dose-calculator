@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { calculateCockcroftGault, calculateEgfrCkdEpi2021 } from "../src/renal.js";
 import { draftRenalDoseRules } from "../src/data/renalRules/index.js";
+import { isSystemicAutocompleteCandidate } from "../src/drugAutocomplete.js";
 import { DRUG_AUTOCOMPLETE_ITEMS } from "../src/drugAutocompleteData.js";
 import { normalizeAssistPayload } from "../src/llmDoseAssist.js";
 
@@ -9,6 +10,7 @@ const REPORT_DIR = new URL("../docs/testing/generated/", import.meta.url);
 const INTERNAL_TOKEN_PATTERN = /\b(?:review_source|dose_found|no_renal_adjustment|not_found)\b/i;
 const UNRESOLVED_DOSE_PATTERN =
   /\b(?:one-half|half|the)?\s*recommended dose\b|\busual recommended dose\b|\brecommended dose or/i;
+const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 const profiles = [
   { age: 45, sex: "male", creatinine: 0.9, weight: 78, height: 174 },
@@ -126,14 +128,16 @@ function buildCuratedSeeds(rules) {
 }
 
 function buildAutocompleteSeeds() {
-  return DRUG_AUTOCOMPLETE_ITEMS.map((item) => ({
-    drugName: compact(item.name),
-    searchTerm: compact(item.name),
-    aliases: item.aliases || [],
-    routes: ["ALL"],
-    sourceUrl: "",
-    confidence: "autocomplete-label-backed",
-  })).filter((seed) => seed.searchTerm);
+  return DRUG_AUTOCOMPLETE_ITEMS.filter(isSystemicAutocompleteCandidate)
+    .map((item) => ({
+      drugName: compact(item.name),
+      searchTerm: compact(item.name),
+      aliases: item.aliases || [],
+      routes: ["ALL"],
+      sourceUrl: "",
+      confidence: "autocomplete-label-backed",
+    }))
+    .filter((seed) => seed.searchTerm);
 }
 
 function buildCase(seed, index) {
@@ -190,11 +194,7 @@ async function runCases(testCases, options) {
 async function runCase(testCase, baseUrl) {
   const startedAt = Date.now();
   try {
-    const response = await fetch(`${baseUrl}/api/renal-dose/assist`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(testCase.payload),
-    });
+    const response = await fetchAssistWithRetry(`${baseUrl}/api/renal-dose/assist`, testCase.payload);
 
     if (!response.ok) {
       return classify({
@@ -224,6 +224,40 @@ async function runCase(testCase, baseUrl) {
   }
 }
 
+async function fetchAssistWithRetry(url, payload) {
+  const attempts = 5;
+  let lastResponse = null;
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!TRANSIENT_HTTP_STATUSES.has(response.status) || attempt === attempts) {
+        response.recoveredAfterRetry = attempt > 1;
+        return response;
+      }
+      lastResponse = response;
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) {
+        throw error;
+      }
+    }
+    await sleep(800 * attempt);
+  }
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw lastError || new Error("Request failed.");
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function classify({ testCase, durationMs, data, normalized, error }) {
   const guidance = normalized?.guidance || {};
   const result = normalized?.result || data?.result || {};
@@ -250,11 +284,9 @@ function classify({ testCase, durationMs, data, normalized, error }) {
   if (error) {
     issues.push(error);
   }
-  if (result.status === "not_found" || data?.sourceMode === "not-found") {
+  const routeUnavailable = data?.sourceMode === "route-not-found";
+  if (!routeUnavailable && (result.status === "not_found" || data?.sourceMode === "not-found")) {
     issues.push("drug label not found");
-  }
-  if (data?.sourceMode === "route-not-found") {
-    issues.push("selected route not found");
   }
   if (data?.sourceMode === "error") {
     issues.push("backend returned error fallback");

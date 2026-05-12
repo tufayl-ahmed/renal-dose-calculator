@@ -24,6 +24,7 @@ const EXCLUDED_DRUG_PATTERN =
 const INTERNAL_TOKEN_PATTERN = /\b(?:review_source|dose_found|no_renal_adjustment|not_found)\b/i;
 const UNRESOLVED_DOSE_PATTERN =
   /\b(?:one-half|half|the)?\s*recommended dose\b|\busual recommended dose\b|\brecommended dose or\b/i;
+const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 const RENAL_KEYWORD_PATTERN =
   /\b(?:renal|kidney|creatinine clearance|crcl|clcr|hemodialysis|dialysis|peritoneal|esrd|glomerular filtration|gfr)\b/i;
 const NO_ADJUSTMENT_PATTERN =
@@ -318,11 +319,7 @@ async function runCase(testCase, baseUrl) {
 
 async function fetchAppAssist(payload, baseUrl) {
   try {
-    const response = await fetch(`${baseUrl}/api/renal-dose/assist`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetchAssistWithRetry(`${baseUrl}/api/renal-dose/assist`, payload);
     if (!response.ok) {
       return { ok: false, data: null, error: `HTTP ${response.status}` };
     }
@@ -330,6 +327,35 @@ async function fetchAppAssist(payload, baseUrl) {
   } catch (error) {
     return { ok: false, data: null, error: error?.message || String(error) };
   }
+}
+
+async function fetchAssistWithRetry(url, payload) {
+  const attempts = 3;
+  let lastResponse = null;
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!TRANSIENT_HTTP_STATUSES.has(response.status) || attempt === attempts) {
+        return response;
+      }
+      lastResponse = response;
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) {
+        throw error;
+      }
+    }
+    await sleep(600 * attempt);
+  }
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw lastError || new Error("Request failed.");
 }
 
 function validateResultAgainstSource({
@@ -561,7 +587,7 @@ async function fetchOpenFdaBySetId(setId) {
 
 async function fetchOpenFdaSearch(search, limit) {
   const params = new URLSearchParams({ search, limit: String(limit) });
-  const response = await fetch(`${OPENFDA_LABEL_URL}?${params.toString()}`);
+  const response = await fetchWithRetry(`${OPENFDA_LABEL_URL}?${params.toString()}`);
   if (response.status === 404) {
     return { results: [] };
   }
@@ -569,6 +595,35 @@ async function fetchOpenFdaSearch(search, limit) {
     throw new Error(`openFDA request failed: HTTP ${response.status}`);
   }
   return response.json();
+}
+
+async function fetchWithRetry(url) {
+  const attempts = 3;
+  let lastResponse = null;
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url);
+      if (!TRANSIENT_HTTP_STATUSES.has(response.status) || attempt === attempts) {
+        return response;
+      }
+      lastResponse = response;
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) {
+        throw error;
+      }
+    }
+    await sleep(600 * attempt);
+  }
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw lastError || new Error("Request failed.");
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function runQueue(items, concurrency, worker) {

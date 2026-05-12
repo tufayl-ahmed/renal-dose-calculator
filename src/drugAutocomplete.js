@@ -3,6 +3,8 @@ import { DRUG_AUTOCOMPLETE_ITEMS } from "./drugAutocompleteData.js";
 
 const MAX_DEFAULT_SUGGESTIONS = 8;
 const EXACT_ONLY_KEYS = new Set(["oxygen"]);
+const NON_SYSTEMIC_AUTOCOMPLETE_PATTERN =
+  /\b(?:topical|cream|ointment|gel|lotion|foam|shampoo|patch|transdermal|ophthalmic|otic|nasal|inhalation|vaginal|rectal|enema|suppository|rinse|mouthwash|toothpaste|fluoride|irrigation|oxygen|nitrogen|carbon dioxide|extract|allergen|antigen|pollen|leaf|root|flower|feather|hair|skin|homeopathic|technetium|diagnostic|device|citrate phosphate|zinc oxide|calcium carbonate|citric acid|sodium citrate|phosphate|vitamin|mineral|fludeoxyglucose|gallium|gadoterate|gadobutrol|iopidine)\b/i;
 
 const PRIORITY_ALIASES = [
   {
@@ -47,10 +49,10 @@ const PRIORITY_ALIASES = [
   },
 ];
 
-const LABEL_ENTRIES = DRUG_AUTOCOMPLETE_ITEMS.map((item) => ({
+const LABEL_ENTRIES = DRUG_AUTOCOMPLETE_ITEMS.filter(isSystemicAutocompleteCandidate).map((item) => ({
   label: item.name,
   value: item.name,
-  aliases: item.aliases || [],
+  aliases: (item.aliases || []).filter((alias) => !NON_SYSTEMIC_AUTOCOMPLETE_PATTERN.test(alias)),
   source: item.source,
   count: item.count,
 }));
@@ -58,6 +60,21 @@ const LABEL_ENTRIES = DRUG_AUTOCOMPLETE_ITEMS.map((item) => ({
 const SEARCH_INDEX = buildSearchIndex([...PRIORITY_ALIASES, ...LABEL_ENTRIES]);
 
 export const LOCAL_DRUG_AUTOCOMPLETE_COUNT = DRUG_AUTOCOMPLETE_ITEMS.length;
+export const LOCAL_DRUG_AUTOCOMPLETE_SEARCHABLE_COUNT = LABEL_ENTRIES.length;
+
+export function isSystemicAutocompleteCandidate(item) {
+  const name = String(item?.name || "").trim();
+  if (!name || NON_SYSTEMIC_AUTOCOMPLETE_PATTERN.test(name)) {
+    return false;
+  }
+
+  const key = normalizeDrugKey(name);
+  if (key.length < 3 || /^(?:sodium|potassium|calcium|magnesium|aluminum|silver|sulfur|phosphorus|helium|nitrogen|oxygen)$/.test(key)) {
+    return false;
+  }
+
+  return true;
+}
 
 export function getDrugAutocompleteSuggestions(query, options = {}) {
   const limit = options.limit || MAX_DEFAULT_SUGGESTIONS;
