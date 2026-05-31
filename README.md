@@ -26,8 +26,6 @@ assessment:
 - Installs as a lightweight PWA with an offline app shell for kidney-function
   calculations.
 - Includes Telegram Mini App support and a WhatsApp text webhook.
-- Includes an optional, disabled-by-default OpenWA experimental bridge for
-  personal testing with a separate self-hosted OpenWA gateway.
 
 ## Clinical Scope
 
@@ -74,7 +72,6 @@ review, but it is not the active primary dose pathway.
 - AI experiment: Cloudflare Workers AI with strict source-grounded output.
 - Drug labels: DailyMed/openFDA.
 - Drug normalization fallback: RxNorm/RxNav.
-- Experimental WhatsApp bridge: optional OpenWA adapter endpoint.
 - Tests: Node.js built-in test runner.
 - CI: GitHub Actions.
 
@@ -84,7 +81,6 @@ review, but it is not the active primary dose pathway.
 functions/api/renal-dose/assist.js   DailyMed/openFDA + dose guidance API
 functions/api/telegram/webhook.js    Telegram Mini App launcher webhook
 functions/api/whatsapp/webhook.js    WhatsApp Cloud API text webhook
-functions/api/openwa/webhook.js      Experimental OpenWA bridge webhook
 src/                                Frontend and shared calculation modules
 src/data/renalRules/                Parked curated renal-rule draft database
 test/                               Unit and integration tests
@@ -121,10 +117,6 @@ npm run cf:dev
 Use the Cloudflare runtime when testing the renal-dose API, Telegram webhook,
 WhatsApp webhook, cache behavior, KV bindings, or Workers AI binding.
 
-The OpenWA bridge is documented separately in
-[docs/openwa-experiment.md](docs/openwa-experiment.md). It is experimental,
-disabled by default, and not the recommended production WhatsApp path.
-
 ## Tests
 
 ```bash
@@ -148,10 +140,6 @@ Required or optional production secrets:
 - `WHATSAPP_PHONE_NUMBER_ID`
 - `WHATSAPP_ACCESS_TOKEN`
 - `WHATSAPP_APP_SECRET`
-- `OPENWA_API_BASE_URL` experimental only
-- `OPENWA_API_KEY` experimental only
-- `OPENWA_SESSION_ID` experimental only
-- `OPENWA_WEBHOOK_SECRET` experimental only
 
 Configured public runtime variables live in `wrangler.toml`.
 
