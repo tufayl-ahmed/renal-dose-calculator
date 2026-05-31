@@ -6,6 +6,8 @@ pages_build_output_dir = "."
 AI_FREE_MODE = "true"
 FREE_AI_DAILY_REQUEST_LIMIT = "200"
 WHATSAPP_GRAPH_VERSION = "v23.0"
+OPENWA_EXPERIMENT_ENABLED = "false"
+OPENWA_ALLOW_GROUPS = "false"
 
 [[kv_namespaces]]
 binding = "WHATSAPP_DEDUPE"

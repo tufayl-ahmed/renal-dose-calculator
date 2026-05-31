@@ -1,5 +1,10 @@
 # WhatsApp Cloud API setup
 
+This is the recommended production WhatsApp path. The repo also contains a
+disabled-by-default OpenWA experiment at
+[openwa-experiment.md](openwa-experiment.md), but that unofficial bridge should
+be used only with a spare number for testing.
+
 The app now includes a Cloudflare Pages Function at:
 
 ```text
