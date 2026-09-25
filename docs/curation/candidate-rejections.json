@@ -1,0 +1,15 @@
+{
+  "_about": "Auto-extracted candidates rejected on review. scripts/extract-renal-candidates.mjs skips these ids (<search term>:<ROUTE>). Add a reason for every entry.",
+  "clobazam:IV": "No IV clobazam product; matched the oral Onfi label.",
+  "clindamycin and benzoyl peroxide:ORAL": "Topical gel, not an oral product.",
+  "clindamycin benzoyl peroxide:ORAL": "Topical gel, not an oral product.",
+  "clindamycin palmitate:ORAL": "Pediatric oral solution label; app is adult-only.",
+  "darunavir ethanolate and cobicistat:ORAL": "Fixed-dose combination received standalone cobicistat dosing.",
+  "denosumab:SC": "Label: no dose change, but severe hypocalcemia risk with CrCl < 30 or dialysis must be shown; needs a curated record with that caution.",
+  "denosumab bmwo:SC": "As denosumab: hypocalcemia risk in severe renal impairment must be shown.",
+  "denosumab kyqq:SC": "As denosumab: hypocalcemia risk in severe renal impairment must be shown.",
+  "sildenafil:ORAL": "Oral labels differ: PAH (no adjustment) vs erectile dysfunction (consider 25 mg start with CrCl < 30); needs product-specific curation.",
+  "ezetimibe and simvastatin:ORAL": "Label limits dose in severe renal impairment; needs curation.",
+  "octreotide:ORAL": "Oral octreotide label has ESRD starting-dose guidance; needs curation.",
+  "methylene blue:IV": "Renal impairment guidance needs manual review."
+}

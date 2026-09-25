@@ -313,3 +313,45 @@ test("does not interpret age ranges as CrCl dose bands", () => {
   assert.doesNotMatch(guidance.crclBand, /> 8/);
   assert.doesNotMatch(guidance.recommendation, /2 mg\/kg/i);
 });
+
+test("no-adjustment detection is limited to explicit, whole-range kidney statements", async () => {
+  const { hasNoRenalAdjustmentText } = await import("../src/doseGuidance.js");
+
+  // Another population's sentence next to renal text (tranexamic acid pattern).
+  assert.equal(
+    hasNoRenalAdjustmentText(
+      "8.5 Geriatric Use No dosage adjustment is needed. 8.6 Renal Impairment The dose should be reduced in patients with renal impairment."
+    ),
+    false
+  );
+  // Hepatic statement (avanafil pattern).
+  assert.equal(
+    hasNoRenalAdjustmentText("No dose adjustment is necessary for patients with mild to moderate hepatic impairment. Renal impairment: see table."),
+    false
+  );
+  // Partial range (vericiguat pattern).
+  assert.equal(
+    hasNoRenalAdjustmentText("No dosage adjustment is recommended in patients with eGFR ≥15 mL/min/1.73 m2."),
+    false
+  );
+  assert.equal(
+    hasNoRenalAdjustmentText("No dosage adjustment is necessary in patients with mild or moderate renal impairment."),
+    false
+  );
+  // Restriction elsewhere in the renal text wins.
+  assert.equal(
+    hasNoRenalAdjustmentText(
+      "No dose adjustment is required in renal impairment. Use in patients with severe renal impairment (CrCl < 30 mL/min) is not recommended."
+    ),
+    false
+  );
+  // Genuine blanket statements still count.
+  assert.equal(
+    hasNoRenalAdjustmentText("No dosage adjustment is required in patients with mild, moderate, or severe renal impairment."),
+    true
+  );
+  assert.equal(
+    hasNoRenalAdjustmentText("Renal impairment: Studies showed no difference in half-life. No dosage adjustment is recommended."),
+    true
+  );
+});

@@ -49,6 +49,9 @@ let requestCount = 0;
 let rateLimited = false;
 installFetchGuard();
 
+const rejections = JSON.parse(
+  await readFile(path.join(root, "docs", "curation", "candidate-rejections.json"), "utf8")
+);
 const existing = await loadExistingCandidates();
 const drugs = selectDrugs();
 const report = { extracted: [], partial: [], noRenalData: [], noLabel: [], skippedCurated: 0 };
@@ -78,6 +81,12 @@ for (const drug of drugs) {
       continue;
     }
 
+    const rejectionKey = `${drug.name.toLowerCase()}:${route}`;
+    if (rejections[rejectionKey]) {
+      report.partial.push(`${drug.name} (${route}): rejected on review — ${rejections[rejectionKey]}`);
+      records.delete(`${drug.name.toLowerCase()}|${route}`);
+      continue;
+    }
     const outcome = extractCandidate(drug, route, label);
     if (outcome.record) {
       records.set(recordKey(outcome.record), outcome.record);

@@ -19,7 +19,6 @@ const NON_DOSING_TEXT =
 const NO_RENAL_ADJUSTMENT_TEXT =
   String.raw`\b(?:no\s+(?:renal\s+)?(?:dosage?|dose)\s+adjustment(?:\s+of\s+[\w\s-]+?)?\s+(?:is\s+)?(?:necessary|required|recommended|needed)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended|needed)|does\s+not\s+require\s+(?:dosage?|dose)\s+adjustment|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended|needed))\b`;
 const NO_RENAL_ADJUSTMENT = new RegExp(NO_RENAL_ADJUSTMENT_TEXT, "i");
-const NO_RENAL_ADJUSTMENT_GLOBAL = new RegExp(NO_RENAL_ADJUSTMENT_TEXT, "gi");
 const RENAL_CAUTION =
   /\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b[\s\S]{0,180}\b(?:use with caution|monitor(?:ing)? renal function|monitor(?:ing)? kidney function|reduce(?:d|ing)? (?:the )?(?:dose|dosage)|reduced? [\w\s]{0,40}doses?|dose(?:age)? decrease may be (?:needed|necessary)|dose(?:age)? reduction may be (?:needed|necessary)|lower individual doses|halve usual initial dose|discontinue(?:d)? if|not recommended|should not be used)\b|\b(?:use with caution|monitor(?:ing)? renal function|monitor(?:ing)? kidney function|reduce(?:d|ing)? (?:the )?(?:dose|dosage)|reduced? [\w\s]{0,40}doses?|dose(?:age)? decrease may be (?:needed|necessary)|dose(?:age)? reduction may be (?:needed|necessary)|lower individual doses|halve usual initial dose|discontinue(?:d)? if|not recommended|should not be used)\b[\s\S]{0,180}\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i;
 
@@ -541,20 +540,60 @@ function hasRenalCautionText(text) {
   return RENAL_CAUTION.test(text);
 }
 
-function hasNoRenalAdjustmentText(text, heading = "") {
-  if (/renal|kidney/i.test(heading) && NO_RENAL_ADJUSTMENT.test(text)) {
-    return true;
-  }
+const RENAL_WORD = /\b(?:renal|kidney|creatinine clearance|crcl|clcr|egfr|gfr|dialysis|hemodialysis)\b/i;
+const OTHER_POPULATION = /\b(?:hepatic|liver|child[- ]pugh|geriatric|elderly|age\b|pediatric|body weight|gender|race|sex\b)/i;
+const PARTIAL_RANGE = /(?:≥|>=|≤|<=|\bgreater than\b|\bless than\b|\babove\b|\bat least\b|\bor more\b)/i;
+const RENAL_TOPIC_START = /^(?:\d+(?:\.\d+)*\s+)?(?:patients with )?(?:renal|kidney) (?:impairment|insufficiency|disease|dysfunction)\b/i;
+const OTHER_TOPIC_START =
+  /^(?:\d+(?:\.\d+)*\s+)?(?:patients with )?(?:hepatic|liver|geriatric|pediatric|pregnancy|lactation|nursing|elderly|gender|race|females|males)\b/i;
+const RENAL_RESTRICTION =
+  /\b(?:not (?:been )?(?:recommended|studied|established|evaluated)|should not be used|contraindicated|avoid|reduce[ds]?|reduction|lower (?:starting |initial )?(?:dose|dosage)|decrease the (?:dose|dosage)|adjust(?:ed|ment)? (?:the )?(?:dose|dosage) (?:in|for) patients)\b/i;
 
-  return [...String(text || "").matchAll(NO_RENAL_ADJUSTMENT_GLOBAL)].some((match) => {
-    const start = Math.max(0, match.index - 180);
-    const end = Math.min(String(text || "").length, match.index + match[0].length + 180);
-    const window = String(text || "").slice(start, end);
-    if (!/\brenal\b/i.test(match[0]) && /\b(?:liver|hepatic)\b[\s\S]{0,140}\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i.test(window)) {
+/**
+ * True only when the label states, for the kidneys specifically, that no dose
+ * adjustment is needed across renal impairment. Rejects statements about other
+ * populations (hepatic, geriatric), partial statements ("mild or moderate",
+ * "eGFR >= 15") and labels that restrict use anywhere in their renal text.
+ */
+export function hasNoRenalAdjustmentText(text, heading = "") {
+  const sentences = splitSentences(text);
+  const renalHeading = /renal|kidney/i.test(heading);
+  const renalSentences = sentences.filter((sentence) => RENAL_WORD.test(sentence));
+  if (renalSentences.some((sentence) => RENAL_RESTRICTION.test(sentence) && !NO_RENAL_ADJUSTMENT.test(sentence))) {
+    return false;
+  }
+  // Track the sub-topic ("Renal impairment: ...", "8.7 Hepatic Impairment ...")
+  // so a sentence without a kidney word still counts inside a renal block.
+  let topic = renalHeading ? "renal" : "";
+  return sentences.some((sentence) => {
+    if (RENAL_TOPIC_START.test(sentence)) {
+      topic = "renal";
+    } else if (OTHER_TOPIC_START.test(sentence)) {
+      topic = "other";
+    }
+    if (!NO_RENAL_ADJUSTMENT.test(sentence)) {
       return false;
     }
-    return /\b(?:renal|kidney|creatinine clearance|crcl|clcr)\b/i.test(window);
+    if (!RENAL_WORD.test(sentence) && topic !== "renal") {
+      return false;
+    }
+    if (OTHER_POPULATION.test(sentence) && !RENAL_WORD.test(sentence.replace(OTHER_POPULATION, ""))) {
+      return false;
+    }
+    if (/\b(?:hepatic|liver)\b/i.test(sentence) && !/\b(?:renal|kidney)\b[^.]*\bno\b/i.test(sentence)) {
+      return false;
+    }
+    const partial = PARTIAL_RANGE.test(sentence) || (/\b(?:mild|moderate)\b/i.test(sentence) && !/\bsevere\b/i.test(sentence));
+    return !partial;
   });
+}
+
+function splitSentences(text) {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.;])\s+(?=[A-Z0-9(])/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
 }
 
 function routeLabel(route) {

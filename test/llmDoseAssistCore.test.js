@@ -1324,3 +1324,16 @@ test("lisinopril/hydrochlorothiazide combination is not recommended at CrCl <= 3
   });
   assert.equal(mono.dose, "2.5 mg");
 });
+
+test("cobicistat handler does not apply to darunavir/cobicistat combinations", () => {
+  const combo = buildSpecialDrugResult({
+    label: { title: "PREZCOBIX", genericName: "DARUNAVIR ETHANOLATE AND COBICISTAT", sections: [] },
+    patient: { drug: "darunavir ethanolate and cobicistat", route: "ORAL", crcl: 50 },
+  });
+  assert.equal(combo, null);
+  const standalone = buildSpecialDrugResult({
+    label: { title: "TYBOST", genericName: "COBICISTAT", sections: [] },
+    patient: { drug: "cobicistat", route: "ORAL", crcl: 50 },
+  });
+  assert.equal(standalone.dose, "150 mg");
+});
