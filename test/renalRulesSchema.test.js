@@ -33,7 +33,10 @@ async function listRuleFiles() {
   try {
     const entries = await readdir(RULE_DIR, { withFileTypes: true });
     return entries
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".js") && !["verifications.js", "candidates.js"].includes(entry.name))
+      .filter(
+        (entry) =>
+          entry.isFile() && entry.name.endsWith(".js") && !["verifications.js", "candidates.js"].includes(entry.name)
+      )
       .map((entry) => entry.name)
       .sort();
   } catch {

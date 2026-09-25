@@ -326,7 +326,9 @@ test("no-adjustment detection is limited to explicit, whole-range kidney stateme
   );
   // Hepatic statement (avanafil pattern).
   assert.equal(
-    hasNoRenalAdjustmentText("No dose adjustment is necessary for patients with mild to moderate hepatic impairment. Renal impairment: see table."),
+    hasNoRenalAdjustmentText(
+      "No dose adjustment is necessary for patients with mild to moderate hepatic impairment. Renal impairment: see table."
+    ),
     false
   );
   // Partial range (vericiguat pattern).
@@ -347,11 +349,15 @@ test("no-adjustment detection is limited to explicit, whole-range kidney stateme
   );
   // Genuine blanket statements still count.
   assert.equal(
-    hasNoRenalAdjustmentText("No dosage adjustment is required in patients with mild, moderate, or severe renal impairment."),
+    hasNoRenalAdjustmentText(
+      "No dosage adjustment is required in patients with mild, moderate, or severe renal impairment."
+    ),
     true
   );
   assert.equal(
-    hasNoRenalAdjustmentText("Renal impairment: Studies showed no difference in half-life. No dosage adjustment is recommended."),
+    hasNoRenalAdjustmentText(
+      "Renal impairment: Studies showed no difference in half-life. No dosage adjustment is recommended."
+    ),
     true
   );
 });

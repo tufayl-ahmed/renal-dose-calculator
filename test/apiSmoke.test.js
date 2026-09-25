@@ -47,3 +47,13 @@ function stripVolatile(payload) {
   const { result, sourceMode, sourceUrl, modelUsed } = payload;
   return { result, sourceMode, sourceUrl, modelUsed, labelTitle: payload.label?.title, setId: payload.label?.setId };
 }
+
+test("dose API cache key separates patients by serum creatinine", async () => {
+  const { buildAssistCacheKey } = await import("../server/renalDose/cache.js");
+  const label = { setId: "abc" };
+  const base = { route: "ORAL", crcl: 30, dialysis: "none", indication: "any", formulation: "any" };
+  assert.notEqual(
+    buildAssistCacheKey({ patient: { ...base, creatinine: 1.8 }, label }),
+    buildAssistCacheKey({ patient: { ...base, creatinine: 6.5 }, label })
+  );
+});

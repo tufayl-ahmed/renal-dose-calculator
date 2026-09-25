@@ -2,7 +2,7 @@ export const ASSIST_CACHE_TTL_SECONDS = 60 * 60 * 24;
 
 export const LABEL_CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
 
-const ASSIST_CACHE_VERSION = "v22-parser-and-ai-context";
+const ASSIST_CACHE_VERSION = "v23-scr-aware";
 
 export function buildAssistCacheKey({ patient, label }) {
   const crclBand = Number.isFinite(patient.crcl) ? Math.floor(patient.crcl / 5) * 5 : "unknown";
@@ -11,6 +11,8 @@ export function buildAssistCacheKey({ patient, label }) {
     drug: label.setId || patient.normalizedDrug?.searchTerm || patient.drug,
     route: patient.route || "ALL",
     crclBand: String(crclBand),
+    // Some labels dose by serum creatinine, so answers differ by SCr too.
+    scr: Number.isFinite(patient.creatinine) ? patient.creatinine.toFixed(1) : "unknown",
     dialysis: patient.dialysis || "none",
     indication: patient.indication || "any",
     formulation: patient.formulation || "any",

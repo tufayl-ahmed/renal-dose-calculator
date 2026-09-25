@@ -1,10 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  findCuratedRenalDoseGuidance,
-  getCuratedDrugOptions,
-  getCuratedRuleCount,
-} from "../src/curatedDoseRules.js";
+import { findCuratedRenalDoseGuidance, getCuratedDrugOptions, getCuratedRuleCount } from "../src/curatedDoseRules.js";
 
 test("returns curated piptaz guidance before DailyMed fallback is needed", () => {
   const guidance = findCuratedRenalDoseGuidance({
