@@ -1234,6 +1234,11 @@ input[type="number"]::-webkit-outer-spin-button {
 .dose-list {
   display: grid;
   gap: 12px;
+  transition: opacity 0.15s var(--ease);
+}
+
+.dose-list.is-stale {
+  opacity: 0.45;
 }
 
 .empty-state {

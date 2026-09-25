@@ -44,10 +44,9 @@ export function createDoseCards({ onResult }) {
   });
 
   function sync(drugs, nextPatient) {
-    const patientChanged = nextPatient && JSON.stringify(nextPatient) !== JSON.stringify(patient);
-    if (nextPatient) {
-      patient = nextPatient;
-    }
+    listElement.classList.remove("is-stale");
+    const patientChanged = JSON.stringify(nextPatient ?? null) !== JSON.stringify(patient);
+    patient = nextPatient ?? null;
     if (patientChanged) {
       generation += 1;
     }
@@ -78,6 +77,11 @@ export function createDoseCards({ onResult }) {
         }
       } else if (patient && (patientChanged || existing.state === "idle")) {
         schedule(existing);
+      } else if (!patient && existing.state !== "idle") {
+        // Details became incomplete: drop the old answer rather than show it.
+        existing.state = "idle";
+        existing.token = Symbol("cancelled");
+        renderEntry(existing);
       }
     }
     renderFrame();
@@ -192,6 +196,12 @@ export function createDoseCards({ onResult }) {
 
   return {
     sync,
+    /** Dims results while patient details are being edited. */
+    markStale() {
+      if (entries.size) {
+        listElement.classList.add("is-stale");
+      }
+    },
     /** Drops the patient so cards wait for a valid calculation again. */
     reset() {
       patient = null;
@@ -214,7 +224,9 @@ function renderIdle(entry) {
       <header class="dose-head">
         <div>
           <h3>${entry.drug.name}</h3>
-          <p class="dose-meta">${routeLabel(entry.drug.route)} · waiting for patient details</p>
+          <p class="dose-meta">
+            ${routeLabel(entry.drug.route)} · enter age, weight and creatinine to see renal dosing
+          </p>
         </div>
       </header>
     </div>

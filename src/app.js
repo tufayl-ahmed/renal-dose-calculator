@@ -19,12 +19,16 @@ initTelegram();
 
 const form = $("#renal-form");
 let current = null; // { values, renal } for the last valid patient
-let calculated = false;
 let refreshTimer = 0;
 
 const drugInput = createDrugInput({
   getDefaultRoute: () => new FormData(form).get("route") || "ORAL",
-  onChange: () => cards.sync(drugInput.drugs, calculated ? patientPayload() : null),
+  // Adding, removing or re-routing a drug looks it up straight away when the
+  // patient details are complete; no need to press Calculate.
+  onChange: () => {
+    cards.sync(drugInput.drugs, patientPayload());
+    rememberCheck();
+  },
 });
 const cards = createDoseCards({});
 const recentChecks = createHistory({ onSelect: loadHistoryItem });
@@ -35,17 +39,20 @@ form.addEventListener("input", (event) => {
     return;
   }
   updateKidney();
-  if (calculated && current) {
-    // Patient changed after a calculation: refresh drug guidance once typing pauses.
-    window.clearTimeout(refreshTimer);
-    refreshTimer = window.setTimeout(() => cards.sync(drugInput.drugs, patientPayload()), REFRESH_DELAY_MS);
-  }
+  // Patient details changed: dim existing dose cards at once, then refresh
+  // them once typing pauses (or leave them waiting if details are incomplete).
+  cards.markStale();
+  window.clearTimeout(refreshTimer);
+  refreshTimer = window.setTimeout(() => {
+    cards.sync(drugInput.drugs, patientPayload());
+    rememberCheck();
+  }, REFRESH_DELAY_MS);
 });
 
 form.addEventListener("change", (event) => {
   if (event.target.name === "route") {
     drugInput.refreshRoutes();
-    cards.sync(drugInput.drugs, calculated ? patientPayload() : null);
+    cards.sync(drugInput.drugs, patientPayload());
   }
 });
 
@@ -57,7 +64,6 @@ form.addEventListener("submit", (event) => {
 form.addEventListener("reset", () => {
   window.setTimeout(() => {
     current = null;
-    calculated = false;
     $("#share").disabled = true;
     drugInput.clear();
     cards.reset();
@@ -92,10 +98,12 @@ function updateKidney() {
   showFieldErrors(errors);
   if (errors) {
     current = null;
+    $("#share").disabled = true;
     resetKidneyCard();
     return false;
   }
   current = { values, renal: computeRenal(values) };
+  $("#share").disabled = false;
   renderKidneyCard(values, current.renal);
   setFormError("");
   return true;
@@ -112,14 +120,20 @@ function calculate() {
     return;
   }
   updateKidney();
-  calculated = true;
-  $("#share").disabled = false;
+  window.clearTimeout(refreshTimer);
   haptic("light");
-  const drugs = drugInput.drugs;
-  cards.sync(drugs, patientPayload());
-  recentChecks.add({ patient: current.values, drugs, crcl: current.renal.crcl });
+  cards.sync(drugInput.drugs, patientPayload());
+  rememberCheck();
   if (window.matchMedia("(max-width: 959px)").matches) {
     $("#results").scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+  }
+}
+
+/** Saves the current patient + drugs to Recent (deduplicated). */
+function rememberCheck() {
+  const drugs = drugInput.drugs;
+  if (current && drugs.length) {
+    recentChecks.add({ patient: current.values, drugs, crcl: current.renal.crcl });
   }
 }
 
