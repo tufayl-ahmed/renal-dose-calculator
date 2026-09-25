@@ -1098,7 +1098,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .body-metrics dd {
   margin: 2px 0 0;
-  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 14px;
   font-weight: 600;
 }
