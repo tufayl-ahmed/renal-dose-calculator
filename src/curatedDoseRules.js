@@ -1,5 +1,7 @@
 import { normalizeDrugKey } from "./drugNormalizer.js";
 import { draftRenalDoseRules } from "./data/renalRules/index.js";
+import { RULE_VERIFICATIONS } from "./data/renalRules/verifications.js";
+import { candidateRenalDoseRules } from "./data/renalRules/candidates.js";
 
 const STARTER_RENAL_RULES = [
   {
@@ -705,22 +707,66 @@ const STRUCTURED_RENAL_RULES = [
 ];
 
 const CURATED_RENAL_RULES = buildCuratedRuleSet();
+const CANDIDATE_RENAL_RULES = buildCandidateRuleSet();
 
-export function findCuratedRenalDoseGuidance({
-  drugQuery,
-  normalizedDrug,
-  crcl,
-  egfr,
-  route,
-  dialysis,
-  indication,
-  formulation,
-}) {
-  const record = findCuratedRecord(drugQuery, normalizedDrug, route);
-  if (!record) {
+export function findCuratedRenalDoseGuidance(input) {
+  return findGuidanceInRecords(CURATED_RENAL_RULES, input);
+}
+
+/**
+ * Same matching as curated rules, over auto-extracted label candidates
+ * (src/data/renalRules/candidates.js). Candidates are unreviewed snapshots of
+ * the deterministic label pipeline until a clinician verifies them.
+ */
+export function findCandidateRenalDoseGuidance(input) {
+  return findGuidanceInRecords(CANDIDATE_RENAL_RULES, input);
+}
+
+export function listCandidateRecords() {
+  return CANDIDATE_RENAL_RULES;
+}
+
+function findGuidanceInRecords(records, input) {
+  const record = findCuratedRecord(records, input.drugQuery, input.normalizedDrug, input.route);
+  if (!record || getRecordVerification(record).status === "retired") {
     return null;
   }
 
+  return {
+    ...buildRecordGuidance(record, input),
+    recordId: curatedRecordId(record),
+    verification: getRecordVerification(record),
+  };
+}
+
+/** Stable id used to attach clinician verifications to a record. */
+export function curatedRecordId(record) {
+  return `${literalDrugKey(record.searchTerm || record.drugName).replaceAll(" ", "-")}:${[...record.routes].sort().join("+")}`;
+}
+
+/**
+ * Clinician sign-off lives in data/renalRules/verifications.js, separate from
+ * the extracted records, so draft extraction can never mark itself verified.
+ */
+export function getRecordVerification(record) {
+  const verification = RULE_VERIFICATIONS[curatedRecordId(record)];
+  if (verification?.status === "verified" || verification?.status === "retired") {
+    return { ...verification };
+  }
+  if (record.confidence === "starter-verified") {
+    return { status: "verified", verifiedBy: record.reviewedBy, verifiedOn: record.reviewedOn };
+  }
+  if (record.confidence === "auto-extracted") {
+    return { status: "unreviewed", verifiedBy: "", verifiedOn: "" };
+  }
+  return { status: "draft", verifiedBy: "", verifiedOn: "" };
+}
+
+export function listCuratedRecords() {
+  return CURATED_RENAL_RULES;
+}
+
+function buildRecordGuidance(record, { crcl, egfr, route, dialysis, indication, formulation }) {
   const structuredGuidance = findStructuredGuidance({
     record,
     crcl,
@@ -735,11 +781,13 @@ export function findCuratedRenalDoseGuidance({
   }
 
   const routeRules = record.rules;
-  const selectedRule = routeRules.find((rule) => {
-    const metric = inferRuleMetric(record, rule);
-    const value = metric.value === "egfr" ? egfr : crcl;
-    return isRenalValueInRule(value, rule);
-  });
+  const selectedRule = findWithBandRounding((round) =>
+    routeRules.find((rule) => {
+      const metric = inferRuleMetric(record, rule);
+      const value = metric.value === "egfr" ? egfr : crcl;
+      return isRenalValueInRule(round(value), rule);
+    })
+  );
   const routeLabel = route === "ALL" ? record.routes.join(", ") : routeDisplayName(route);
   const badge = buildBadge(record);
   const status = selectedRule ? getMatchedStatus(record, selectedRule) : "curated_needs_review";
@@ -797,7 +845,7 @@ export function findCuratedRenalDoseGuidance({
 }
 
 export function getCuratedDrugOptions({ drugQuery, normalizedDrug, route }) {
-  const record = findCuratedRecord(drugQuery, normalizedDrug, route);
+  const record = findCuratedRecord(CURATED_RENAL_RULES, drugQuery, normalizedDrug, route);
   if (!record?.structured) {
     return null;
   }
@@ -814,7 +862,7 @@ export function getCuratedRuleCount() {
   return CURATED_RENAL_RULES.length;
 }
 
-function findCuratedRecord(drugQuery, normalizedDrug, route) {
+function findCuratedRecord(records, drugQuery, normalizedDrug, route) {
   const keys = [
     drugQuery,
     normalizedDrug?.searchTerm,
@@ -833,7 +881,7 @@ function findCuratedRecord(drugQuery, normalizedDrug, route) {
     .filter(Boolean)
     .map(literalDrugKey);
 
-  const candidates = CURATED_RENAL_RULES.map((record) => {
+  const candidates = records.map((record) => {
     const recordKeys = [record.drugName, record.searchTerm, ...record.aliases].map(normalizeDrugKey);
     const recordLiteralKeys = [record.drugName, record.searchTerm, ...record.aliases].map(literalDrugKey);
     const normalizedMatch = keys.some((key) => recordKeys.includes(key));
@@ -862,6 +910,16 @@ function buildCuratedRuleSet() {
   return [...STARTER_RENAL_RULES, ...draftRecords].map(addStructuredOverlay);
 }
 
+function buildCandidateRuleSet() {
+  const curatedKeys = new Set(
+    CURATED_RENAL_RULES.flatMap((record) => record.routes.map((route) => `${normalizeDrugKey(record.searchTerm)}|${route}`))
+  );
+  // A hand-curated record always wins over an auto-extracted one.
+  return candidateRenalDoseRules.filter(
+    (record) => !record.routes.some((route) => curatedKeys.has(`${normalizeDrugKey(record.searchTerm)}|${route}`))
+  );
+}
+
 function routeMatches(record, route) {
   if (!route || route === "ALL") {
     return true;
@@ -869,7 +927,16 @@ function routeMatches(record, route) {
   return record.routes.includes(route);
 }
 
-function isRenalValueInRule(value, rule) {
+/**
+ * Label tables usually use whole-number bands ("40-59", ">=60") while CrCl is
+ * calculated to one decimal, so 59.4 would otherwise fall between bands. Try
+ * the exact value first, then the value rounded to a whole number.
+ */
+function findWithBandRounding(select) {
+  return select((value) => value) || select((value) => (Number.isFinite(value) ? Math.round(value) : value));
+}
+
+export function isRenalValueInRule(value, rule) {
   if (!Number.isFinite(value)) {
     return false;
   }
@@ -896,10 +963,11 @@ function findStructuredGuidance({ record, crcl, egfr, route, dialysis, indicatio
   const controls = normalizeStructuredControls(record.structured, { dialysis, indication, formulation });
   const metric = RENAL_METRICS[record.structured.renalMetric] || inferRecordMetric(record);
   const renalValue = metric.value === "egfr" ? egfr : crcl;
-  const matchingRules = record.structured.rules
-    .filter((rule) => structuredRuleMatches(rule, controls, renalValue))
-    .sort((a, b) => scoreStructuredRule(b, controls) - scoreStructuredRule(a, controls));
-  const selectedRule = matchingRules[0];
+  const selectedRule = findWithBandRounding((round) =>
+    record.structured.rules
+      .filter((rule) => structuredRuleMatches(rule, controls, round(renalValue)))
+      .sort((a, b) => scoreStructuredRule(b, controls) - scoreStructuredRule(a, controls))[0]
+  );
   const routeLabel = route === "ALL" ? record.routes.join(", ") : routeDisplayName(route);
   const badge = buildBadge(record);
   const rows = record.structured.rules
@@ -1189,6 +1257,9 @@ const RENAL_METRICS = {
 };
 
 function inferRuleMetric(record, rule) {
+  if (RENAL_METRICS[record.renalMetric]) {
+    return RENAL_METRICS[record.renalMetric];
+  }
   const ruleText = [
     rule.variants?.map((variant) => variant.condition).join(" "),
     rule.variants?.map((variant) => `${variant.dose} ${variant.interval}`).join(" "),
@@ -1198,6 +1269,9 @@ function inferRuleMetric(record, rule) {
 }
 
 function inferRecordMetric(record) {
+  if (RENAL_METRICS[record.renalMetric]) {
+    return RENAL_METRICS[record.renalMetric];
+  }
   const recordText = [
     record.indicationNote,
     record.sourceLabel,
@@ -1225,6 +1299,9 @@ function inferMetricFromText(text) {
 function buildBadge(record) {
   if (record.confidence === "starter-verified") {
     return "Starter verified";
+  }
+  if (record.confidence === "auto-extracted") {
+    return "Auto-extracted from label";
   }
   return `Curated draft ${CURATED_RENAL_RULES.length} drugs`;
 }

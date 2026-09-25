@@ -3,199 +3,128 @@
 Adult kidney-function calculator and renal-dose guidance app built by
 **Dr. Tufayl (Cortex Labs)**.
 
-[Live app](https://renal-dose-calculator.pages.dev) ·
-[Deployment notes](docs/DEPLOYMENT.md) ·
-[Data strategy](docs/DATA_STRATEGY.md) ·
+[Live app](https://renal-dose-calculator-3fl.pages.dev) ·
+[Dose database & review](docs/RENAL_DOSE_CURATION.md) ·
+[Deployment](docs/DEPLOYMENT.md) ·
 [Security](SECURITY.md)
 
-![Renal Dose Calculator interface preview](docs/design/ui-mockup-v2.png)
+![Renal Dose Calculator with three drugs checked](docs/design/app-light.png)
 
-## What It Does
+<details><summary>Dark theme</summary>
 
-Renal Dose Calculator is a browser-first clinical utility for quick adult renal
-assessment:
+![Dark theme](docs/design/app-dark.png)
 
-- Calculates CKD-EPI 2021 creatinine eGFR.
-- Calculates Cockcroft-Gault creatinine clearance for drug dosing decisions.
-- Accepts quick free-text input such as `72 M 78 kg 1.4 meropenem`.
-- Normalizes common drug names using local aliases and RxNorm/RxNav fallback.
-- Looks up human drug labels from DailyMed/openFDA.
-- Produces a concise renal-dose guidance card when label data can be parsed or
-  summarized safely.
-- Keeps a DailyMed source link visible so the original label can be reviewed.
-- Installs as a lightweight PWA with an offline app shell for kidney-function
-  calculations.
-- Includes Telegram Mini App support and a WhatsApp text webhook.
+</details>
 
-## Clinical Scope
+## What it does
 
-This project is intentionally narrow in the first production track:
+- CKD-EPI 2021 creatinine eGFR with KDIGO G category, updated as you type.
+- Cockcroft-Gault creatinine clearance for drug dosing, plus BMI, ideal and
+  adjusted body weight and BSA when height is given.
+- Checks **several drugs at once**, each with its own route (oral, IV,
+  subcutaneous), and shows one card per drug with the renal band, dose,
+  cautions, the full dose table and the DailyMed source.
+- Quick entry in one line, e.g. `72 M 78 kg SCr 1.4 meropenem IV, doxy oral`
+  (creatinine in mg/dL or µmol/L, e.g. `SCr 124`).
+- Creatinine unit toggle (mg/dL ⇄ µmol/L) and choice of actual, ideal or
+  adjusted body weight for Cockcroft-Gault.
+- Dialysis status (hemodialysis, peritoneal, CRRT) and an "unstable
+  creatinine / AKI" flag that change and annotate the guidance.
+- Share link (the check is stored in the URL fragment, never sent to the
+  server) and print / save as PDF.
+- Clinician review page (`/review.html`) to verify or retire records.
+- Every answer carries a source badge so you know how much to trust it:
+  **Clinician-verified**, **Curated · draft**, **Auto-extracted**,
+  **Label logic/table**, **AI summary** or **Review source**.
+- Light and dark themes, print-friendly result sheet, copy summary, recent
+  checks, installable PWA that works offline for kidney calculations.
+- Telegram Mini App launcher.
 
-- Adults only, age 18 years and above.
-- Serum creatinine unit: mg/dL.
-- Weight is required for Cockcroft-Gault CrCl.
-- Height is optional and used for BMI, ideal body weight, and adjusted body
-  weight estimates.
-- Route options: IV or oral.
-- Drug source target: human DailyMed/openFDA labels.
+## Clinical scope
+
+Adults (≥18 years), serum creatinine in mg/dL or µmol/L, weight required for
+Cockcroft-Gault (actual by default; ideal or adjusted weight selectable when
+height is given). On intermittent dialysis the app uses the label's dialysis
+rule where one exists, otherwise the lowest renal band, and asks for review;
+on CRRT it always asks for review.
 
 **Educational purpose only. Results are estimates and are not for prescribing.**
-The app is not a replacement for clinician judgment, pharmacist review, local
-protocols, allergy checks, interaction checks, indication-specific dosing, or
-the official prescribing information.
+The app does not replace clinician judgment, pharmacist review, local
+protocols, allergy or interaction checks, or the official prescribing
+information.
 
-## Current Product Status
-
-The app is a beta clinical decision-support prototype.
-
-The live renal-dose pathway uses:
-
-1. Deterministic kidney-function calculations.
-2. Drug-name normalization.
-3. DailyMed/openFDA label lookup.
-4. Special deterministic handlers for selected high-risk/common drugs.
-5. Label-table parsing where possible.
-6. AI-assisted source summarization only when Cloudflare Workers AI is
-   configured and within the free-mode guard.
-7. Source-review fallback when the app cannot produce a clean label-backed
-   answer.
-
-The older curated renal-dose database remains in the repository for future
-review, but it is not the active primary dose pathway.
-
-## Tech Stack
-
-- Frontend: plain HTML, CSS, and modern JavaScript.
-- App shell: installable PWA with Web App Manifest and Service Worker caching.
-- Functions: Cloudflare Pages Functions.
-- Hosting: Cloudflare Pages.
-- AI experiment: Cloudflare Workers AI with strict source-grounded output.
-- Drug labels: DailyMed/openFDA.
-- Drug normalization fallback: RxNorm/RxNav.
-- Tests: Node.js built-in test runner.
-- CI: GitHub Actions.
-
-## Repository Layout
+## How dose guidance is found
 
 ```text
-functions/api/renal-dose/assist.js   DailyMed/openFDA + dose guidance API
-functions/api/telegram/webhook.js    Telegram Mini App launcher webhook
-functions/api/whatsapp/webhook.js    WhatsApp Cloud API text webhook
-src/                                Frontend and shared calculation modules
-src/data/renalRules/                Parked curated renal-rule draft database
-test/                               Unit and integration tests
-docs/                               Clinical, deployment, and setup notes
-wrangler.toml                       Cloudflare Pages/Functions config
+drug + route + CrCl/eGFR
+  1. curated renal rule database (205 drugs; draft or clinician-verified)
+  2. auto-extracted label candidates (unreviewed snapshots of step 3)
+  3. live DailyMed/openFDA label: drug-specific logic, renal table parser
+  4. Workers AI summary of the label text (validated against the source)
+  5. "Review source" with the DailyMed link
 ```
 
-## Local Development
+Steps 1–2 need no network call. See
+[docs/RENAL_DOSE_CURATION.md](docs/RENAL_DOSE_CURATION.md) for the review
+workflow (spreadsheet export/import) and how to grow the database.
 
-Install dependencies:
+## Tech stack
+
+- Frontend: HTML, CSS and JavaScript modules, built with Vite; service worker
+  generated by vite-plugin-pwa.
+- API: Cloudflare Pages Functions (`functions/`), logic in `server/renalDose/`.
+- Data: DailyMed/openFDA labels, RxNorm/RxNav name normalisation.
+- Optional AI: Cloudflare Workers AI behind a free-mode request guard.
+- Tests: Node test runner (unit + recorded API replay) and Playwright (desktop
+  and mobile). CI: GitHub Actions.
+
+## Repository layout
+
+```text
+index.html, src/app.js          App shell and bootstrap
+review.html, src/review.js      Clinician rule review page
+src/ui/                         UI modules (form, drug chips, dose cards, theme…)
+src/doseView.js                 View model for dose results
+src/renal.js                    eGFR / CrCl / body-size equations
+src/curatedDoseRules.js         Rule matching engine
+src/data/renalRules/            Curated records, candidates, verifications
+server/renalDose/               Dose pipeline, openFDA lookup, label logic, AI
+functions/api/                  Cloudflare Pages Functions (dose API, Telegram)
+scripts/                        Rule review, candidate extraction, QA scripts
+test/, e2e/                     Unit and end-to-end tests
+public/                         Static assets, manifest, _headers
+```
+
+## Development
 
 ```bash
 npm install
+npm run dev        # UI on http://localhost:5173
+npm run cf:dev     # built app + API on http://localhost:8788 (no login needed)
+npm run check      # lint, unit tests, build
+npm run test:e2e   # Playwright (run `npx playwright install chromium` once)
 ```
 
-Run the static frontend:
+Useful data scripts:
 
 ```bash
-npm run dev
+npm run rules:export                          # CSV for clinician review
+npm run rules:import -- docs/curation/rule-review.csv
+npm run candidates:extract -- --limit=200     # grow the database from labels
+npm run fixtures:record                       # refresh API replay fixtures
 ```
-
-Open:
-
-```text
-http://localhost:5173
-```
-
-Run with Cloudflare Pages Functions locally:
-
-```bash
-npm run cf:dev
-```
-
-Use the Cloudflare runtime when testing the renal-dose API, Telegram webhook,
-WhatsApp webhook, cache behavior, KV bindings, or Workers AI binding.
-
-## Tests
-
-```bash
-npm test
-```
-
-The test suite covers renal calculations, quick input parsing, drug
-normalization, DailyMed/openFDA route matching, label parsing, AI-output
-validation, Telegram webhook behavior, and WhatsApp webhook behavior.
-
-## Environment And Secrets
-
-Use `.env.example` as a template only. Real secrets must be stored in
-Cloudflare Pages, not committed to Git.
-
-Required or optional production secrets:
-
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_WEBHOOK_SECRET`
-- `WHATSAPP_VERIFY_TOKEN`
-- `WHATSAPP_PHONE_NUMBER_ID`
-- `WHATSAPP_ACCESS_TOKEN`
-- `WHATSAPP_APP_SECRET`
-
-Configured public runtime variables live in `wrangler.toml`.
 
 ## Deployment
 
-Current target:
+Cloudflare Pages project `renal-dose-calculator`, build command
+`npm run build`, output `dist`. GitHub Actions runs lint, tests, build and
+Playwright, then deploys `dist/` when `CLOUDFLARE_DEPLOY_ENABLED=true`. See
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-- GitHub repository: `tufayl-ahmed/renal-dose-calculator`
-- Production branch: `main`
-- Cloudflare Pages project: `renal-dose-calculator`
-- Build command: none
-- Build output directory: `.`
-
-Manual deploy during development:
-
-```bash
-npm run deploy
-```
-
-The intended production workflow is GitHub-to-Cloudflare auto-deploy through
-GitHub Actions: push to `main`, tests run, and Wrangler deploys the existing
-Cloudflare Pages project when deployment is enabled.
-
-## Free-First Architecture
-
-The project is designed to stay free-first while it is being validated:
-
-- Cloudflare Pages free hosting during development.
-- Free `*.pages.dev` domain until a custom domain is chosen.
-- DailyMed, openFDA, and RxNorm/RxNav as open public data sources.
-- Cloudflare Workers AI only behind an app-level free-mode guard.
-- Caching to reduce repeated label and AI calls.
-
-`FREE_AI_DAILY_REQUEST_LIMIT` is an app-level request guard. It is not the same
-thing as Cloudflare's Workers AI neuron accounting.
-
-## Roadmap
-
-- Connect Cloudflare Pages to GitHub auto-deploy.
-- Add a reviewed structured renal-dose database for common drugs.
-- Expand clinical validation tables.
-- Improve route, formulation, dialysis, and indication handling.
-- Add stronger monitoring for API failures and source-review fallbacks.
-- Decide on a custom domain and public release posture.
-
-## Security
-
-This repository should never contain real API tokens, webhook secrets, private
-keys, `.env` files, or provider credentials. See [SECURITY.md](SECURITY.md).
-
-Secret scans have been run locally with `gitleaks` before deployment setup.
+Secrets (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`) live in Cloudflare
+Pages, never in Git.
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
-
-The MIT license covers the software code. The clinical disclaimer still applies:
-this app is educational only, results are estimates, and outputs are not for
-prescribing.
+MIT License. See [LICENSE](LICENSE). The clinical disclaimer still applies:
+educational only, results are estimates, not for prescribing.

@@ -1,0 +1,736 @@
+﻿id,drug,routes,label_rules,structured_rules,notes_from_extraction,dailymed_url,current_status,current_reviewer,decision,reviewer,review_date,notes
+piperacillin-and-tazobactam:IV,Piperacillin and tazobactam,IV,"> 40: All indications except nosocomial pneumonia: 3.375 g every 6 hours | Nosocomial pneumonia: 4.5 g every 6 hours
+20-40: Not receiving hemodialysis; all indications except nosocomial pneumonia: 2.25 g every 6 hours | Not receiving hemodialysis; nosocomial pneumonia: 3.375 g every 6 hours
+< 20: Not receiving hemodialysis; all indications except nosocomial pneumonia: 2.25 g every 8 hours | Not receiving hemodialysis; nosocomial pneumonia: 2.25 g every 6 hours | Hemodialysis; all indications except nosocomial pneumonia: 2.25 g plus 0.75 g after each hemodialysis session every 12 hours plus post-HD supplement | Hemodialysis; nosocomial pneumonia: 2.25 g plus 0.75 g after each hemodialysis session every 8 hours plus post-HD supplement | CAPD; all indications except nosocomial pneumonia: 2.25 g every 12 hours | CAPD; nosocomial pneumonia: 2.25 g every 8 hours","> 40 [dialysis=none, indication=other]: 3.375 g every 6 hours
+> 40 [dialysis=none, indication=nosocomial-pneumonia]: 4.5 g every 6 hours
+20-40 [dialysis=none, indication=other]: 2.25 g every 6 hours
+20-40 [dialysis=none, indication=nosocomial-pneumonia]: 3.375 g every 6 hours
+< 20 [dialysis=none, indication=other]: 2.25 g every 8 hours
+< 20 [dialysis=none, indication=nosocomial-pneumonia]: 2.25 g every 6 hours
+All values [dialysis=hd, indication=other]: 2.25 g plus 0.75 g after each HD session every 12 hours plus post-HD supplement
+All values [dialysis=hd, indication=nosocomial-pneumonia]: 2.25 g plus 0.75 g after each HD session every 8 hours plus post-HD supplement
+All values [dialysis=capd, indication=other]: 2.25 g every 12 hours
+All values [dialysis=capd, indication=nosocomial-pneumonia]: 2.25 g every 8 hours",Adult IV infusion over 30 minutes; indication-specific columns retained from label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9b682c66-61c6-4ade-baf4-9d68911a16b8,verified,Dr. Tufayl (Cortex Labs),,,,
+meropenem:IV,Meropenem,IV,"> 50: Adult renal table: Recommended dose every 8 hours
+26-50: Adult renal table: Recommended dose every 12 hours
+10-25: Adult renal table: One-half recommended dose every 12 hours
+< 10: Adult renal table: One-half recommended dose every 24 hours",,Adult IV dosing adjustment; actual dose depends on infection type.,https://dailymed.nlm.nih.gov/dailymed/search.cfm?query=meropenem,verified,Dr. Tufayl (Cortex Labs),,,,
+amoxicillin:ORAL,Amoxicillin,ORAL,"> 30: GFR >30 mL/min: No renal dose adjustment; avoid only if other label limits apply usual adult schedule by indication
+10-30: GFR 10-30 mL/min: 250 mg or 500 mg, depending on infection severity every 12 hours
+< 10: GFR <10 mL/min, not on hemodialysis: 250 mg or 500 mg, depending on infection severity every 24 hours | Hemodialysis: 250 mg or 500 mg, depending on infection severity; give an additional dose during and at the end of dialysis every 24 hours plus dialysis supplements",,Adult oral dosing; severe renal impairment table uses infection severity to choose 250 mg or 500 mg.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f9062321-ffb3-42e8-8f98-453cd30f5282,draft,,,,,
+amoxicillin-clavulanate:ORAL,Amoxicillin and clavulanate potassium,ORAL,"> 30: GFR >30 mL/min: No renal dose adjustment usual adult schedule by indication
+10-30: GFR 10-30 mL/min: 250/125 mg or 500/125 mg, depending on infection severity every 12 hours
+< 10: GFR <10 mL/min, not on hemodialysis: 250/125 mg or 500/125 mg, depending on infection severity every 24 hours | Hemodialysis: 250/125 mg or 500/125 mg, depending on infection severity; give an additional dose during and at the end of dialysis every 24 hours plus dialysis supplements","> 30 [dialysis=none]: No renal dose adjustment usual adult schedule by indication
+10-30 [dialysis=none]: 250/125 mg or 500/125 mg every 12 hours
+< 10 [dialysis=none]: 250/125 mg or 500/125 mg every 24 hours
+All values [dialysis=hd]: 250/125 mg or 500/125 mg plus extra doses during and after HD every 24 hours plus dialysis supplements",Immediate-release adult oral dosing; do not use 875 mg tablet when GFR is below 30 mL/min.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=d25c8190-3690-4ce6-a525-21850754224d,draft,,,,,
+ampicillin-sulbactam:IM+IV,Ampicillin and sulbactam,"IV, IM",">= 30: CrCl >=30 mL/min/1.73 m2: 1.5-3 g every 6 to 8 hours
+15-29: CrCl 15-29 mL/min/1.73 m2: 1.5-3 g every 12 hours
+5-14: CrCl 5-14 mL/min/1.73 m2: 1.5-3 g every 24 hours",,Adult parenteral dosing; table lists total ampicillin/sulbactam grams.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=155c7ec0-5862-404f-b1d0-f278f8a8bbda,draft,,,,,
+cefazolin:IM+IV,Cefazolin,"IV, IM",">= 55: CrCl >=55 mL/min: Full usual dose usual adult schedule by indication
+35-54: CrCl 35-54 mL/min: Full usual dose at least every 8 hours
+11-34: CrCl 11-34 mL/min: One-half usual dose every 12 hours
+0-10: CrCl <=10 mL/min: One-half usual dose every 18 to 24 hours",,Adult parenteral dosing after an initial loading dose appropriate to infection severity.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=db977f52-2296-4003-9162-c155163d714a,draft,,,,,
+cephalexin:ORAL,Cephalexin,ORAL,">= 60: CrCl >=60 mL/min: No renal dose adjustment usual adult schedule by indication
+30-59: CrCl 30-59 mL/min: No renal dose adjustment; maximum 1 g/day usual adult schedule within daily maximum
+15-29: CrCl 15-29 mL/min: 250 mg every 8 to 12 hours
+5-14: CrCl 5-14 mL/min, not yet on dialysis: 250 mg every 24 hours
+1-4: CrCl 1-4 mL/min, not yet on dialysis: 250 mg every 48 to 60 hours",,Adult and pediatric patients at least 15 years old; hemodialysis dosing not established in the cited label.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=3fed2817-fc0d-43cd-9f02-948fbc76672c,draft,,,,,
+cefuroxime-axetil:ORAL,Cefuroxime axetil,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment usual adult schedule by indication
+10-29: CrCl 10 to <30 mL/min: Standard individual dose every 24 hours
+< 10: CrCl <10 mL/min without hemodialysis: Standard individual dose every 48 hours",">= 30 [dialysis=none]: No renal dose adjustment usual adult schedule by indication
+10-29 [dialysis=none]: Standard individual dose every 24 hours
+< 10 [dialysis=none]: Standard individual dose every 48 hours
+All values [dialysis=hd]: Standard individual dose plus post-HD dose give after HD","Adult oral tablet dosing; use the standard individual dose for the infection, then extend interval when CrCl is below 30.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=76cec54f-d167-4298-951b-5411a3c47f4a,draft,,,,,
+cefuroxime-injection:IM+IV,Cefuroxime,"IV, IM","> 20: CrCl >20 mL/min: 750 mg to 1.5 g every 8 hours
+10-20: CrCl 10-20 mL/min: 750 mg every 12 hours
+< 10: CrCl <10 mL/min, not on hemodialysis: 750 mg every 24 hours | Hemodialysis: 750 mg further dose at the end of dialysis in addition to reduced schedule","> 20 [dialysis=none]: 750 mg to 1.5 g every 8 hours
+10-20 [dialysis=none]: 750 mg every 12 hours
+< 10 [dialysis=none]: 750 mg every 24 hours
+All values [dialysis=hd]: 750 mg further dose at the end of dialysis in addition to reduced schedule",Adult parenteral dosing; table uses degree of renal impairment and organism susceptibility.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=19902965-d2d6-433f-982d-0095014df4e8,draft,,,,,
+ceftriaxone:IM+IV,Ceftriaxone,"IV, IM",All values: Renal failure without concurrent significant hepatic dysfunction: No renal dose adjustment usual adult schedule by indication,,Usual adult dosing; combined significant renal disease plus hepatic dysfunction has a label maximum of 2 g/day.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7bed9b33-29e3-4f04-9766-43a21c7ad47a,draft,,,,,
+cefepime:IM+IV,Cefepime,"IV, IM","> 60: Usual 500 mg q12h regimen: 500 mg every 12 hours | Usual 1 g q12h regimen: 1 g every 12 hours | Usual 2 g q12h regimen: 2 g every 12 hours | Usual 2 g q8h regimen: 2 g every 8 hours
+30-60: Usual 500 mg q12h regimen, not on CAPD or hemodialysis: 500 mg every 24 hours | Usual 1 g q12h regimen, not on CAPD or hemodialysis: 1 g every 24 hours | Usual 2 g q12h regimen, not on CAPD or hemodialysis: 2 g every 24 hours | Usual 2 g q8h regimen, not on CAPD or hemodialysis: 2 g every 12 hours
+11-29: Usual 500 mg q12h regimen, not on CAPD or hemodialysis: 500 mg every 24 hours | Usual 1 g q12h regimen, not on CAPD or hemodialysis: 500 mg every 24 hours | Usual 2 g q12h regimen, not on CAPD or hemodialysis: 1 g every 24 hours | Usual 2 g q8h regimen, not on CAPD or hemodialysis: 2 g every 24 hours
+< 11: Usual 500 mg q12h regimen, not on CAPD or hemodialysis: 250 mg every 24 hours | Usual 1 g q12h regimen, not on CAPD or hemodialysis: 250 mg every 24 hours | Usual 2 g q12h regimen, not on CAPD or hemodialysis: 500 mg every 24 hours | Usual 2 g q8h regimen, not on CAPD or hemodialysis: 1 g every 24 hours | CAPD; usual 500 mg q12h regimen: 500 mg every 48 hours | CAPD; usual 1 g q12h regimen: 1 g every 48 hours | CAPD; usual 2 g q12h or q8h regimen: 2 g every 48 hours | Hemodialysis, all infections except febrile neutropenia: 1 g on day 1, then 500 mg every 24 hours after hemodialysis on dialysis days | Hemodialysis, febrile neutropenia: 1 g every 24 hours after hemodialysis on dialysis days",">= 60 [dialysis=none, indication=usual-500-q12]: 500 mg every 12 hours
+>= 60 [dialysis=none, indication=usual-1g-q12]: 1 g every 12 hours
+>= 60 [dialysis=none, indication=usual-2g-q12]: 2 g every 12 hours
+>= 60 [dialysis=none, indication=usual-2g-q8]: 2 g every 8 hours
+30-59 [dialysis=none, indication=usual-500-q12]: 500 mg every 24 hours
+30-59 [dialysis=none, indication=usual-1g-q12]: 1 g every 24 hours
+30-59 [dialysis=none, indication=usual-2g-q12]: 2 g every 24 hours
+30-59 [dialysis=none, indication=usual-2g-q8]: 2 g every 12 hours
+11-29 [dialysis=none, indication=usual-500-q12]: 500 mg every 24 hours
+11-29 [dialysis=none, indication=usual-1g-q12]: 500 mg every 24 hours
+11-29 [dialysis=none, indication=usual-2g-q12]: 1 g every 24 hours
+11-29 [dialysis=none, indication=usual-2g-q8]: 2 g every 24 hours
+< 11 [dialysis=none, indication=usual-500-q12]: 250 mg every 24 hours
+< 11 [dialysis=none, indication=usual-1g-q12]: 250 mg every 24 hours
+< 11 [dialysis=none, indication=usual-2g-q12]: 500 mg every 24 hours
+< 11 [dialysis=none, indication=usual-2g-q8]: 1 g every 24 hours
+All values [dialysis=capd, indication=usual-500-q12]: 500 mg every 48 hours
+All values [dialysis=capd, indication=usual-1g-q12]: 1 g every 48 hours
+All values [dialysis=capd, indication=usual-2g-q12]: 2 g every 48 hours
+All values [dialysis=capd, indication=usual-2g-q8]: 2 g every 48 hours
+All values [dialysis=hd, indication=usual-2g-q8]: 1 g every 24 hours after HD on dialysis days
+All values [dialysis=hd]: 1 g on day 1, then 500 mg every 24 hours after HD on dialysis days",Adult maintenance dosing; initial dose is the same as normal renal function except in hemodialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=dd641c7f-b857-48ff-bd9d-747e0c3cc89f,draft,,,,,
+ceftazidime:IM+IV,Ceftazidime,"IV, IM","> 50: CrCl >50 mL/min: No renal dose adjustment usual adult schedule by indication
+31-50: CrCl 31-50 mL/min: 1 g every 12 hours
+16-30: CrCl 16-30 mL/min: 1 g every 24 hours
+6-15: CrCl 6-15 mL/min: 500 mg every 24 hours
+0-5: CrCl <5 mL/min, not on dialysis: 500 mg every 48 hours | Hemodialysis: 1 g loading dose, then 1 g after each hemodialysis period | Intraperitoneal dialysis or CAPD: 1 g loading dose, then 500 mg every 24 hours","> 50 [dialysis=none]: No renal dose adjustment usual adult schedule by indication
+31-50 [dialysis=none]: 1 g every 12 hours
+16-30 [dialysis=none]: 1 g every 24 hours
+6-15 [dialysis=none]: 500 mg every 24 hours
+0-5 [dialysis=none]: 500 mg every 48 hours
+All values [dialysis=hd]: 1 g loading dose, then 1 g after each HD period
+All values [dialysis=capd]: 1 g loading dose, then 500 mg every 24 hours",Adult maintenance dosing after a 1 g loading dose when renal insufficiency is suspected.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8b55504e-38c5-fa0c-7766-ee68d38c041b,draft,,,,,
+ceftaroline:IV,Ceftaroline fosamil,IV,"> 50: CrCl >50 mL/min: No renal dose adjustment usual adult schedule by indication
+31-50: CrCl >30 to <=50 mL/min: 400 mg IV every 12 hours
+15-30: CrCl >=15 to <=30 mL/min: 300 mg IV every 12 hours
+< 15: End-stage renal disease, including hemodialysis: 200 mg IV every 12 hours",,Adult IV dosing over 5 to 60 minutes; administer after hemodialysis on hemodialysis days.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=3cee3c08-ed60-06c5-ac49-103b7ad2ef5f,draft,,,,,
+cefdinir:ORAL,Cefdinir,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment usual adult schedule by indication
+< 30: CrCl <30 mL/min, not on hemodialysis: 300 mg once daily | Chronic hemodialysis: 300 mg initially; give 300 mg at the conclusion of each hemodialysis session every other day after dialysis",,Adult oral dosing; renal adjustment threshold is CrCl below 30 mL/min.,https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=236cea6b-c72e-43fa-bbcb-187a061e3a33,draft,,,,,
+cefpodoxime:ORAL,Cefpodoxime proxetil,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment usual adult schedule by indication
+< 30: CrCl <30 mL/min, not on hemodialysis: Usual individual dose every 24 hours | Hemodialysis: Usual individual dose 3 times/week after hemodialysis",">= 30 [dialysis=none]: No renal dose adjustment usual adult schedule by indication
+< 30 [dialysis=none]: Usual individual dose every 24 hours
+All values [dialysis=hd]: Usual individual dose 3 times/week after HD",Adult oral dosing; extend interval for severe renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8519a9d8-7106-4545-bc58-859ee9a6708e,draft,,,,,
+cefixime:ORAL,Cefixime,ORAL,">= 60: CrCl >=60 mL/min: No renal dose adjustment usual adult schedule by indication
+21-59: CrCl 21-59 mL/min or renal hemodialysis; suspension table: 13 mL of 100 mg/5 mL or 6.5 mL of 200 mg/5 mL per day once daily
+0-20: CrCl <=20 mL/min or continuous peritoneal dialysis; suspension table: 8.6 mL of 100 mg/5 mL or 4.4 mL of 200 mg/5 mL per day once daily",,Adult oral suspension/tablet dosing; 400 mg tablet is not appropriate for the 21-59 mL/min band in the cited tablet label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3194433c-c04e-442b-9668-fbeb0a15bac7,draft,,,,,
+cefprozil:ORAL,Cefprozil,ORAL,"30-120: CrCl 30-120 mL/min: Standard dose standard interval
+0-29: CrCl 0-29 mL/min: 50% of standard dose standard interval",,Adult oral dosing; administer after hemodialysis when applicable.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=6133611e-19c1-4df2-8c23-8573aaf63020,draft,,,,,
+cefotetan:IM+IV,Cefotetan,"IV, IM","> 30: CrCl >30 mL/min: Usual recommended dose every 12 hours
+10-30: CrCl 10-30 mL/min, interval-extension option: Usual recommended dose every 24 hours | CrCl 10-30 mL/min, dose-reduction option: One-half usual recommended dose every 12 hours
+< 10: CrCl <10 mL/min, not on intermittent hemodialysis, interval-extension option: Usual recommended dose every 48 hours | CrCl <10 mL/min, not on intermittent hemodialysis, dose-reduction option: One-quarter usual recommended dose every 12 hours | Intermittent hemodialysis, days between dialysis: One-quarter usual recommended dose every 24 hours | Intermittent hemodialysis, day of dialysis: One-half usual recommended dose on dialysis day",,Adult parenteral dosing; label offers either interval extension or dose reduction at a 12-hour interval.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=33b13b93-58ce-44c7-b9a2-af3b3a333f80,draft,,,,,
+ceftolozane-tazobactam:IV,Ceftolozane and tazobactam,IV,"> 50: cIAI or cUTI: 1.5 g IV every 8 hours | HABP/VABP: 3 g IV every 8 hours
+30-50: cIAI or cUTI: 750 mg IV every 8 hours | HABP/VABP: 1.5 g IV every 8 hours
+15-29: cIAI or cUTI: 375 mg IV every 8 hours | HABP/VABP: 750 mg IV every 8 hours
+< 15: ESRD on hemodialysis, cIAI or cUTI: 750 mg IV loading dose, then 150 mg IV maintenance every 8 hours; on hemodialysis days give after dialysis | ESRD on hemodialysis, HABP/VABP: 2.25 g IV loading dose, then 450 mg IV maintenance every 8 hours; on hemodialysis days give after dialysis | CrCl <15 mL/min not on hemodialysis: No clean DailyMed adult dose row in this label manual clinical review required",,Adult IV dosing over 1 hour; indication-specific doses are retained for cIAI/cUTI vs HABP/VABP.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=70ac1d90-eff3-4f0b-9f46-5846c571b32f,draft,,,,,
+ceftazidime-avibactam:IV,Ceftazidime and avibactam,IV,"> 50: CrCl >50 mL/min: 2.5 g IV every 8 hours
+31-50: CrCl 31-50 mL/min: 1.25 g IV every 8 hours
+16-30: CrCl 16-30 mL/min: 0.94 g IV every 12 hours
+6-15: CrCl 6-15 mL/min: 0.94 g IV every 24 hours
+0-5: CrCl <=5 mL/min; administer after hemodialysis on hemodialysis days: 0.94 g IV every 48 hours",,Adult IV dosing over 2 hours; use with metronidazole for cIAI per label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d9c2803f-dc9c-4b19-b4a3-8303bc8c15fd,draft,,,,,
+cefiderocol:IV,Cefiderocol,IV,">= 120: CLcr >=120 mL/min: 2 g IV every 6 hours
+60-119: CLcr 60-119 mL/min: 2 g IV every 8 hours
+30-59: CLcr 30-59 mL/min: 1.5 g IV every 8 hours
+15-29: CLcr 15-29 mL/min: 1 g IV every 8 hours
+< 15: CLcr <15 mL/min, with or without intermittent hemodialysis: 0.75 g IV every 12 hours",,Adult IV dosing over 3 hours; includes augmented renal clearance band.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=75c0c785-38e0-4049-a6fb-b77581f5b35c,draft,,,,,
+aztreonam:IM+IV,Aztreonam,"IV, IM","> 30: CrCl >30 mL/min/1.73 m2: No renal dose adjustment usual adult schedule by indication
+10-30: CrCl 10-30 mL/min/1.73 m2 after 1 g or 2 g loading dose: One-half usual dose usual fixed interval
+< 10: CrCl <10 mL/min/1.73 m2 after usual initial dose: One-quarter usual dose usual fixed interval",,Adult parenteral dosing; give initial 1 g or 2 g loading dose before maintenance reduction.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9a105eaf-ee77-4016-beeb-d425a5565db2,draft,,,,,
+imipenem-cilastatin:IV,Imipenem and cilastatin,IV,">= 90: Susceptible species regimen option 1: 500 mg every 6 hours | Susceptible species regimen option 2: 1000 mg every 8 hours | Intermediate susceptibility species: 1000 mg every 6 hours
+60-89: Susceptible species, corresponding to 500 mg q6h normal regimen: 400 mg every 6 hours | Susceptible species, corresponding to 1000 mg q8h normal regimen: 500 mg every 6 hours | Intermediate susceptibility species: 750 mg every 8 hours
+30-59: Susceptible species, corresponding to 500 mg q6h normal regimen: 300 mg every 6 hours | Susceptible species, corresponding to 1000 mg q8h normal regimen: 500 mg every 8 hours | Intermediate susceptibility species: 500 mg every 6 hours
+15-29: Susceptible species, corresponding to 500 mg q6h normal regimen: 200 mg every 6 hours | Susceptible species, corresponding to 1000 mg q8h normal regimen: 500 mg every 12 hours | Intermediate susceptibility species: 500 mg every 12 hours
+< 15: CrCl <15 mL/min: Do not use unless hemodialysis is instituted within 48 hours use hemodialysis timing from label if applicable",,Adult IV dosing; table is based on suspected or proven pathogen susceptibility and CrCl.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f41d8abd-7792-4918-1b93-bd83ea01955e,draft,,,,,
+ertapenem:IM+IV,Ertapenem,"IV, IM","> 30: CrCl >30 mL/min/1.73 m2: No renal dose adjustment usual adult schedule by indication
+0-30: CrCl <=30 mL/min/1.73 m2 or ESRD: 500 mg once daily",,Adult dosing; hemodialysis supplement depends on timing relative to dialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a400707f-763f-43f6-989e-0d2569d822d8,draft,,,,,
+ciprofloxacin:ORAL,Ciprofloxacin,ORAL,"> 50: Adult oral label table: See usual dosage by indication
+30-50: Adult oral label table: 250 to 500 mg every 12 hours
+5-29: CrCl 5-29 mL/min, not on hemodialysis or peritoneal dialysis: 250 to 500 mg every 18 hours | Hemodialysis or peritoneal dialysis: 250 to 500 mg every 24 hours after dialysis","> 50 [dialysis=none]: See usual dose by indication
+30-50 [dialysis=none]: 250-500 mg every 12 hours
+5-29 [dialysis=none]: 250-500 mg every 18 hours
+All values [dialysis=hd]: 250-500 mg every 24 hours after dialysis
+All values [dialysis=capd]: 250-500 mg every 24 hours after dialysis",Adult oral renal table; usual dose depends on infection. Dialysis has a separate label row and should not use the CrCl 5-29 non-dialysis interval.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=888dc7f9-ad9c-4c00-8d50-8ddfd9bd27c0,draft,,,,,
+levofloxacin:ORAL,Levofloxacin,ORAL,">= 50: Adult label table: No dosage adjustment usual adult schedule by indication
+20-49: Normal regimen 750 mg every 24 hours: 750 mg every 48 hours | Normal regimen 500 mg every 24 hours: 500 mg once, then 250 mg every 24 hours | Normal regimen 250 mg every 24 hours: No dosage adjustment usual 250 mg schedule
+10-19: Normal regimen 750 mg every 24 hours: 750 mg once, then 500 mg every 48 hours | Normal regimen 500 mg every 24 hours: 500 mg once, then 250 mg every 48 hours | Normal regimen 250 mg every 24 hours: 250 mg every 48 hours; no adjustment for uncomplicated UTI
+0-9: Hemodialysis or CAPD; normal regimen 750 mg every 24 hours: 750 mg once, then 500 mg every 48 hours | Hemodialysis or CAPD; normal regimen 500 mg every 24 hours: 500 mg once, then 250 mg every 48 hours | Hemodialysis or CAPD; normal regimen 250 mg every 24 hours: No adjustment information available review label | CrCl <10 mL/min not on HD or CAPD: DailyMed renal table is dialysis-specific at this level; review label manual clinical review required",">= 50 [dialysis=none]: No dosage adjustment usual adult schedule by indication
+20-49 [dialysis=none, indication=usual-750-q24]: 750 mg every 48 hours
+20-49 [dialysis=none, indication=usual-500-q24]: 500 mg once, then 250 mg every 24 hours
+20-49 [dialysis=none, indication=usual-250-q24]: No dosage adjustment usual 250 mg schedule
+10-19 [dialysis=none, indication=usual-750-q24]: 750 mg once, then 500 mg every 48 hours
+10-19 [dialysis=none, indication=usual-500-q24]: 500 mg once, then 250 mg every 48 hours
+10-19 [dialysis=none, indication=usual-250-q24]: 250 mg every 48 hours; no adjustment for uncomplicated UTI
+< 10 [dialysis=none]: DailyMed table is dialysis-specific below 10 mL/min manual clinical review required
+All values [dialysis=hd, indication=usual-750-q24]: 750 mg once, then 500 mg every 48 hours
+All values [dialysis=hd, indication=usual-500-q24]: 500 mg once, then 250 mg every 48 hours
+All values [dialysis=hd, indication=usual-250-q24]: No clean adjustment row review label
+All values [dialysis=capd, indication=usual-750-q24]: 750 mg once, then 500 mg every 48 hours
+All values [dialysis=capd, indication=usual-500-q24]: 500 mg once, then 250 mg every 48 hours
+All values [dialysis=capd, indication=usual-250-q24]: No clean adjustment row review label",Adult oral renal adjustment table; choose the row matching the usual normal-renal regimen.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=af4b7333-4f77-4ec9-e053-2a95a90a16d2,draft,,,,,
+moxifloxacin:ORAL,Moxifloxacin,ORAL,"All values: Renal impairment, including HD or CAPD: No renal dose adjustment usual adult schedule by indication",,"Adult oral label states renal pharmacokinetics are not significantly altered, including HD and CAPD.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=45ce14e5-98b8-296b-e063-6294a90a769b,draft,,,,,
+azithromycin:ORAL,Azithromycin,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule by indication,,Adult oral label states no renal dosage adjustment; use caution in severe renal impairment.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7e7c2f49-449c-4ba2-98ae-0ff0c040614c,draft,,,,,
+clarithromycin-extended-release:ORAL,Clarithromycin extended-release,ORAL,"> 60: Extended-release tablet renal impairment table: No renal dose reduction usual adult ER schedule by indicated infection
+30-60: With concomitant atazanavir or ritonavir-containing regimen: Reduce clarithromycin dose by 50% usual interval unless otherwise specified
+< 30: Severe renal impairment: Reduce clarithromycin dose by 50% usual interval unless otherwise specified | Severe renal impairment with atazanavir or ritonavir-containing regimen: Reduce clarithromycin dose by 75% usual interval unless otherwise specified",,Adult extended-release tablet only; do not generalize to immediate-release tablets or granules. Renal adjustment is expressed as percent dose reduction; concomitant atazanavir or ritonavir-containing regimens have separate reductions.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1d328f5d-73c1-4df7-a3df-71d0e0221181,draft,,,,,
+clindamycin:ORAL,Clindamycin,ORAL,All values: Renal disease: No renal dose adjustment usual adult schedule by indication,,Adult oral label states dosage schedules do not need modification in renal disease.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=47f76d99-2024-4531-a527-66c80deeeb37,draft,,,,,
+linezolid:IV+ORAL,Linezolid,"ORAL, IV",All values: Renal impairment: No renal dose adjustment usual adult schedule by indication,,Label states parent-drug exposure is similar regardless of renal function; metabolite accumulation risk should still be considered.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=374af2a7-d994-40bd-a86a-cd9038d0b72c&version=15,draft,,,,,
+daptomycin:IV,Daptomycin,IV,">= 30: cSSSI: 4 mg/kg every 24 hours | S. aureus bloodstream infection: 6 mg/kg every 24 hours
+< 30: cSSSI, including HD or CAPD: 4 mg/kg every 48 hours | S. aureus bloodstream infection, including HD or CAPD: 6 mg/kg every 48 hours",,Adult IV label gives separate cSSSI and S. aureus bloodstream infection regimens.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=d87bd6b5-bf92-49c1-879b-dc2add3deae6,draft,,,,,
+nitrofurantoin:ORAL,Nitrofurantoin,ORAL,">= 60: Renal function not contraindicated by label threshold: Usual adult cystitis dose by formulation
+< 60: CrCl under 60 mL/min or clinically significant creatinine elevation: Contraindicated do not use per label",,"Label contraindicates anuria, oliguria, or significant renal impairment using a CrCl threshold.",https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0f4d7699-d5d8-4c36-aaa6-63c3c8c68b4f,draft,,,,,
+sulfamethoxazole-trimethoprim:ORAL,Sulfamethoxazole and trimethoprim,ORAL,"> 30: Renal impairment table: Usual standard regimen by indication
+15-30: Renal impairment table: One-half usual regimen by indication
+< 15: Renal impairment table: Use not recommended avoid per label",,Adult oral label uses fractions of the usual regimen; select the usual regimen by indication first.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=0b261114-77e7-ff08-e063-6394a90a4e03,draft,,,,,
+fluconazole:ORAL,Fluconazole,ORAL,"> 50: Multiple-dose therapy after loading dose: 100% of recommended dose usual adult schedule by indication
+0-50: Multiple-dose therapy, not on dialysis, after loading dose: 50% of recommended dose usual interval unless otherwise specified | Hemodialysis: 100% of recommended dose after each dialysis session",,No adjustment for single-dose vaginal candidiasis; for multiple-dose therapy give loading dose then adjust daily dose by renal table.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=4d7cf836-d115-456c-a636-6f05eae043cd,draft,,,,,
+voriconazole:ORAL,Voriconazole,ORAL,All values: Oral dosing in mild to severe renal impairment: No renal dose adjustment usual adult schedule by indication,,Oral voriconazole has no renal adjustment; IV vehicle accumulation is a separate label warning and is not modeled as a dose change.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4cbac6ad-0faa-4181-a830-27a9f1536b7a,draft,,,,,
+posaconazole:ORAL,Posaconazole,ORAL,All values: Oral dosing in mild to severe renal impairment: No renal dose adjustment usual adult schedule by indication,,Delayed-release tablet label states renal impairment does not significantly affect pharmacokinetics; monitor severe impairment for breakthrough infection.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=548124ce-8050-46a9-967b-ff23dfb18633,draft,,,,,
+isavuconazonium:IV+ORAL,Isavuconazonium sulfate,"ORAL, IV",All values: Renal impairment including ESRD: No renal dose adjustment usual adult schedule by indication,,Label states no renal dose adjustment is necessary and no adjustment is warranted in ESRD.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8f7f73b8-586a-4df0-935f-fecd4696c16c,draft,,,,,
+fosfomycin-disodium:IV,Fosfomycin disodium,IV,"> 50: Adults 18 years and older: 6 g every 8 hours
+41-50: After 6 g loading dose; if on hemodialysis, administer after HD on HD days: 4 g every 8 hours
+31-40: After 6 g loading dose; if on hemodialysis, administer after HD on HD days: 3 g every 8 hours
+21-30: After 6 g loading dose; if on hemodialysis, administer after HD on HD days: 5 g every 24 hours
+11-20: After 6 g loading dose; if on hemodialysis, administer after HD on HD days: 3 g every 24 hours
+0-10: CLcr <=10 mL/min: No clean DailyMed adult maintenance dose row in this label; hemodialysis doses should be given after HD on HD days manual clinical review required",,CONTEPO adult IV cUTI label; all doses are infused over 1 hour and lower renal bands include a 6 g loading dose.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?audience=consumer&setid=855574f2-39f8-43bc-a3d2-79dbb578cb94,draft,,,,,
+terbinafine:ORAL,Terbinafine,ORAL,"> 50: Renal function above label caution threshold: 250 mg once daily by indication duration
+0-50: CrCl 50 mL/min or less: Use not recommended avoid per label",,Older full label text states oral tablets are not recommended when CrCl is 50 mL/min or less because use has not been adequately studied.,https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?audience=consumer&setid=60452f7e-f971-428b-aa6a-9e2c15480bf3,draft,,,,,
+colistimethate-sodium:IM+IV,Colistimethate sodium,"IV, IM",">= 80: Normal renal function: 2.5 to 5 mg/kg/day colistin base activity divided in 2 to 4 doses per day
+50-79: Mild renal impairment: 2.5 to 3.8 mg/kg/day colistin base activity divided in 2 doses per day
+30-49: Moderate renal impairment: 2.5 mg/kg/day colistin base activity once daily or divided in 2 doses per day
+10-29: Severe renal impairment: 1.5 mg/kg colistin base activity every 36 hours",,Adult IV/IM table doses are expressed as colistin base activity and are based on ideal body weight in obesity.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8ec7dc90-825c-422e-9f4b-c8ace9d93af5,draft,,,,,
+acyclovir:ORAL,Acyclovir,ORAL,"> 25: Normal regimen 200 mg every 4 hours: 200 mg every 4 hours, 5 times daily | Normal regimen 400 mg every 12 hours: 400 mg every 12 hours | Normal regimen 800 mg every 4 hours: 800 mg every 4 hours, 5 times daily
+10-25: Normal regimen 200 mg every 4 hours: 200 mg every 4 hours, 5 times daily | Normal regimen 400 mg every 12 hours: 400 mg every 12 hours | Normal regimen 800 mg every 4 hours: 800 mg every 8 hours
+0-10: Normal regimen 200 mg every 4 hours: 200 mg every 12 hours | Normal regimen 400 mg every 12 hours: 200 mg every 12 hours | Normal regimen 800 mg every 4 hours: 800 mg every 12 hours","> 25 [formulation=usual-200-q4h]: 200 mg every 4 hours, 5 times daily
+> 25 [formulation=usual-400-q12h]: 400 mg every 12 hours
+> 25 [formulation=usual-800-q4h]: 800 mg every 4 hours, 5 times daily
+10-25 [formulation=usual-200-q4h]: 200 mg every 4 hours, 5 times daily
+10-25 [formulation=usual-400-q12h]: 400 mg every 12 hours
+10-25 [formulation=usual-800-q4h]: 800 mg every 8 hours
+< 10 [formulation=usual-200-q4h]: 200 mg every 12 hours
+< 10 [formulation=usual-400-q12h]: 200 mg every 12 hours
+< 10 [formulation=usual-800-q4h]: 800 mg every 12 hours",Adult oral capsule/tablet renal table; select the row matching the normal dosage regimen.,https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=69e5455e-d0be-4c2b-b9ab-458b5480ed57,draft,,,,,
+valacyclovir:ORAL,Valacyclovir,ORAL,">= 50: All adult indications; if on hemodialysis, administer after HD on HD days: No renal dose adjustment usual adult schedule by indication
+30-49: Cold sores; if on hemodialysis, administer after HD on HD days: 1 g twice in 1 day 12 hours apart | Genital herpes initial, recurrent, or suppression; if on hemodialysis, administer after HD on HD days: No reduction usual adult schedule | Herpes zoster; if on hemodialysis, administer after HD on HD days: 1 g every 12 hours
+10-29: Cold sores; if on hemodialysis, administer after HD on HD days: 500 mg twice in 1 day 12 hours apart | Genital herpes initial episode; if on hemodialysis, administer after HD on HD days: 1 g every 24 hours | Genital herpes recurrent or suppression; if on hemodialysis, administer after HD on HD days: 500 mg every 24 hours | Herpes zoster; if on hemodialysis, administer after HD on HD days: 1 g every 24 hours
+< 10: Cold sores; if on hemodialysis, administer after HD on HD days: 500 mg single dose | Genital herpes initial, recurrent, or suppression; if on hemodialysis, administer after HD on HD days: 500 mg every 24 hours | Herpes zoster; if on hemodialysis, administer after HD on HD days: 500 mg every 24 hours",">= 50 [dialysis=none, indication=cold-sores]: 2 g twice in 1 day 12 hours apart
+>= 50 [dialysis=none, indication=initial-genital-herpes]: 1 g every 12 hours
+>= 50 [dialysis=none, indication=recurrent-genital-herpes]: 500 mg every 12 hours
+>= 50 [dialysis=none, indication=genital-suppression]: 500 mg to 1 g every 24 hours
+>= 50 [dialysis=none, indication=transmission-reduction]: 500 mg every 24 hours
+>= 50 [dialysis=none, indication=zoster]: 1 g every 8 hours
+30-49 [dialysis=none, indication=cold-sores]: 1 g twice in 1 day 12 hours apart
+30-49 [dialysis=none, indication=zoster]: 1 g every 12 hours
+30-49 [dialysis=none]: No reduction usual adult schedule by indication
+10-29 [dialysis=none, indication=cold-sores]: 500 mg twice in 1 day 12 hours apart
+10-29 [dialysis=none, indication=initial-genital-herpes]: 1 g every 24 hours
+10-29 [dialysis=none, indication=recurrent-genital-herpes]: 500 mg every 24 hours
+10-29 [dialysis=none, indication=genital-suppression]: 500 mg every 24 to 48 hours by suppression regimen
+10-29 [dialysis=none, indication=transmission-reduction]: 500 mg every 48 hours
+10-29 [dialysis=none, indication=zoster]: 1 g every 24 hours
+< 10 [dialysis=none, indication=cold-sores]: 500 mg single dose
+< 10 [dialysis=none, indication=initial-genital-herpes]: 500 mg every 24 hours
+< 10 [dialysis=none, indication=recurrent-genital-herpes]: 500 mg every 24 hours
+< 10 [dialysis=none, indication=genital-suppression]: 500 mg every 24 to 48 hours by suppression regimen
+< 10 [dialysis=none, indication=transmission-reduction]: 500 mg every 48 hours
+< 10 [dialysis=none, indication=zoster]: 500 mg every 24 hours
+All values [dialysis=hd]: Use renal-adjusted dose for CrCl band; give after HD on dialysis days review selected indication",Adult oral renal table has indication-specific regimens; do not exceed label durations.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=4ab809f3-8898-463c-b55a-f452c87d0779,draft,,,,,
+famciclovir:ORAL,Famciclovir,ORAL,">= 60: Recurrent genital herpes: 1000 mg every 12 hours for 1 day | Recurrent herpes labialis: 1500 mg single dose | Herpes zoster: 500 mg every 8 hours
+40-59: Recurrent genital herpes: 500 mg every 12 hours for 1 day | Recurrent herpes labialis: 750 mg single dose | Herpes zoster: 500 mg every 12 hours | Recurrent orolabial/genital herpes in HIV: 500 mg every 12 hours
+20-39: Recurrent genital herpes: 500 mg single dose | Recurrent herpes labialis: 500 mg single dose | Herpes zoster: 500 mg every 24 hours | Genital herpes suppression: 125 mg every 12 hours | Recurrent orolabial/genital herpes in HIV: 500 mg every 24 hours
+< 20: Recurrent genital herpes: 250 mg single dose | Recurrent herpes labialis: 250 mg single dose | Herpes zoster: 250 mg every 24 hours | Genital herpes suppression: 125 mg every 24 hours | Recurrent orolabial/genital herpes in HIV: 250 mg every 24 hours | Hemodialysis; recurrent genital herpes: 250 mg single dose following dialysis | Hemodialysis; recurrent herpes labialis: 250 mg single dose following dialysis | Hemodialysis; herpes zoster: 250 mg following each dialysis | Hemodialysis; genital herpes suppression: 125 mg following each dialysis | Hemodialysis; recurrent orolabial/genital herpes in HIV: 250 mg following each dialysis",">= 60 [dialysis=none, indication=recurrent-genital-herpes]: 1000 mg every 12 hours for 1 day
+>= 60 [dialysis=none, indication=herpes-labialis]: 1500 mg single dose
+>= 60 [dialysis=none, indication=zoster]: 500 mg every 8 hours
+>= 60 [dialysis=none, indication=genital-suppression]: 250 mg every 12 hours
+>= 60 [dialysis=none, indication=hiv-recurrent-herpes]: 500 mg every 12 hours
+40-59 [dialysis=none, indication=recurrent-genital-herpes]: 500 mg every 12 hours for 1 day
+40-59 [dialysis=none, indication=herpes-labialis]: 750 mg single dose
+40-59 [dialysis=none, indication=zoster]: 500 mg every 12 hours
+40-59 [dialysis=none, indication=genital-suppression]: 250 mg every 12 hours
+40-59 [dialysis=none, indication=hiv-recurrent-herpes]: 500 mg every 12 hours
+20-39 [dialysis=none, indication=recurrent-genital-herpes]: 500 mg single dose
+20-39 [dialysis=none, indication=herpes-labialis]: 500 mg single dose
+20-39 [dialysis=none, indication=zoster]: 500 mg every 24 hours
+20-39 [dialysis=none, indication=genital-suppression]: 125 mg every 12 hours
+20-39 [dialysis=none, indication=hiv-recurrent-herpes]: 500 mg every 24 hours
+< 20 [dialysis=none, indication=recurrent-genital-herpes]: 250 mg single dose
+< 20 [dialysis=none, indication=herpes-labialis]: 250 mg single dose
+< 20 [dialysis=none, indication=zoster]: 250 mg every 24 hours
+< 20 [dialysis=none, indication=genital-suppression]: 125 mg every 24 hours
+< 20 [dialysis=none, indication=hiv-recurrent-herpes]: 250 mg every 24 hours
+All values [dialysis=hd, indication=recurrent-genital-herpes]: 250 mg single dose following dialysis
+All values [dialysis=hd, indication=herpes-labialis]: 250 mg single dose following dialysis
+All values [dialysis=hd, indication=zoster]: 250 mg following each dialysis
+All values [dialysis=hd, indication=genital-suppression]: 125 mg following each dialysis
+All values [dialysis=hd, indication=hiv-recurrent-herpes]: 250 mg following each dialysis",Adult renal table includes separate single-day and multiple-day regimens.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=2c44b8d2-3b70-4e8b-af03-2e917178f761,draft,,,,,
+oseltamivir:ORAL,Oseltamivir,ORAL,"> 60: Treatment: 75 mg twice daily for 5 days | Prophylaxis: 75 mg once daily
+30.01-60: Treatment, CrCl >30-60 mL/min: 30 mg twice daily for 5 days | Prophylaxis, CrCl >30-60 mL/min: 30 mg once daily
+10.01-30: Treatment, CrCl >10-30 mL/min: 30 mg once daily for 5 days | Prophylaxis, CrCl >10-30 mL/min: 30 mg every other day
+0-10: ESRD on hemodialysis treatment: 30 mg immediately, then 30 mg after every hemodialysis cycle treatment duration not to exceed 5 days | ESRD on hemodialysis prophylaxis: 30 mg immediately, then 30 mg after alternate hemodialysis cycles per prophylaxis duration | ESRD on CAPD treatment: 30 mg single dose immediately | ESRD on CAPD prophylaxis: 30 mg immediately, then 30 mg once weekly for prophylaxis duration | ESRD not on dialysis: Not recommended do not use per label","> 60 [dialysis=none, indication=treatment]: 75 mg twice daily for 5 days
+> 60 [dialysis=none, indication=prophylaxis]: 75 mg once daily
+30-60 [dialysis=none, indication=treatment]: 30 mg twice daily for 5 days
+30-60 [dialysis=none, indication=prophylaxis]: 30 mg once daily
+10-30 [dialysis=none, indication=treatment]: 30 mg once daily for 5 days
+10-30 [dialysis=none, indication=prophylaxis]: 30 mg every other day
+All values [dialysis=hd, indication=treatment]: 30 mg immediately, then 30 mg after each HD cycle treatment duration not to exceed 5 days
+All values [dialysis=hd, indication=prophylaxis]: 30 mg immediately, then 30 mg after alternate HD cycles per prophylaxis duration
+All values [dialysis=capd, indication=treatment]: 30 mg single dose immediately
+All values [dialysis=capd, indication=prophylaxis]: 30 mg immediately, then 30 mg once weekly
+All values [dialysis=esrd-not-on-dialysis]: Not recommended not applicable",Adult renal table separates treatment and prophylaxis. ESRD dialysis regimens require dialysis-specific scheduling.,https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1b17fffc-5774-4b9b-8440-3a5295a34f89,draft,,,,,
+valganciclovir:ORAL,Valganciclovir,ORAL,">= 60: Induction: 900 mg twice daily | Maintenance/prevention: 900 mg once daily
+40-59: Induction: 450 mg twice daily | Maintenance/prevention: 450 mg once daily
+25-39: Induction: 450 mg once daily | Maintenance/prevention: 450 mg every 2 days
+10-24: Induction: 450 mg every 2 days | Maintenance/prevention: 450 mg twice weekly
+< 10: Hemodialysis: Tablets not recommended no tablet dose recommendation",,Adult tablet renal table; monitor serum creatinine or estimated CrCl during therapy. Hemodialysis CrCl under 10 mL/min is not recommended for tablets.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6a6533fd-0579-4059-ba87-aa399829a8b0,draft,,,,,
+ganciclovir:IV,Ganciclovir,IV,">= 70: Induction: 5 mg/kg every 12 hours | Maintenance: 5 mg/kg every 24 hours
+50-69: Induction: 2.5 mg/kg every 12 hours | Maintenance: 2.5 mg/kg every 24 hours
+25-49: Induction: 2.5 mg/kg every 24 hours | Maintenance: 1.25 mg/kg every 24 hours
+10-24: Induction: 1.25 mg/kg every 24 hours | Maintenance: 0.625 mg/kg every 24 hours
+< 10: Hemodialysis induction: 1.25 mg/kg 3 times per week following hemodialysis | Hemodialysis maintenance: 0.625 mg/kg 3 times per week following hemodialysis",,Adult IV induction and maintenance renal table for CMV retinitis treatment and transplant CMV prevention.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=26361de8-39b5-4266-90f6-2b307940135d,draft,,,,,
+atovaquone-proguanil:ORAL,Atovaquone and proguanil hydrochloride,ORAL,">= 30: Malaria prophylaxis: No renal dose adjustment usual adult prophylaxis schedule | Acute malaria treatment: No renal dose adjustment usual adult 3-day treatment schedule
+< 30: Malaria prophylaxis: Contraindicated do not use per label | Acute malaria treatment: Use with caution only if benefits outweigh risks usual 3-day treatment schedule if used",,Adult malaria prophylaxis and treatment label; severe renal impairment differs by prophylaxis vs treatment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=57d74d71-8cf8-4b10-9420-22954fae623c,draft,,,,,
+fidaxomicin:ORAL,Fidaxomicin,ORAL,All values: Renal impairment based on creatinine clearance: No renal dose adjustment usual adult schedule by indication,,Label states plasma concentrations did not vary by CrCl-based renal impairment severity and no renal dose adjustment is recommended.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=dd966338-c820-4270-b704-09ef75fa3ceb,draft,,,,,
+rifampin:ORAL,Rifampin,ORAL,"All values: Renal failure, rifampin doses not exceeding 600 mg daily: No renal dose adjustment usual adult schedule by indication",,Label states no renal dose adjustment is required for renal failure at doses not exceeding 600 mg daily; higher-dose renal data are limited.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4905542c-83a5-4507-a7cf-94f827119c60,draft,,,,,
+rifabutin:ORAL,Rifabutin,ORAL,">= 30: Mild to moderate renal impairment: No renal dose adjustment usual adult schedule by indication
+< 30: Severe renal impairment: Consider reducing dose by 50% if toxicity is suspected usual interval unless reduced",,Label states no adjustment for mild to moderate renal impairment; severe renal impairment has toxicity-based dose-reduction language.,https://www.dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=25a60937-cbbe-4a50-994f-2ce15203f589&type=display,draft,,,,,
+doxycycline:ORAL,Doxycycline hyclate,ORAL,"All values: Renal impairment, including severe renal insufficiency or hemodialysis pharmacokinetic context: No renal dose adjustment specified usual adult schedule by indication",,Adult oral doxycycline hyclate dosing; usual dose depends on infection indication and severity.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=cec4368f-2852-443d-9d6f-7ba95807021b,draft,,,,,
+vancomycin:IV,Vancomycin hydrochloride,IV,"All values: IV vancomycin with renal impairment or changing renal function: Source summary only DailyMed: use at least 15 mg/kg initial dose, then individualize using serum concentrations; review local AUC/trough protocol","All values [any]: Use at least 15 mg/kg initial dose, then individualize serum concentrations / local AUC/trough protocol",Adult IV vancomycin dosing is individualized; renal impairment dosing should be guided by serum concentrations and local AUC/trough monitoring policy.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8eccafe8-40c9-495a-872d-7f45a98ee759,draft,,,,,
+tinidazole:ORAL,Tinidazole,ORAL,"All values: Severe renal impairment, CrCl less than 22 mL/min: No renal dose adjustment usual adult schedule by indication | Hemodialysis if dose is given same day before dialysis: Additional one-half of recommended dose after hemodialysis",,Label states no dose adjustment is necessary in severe renal impairment; hemodialysis supplemental dose is retained as a condition.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b39bc167-f1c4-4169-8b46-e6c2eafe6bbf,draft,,,,,
+acyclovir-oral:ORAL,Acyclovir,ORAL,"> 25: 200 mg every 4 hours regimen: 200 mg every 4 hours, 5 times daily | 400 mg every 12 hours regimen: 400 mg every 12 hours | 800 mg every 4 hours regimen: 800 mg every 4 hours, 5 times daily
+10-25: 200 mg every 4 hours regimen: 200 mg every 4 hours, 5 times daily | 400 mg every 12 hours regimen: 400 mg every 12 hours | 800 mg every 4 hours regimen: 800 mg every 8 hours
+< 10: 200 mg every 4 hours regimen: 200 mg every 12 hours | 400 mg every 12 hours regimen: 200 mg every 12 hours | 800 mg every 4 hours regimen: 800 mg every 12 hours","> 25 [formulation=usual-200-q4h]: 200 mg every 4 hours, 5 times daily
+> 25 [formulation=usual-400-q12h]: 400 mg every 12 hours
+> 25 [formulation=usual-800-q4h]: 800 mg every 4 hours, 5 times daily
+10-25 [formulation=usual-200-q4h]: 200 mg every 4 hours, 5 times daily
+10-25 [formulation=usual-400-q12h]: 400 mg every 12 hours
+10-25 [formulation=usual-800-q4h]: 800 mg every 8 hours
+< 10 [formulation=usual-200-q4h]: 200 mg every 12 hours
+< 10 [formulation=usual-400-q12h]: 200 mg every 12 hours
+< 10 [formulation=usual-800-q4h]: 800 mg every 12 hours",Oral capsule/tablet regimens; renal adjustment differs by usual regimen.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=8d9fea43-6c04-40d7-8aac-398c2de2a558&version=5,draft,,,,,
+acyclovir-injection:IV,Acyclovir sodium,IV,"> 50: IV renal table: 100% of recommended dose every 8 hours
+25-50: IV renal table: 100% of recommended dose every 12 hours
+10-25: IV renal table: 100% of recommended dose every 24 hours
+< 10: IV renal table: 50% of recommended dose every 24 hours","> 50 [any]: 100% of recommended dose every 8 hours
+25-50 [any]: 100% of recommended dose every 12 hours
+10-25 [any]: 100% of recommended dose every 24 hours
+< 10 [any]: 50% of recommended dose every 24 hours",IV infusion; apply percent of recommended dose and interval by adult indication.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=23a7cf9e-f21b-06c2-e063-6394a90aa623,draft,,,,,
+ganciclovir-injection:IV,Ganciclovir,IV,">= 70: Induction: 5 mg/kg every 12 hours | Maintenance/prevention: 5 mg/kg every 24 hours
+50-69: Induction: 2.5 mg/kg every 12 hours | Maintenance/prevention: 2.5 mg/kg every 24 hours
+25-49: Induction: 2.5 mg/kg every 24 hours | Maintenance/prevention: 1.25 mg/kg every 24 hours
+10-24: Induction: 1.25 mg/kg every 24 hours | Maintenance/prevention: 0.625 mg/kg every 24 hours
+< 10: Induction; hemodialysis: 1.25 mg/kg 3 times per week after hemodialysis | Maintenance/prevention; hemodialysis: 0.625 mg/kg 3 times per week after hemodialysis",,Adult CMV induction and maintenance/prevention dosing by renal function.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=69017374-ac20-4b8c-86c7-d35907046dce,draft,,,,,
+peramivir:IV,Peramivir,IV,">= 50: Acute uncomplicated influenza: 600 mg single IV dose
+30-49: Acute uncomplicated influenza: 200 mg single IV dose
+10-29: Acute uncomplicated influenza: 100 mg single IV dose
+All values: Chronic renal impairment maintained on hemodialysis: Use renal-function-adjusted adult dose single IV dose after dialysis",,Adult single-dose IV treatment for acute uncomplicated influenza.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fe04f6cd-e71c-4bd4-abac-97720bba2a0d,draft,,,,,
+tenofovir-disoproxil-fumarate:ORAL,Tenofovir disoproxil fumarate,ORAL,">= 50: 300 mg tablet: 300 mg every 24 hours
+30-49: 300 mg tablet: 300 mg every 48 hours
+10-29: 300 mg tablet: 300 mg every 72 to 96 hours
+< 10: Hemodialysis: 300 mg every 7 days or after about 12 hours of dialysis | Non-hemodialysis: No dosing recommendation CrCl <10 mL/min",,Adult 300 mg tablet interval adjustment; no recommendation for non-hemodialysis CrCl below 10 mL/min.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e122435e-cd0b-4c90-940a-b7a0d090d866,draft,,,,,
+tenofovir-alafenamide:ORAL,Tenofovir alafenamide,ORAL,">= 15: Chronic hepatitis B: 25 mg once daily with food
+< 15: ESRD receiving chronic hemodialysis: 25 mg once daily with food; after hemodialysis on dialysis days | ESRD not receiving chronic hemodialysis: Not recommended no recommended schedule",,VEMLIDY chronic HBV dosing; renal guidance differs for ESRD based on chronic hemodialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=72e6b33c-0351-4070-9172-eeaa186c01d2,draft,,,,,
+emtricitabine:ORAL,Emtricitabine,ORAL,">= 50: Capsule: 200 mg every 24 hours | Oral solution: 240 mg (24 mL) every 24 hours
+30-49: Capsule: 200 mg every 48 hours | Oral solution: 120 mg (12 mL) every 24 hours
+15-29: Capsule: 200 mg every 72 hours | Oral solution: 80 mg (8 mL) every 24 hours
+< 15: Capsule; includes hemodialysis: 200 mg every 96 hours; after dialysis if given on dialysis day | Oral solution; includes hemodialysis: 60 mg (6 mL) every 24 hours; after dialysis if given on dialysis day",,Adult capsule and oral-solution renal interval adjustments.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=d6599395-3944-44f9-97f2-e0424c6b6a1f,draft,,,,,
+lamivudine:ORAL,Lamivudine,ORAL,">= 50: HIV treatment: 150 mg twice daily or 300 mg once daily usual adult schedule
+30-49: HIV treatment: 150 mg once daily
+15-29: HIV treatment: 150 mg first dose, then 100 mg once daily
+5-14: HIV treatment: 150 mg first dose, then 50 mg once daily
+< 5: HIV treatment: 50 mg first dose, then 25 mg once daily",,EPIVIR HIV dosing in adults/adolescents at least 25 kg; HBV product strengths differ and need separate review.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=89226149-47fa-4f7d-bb1f-1aa7034486b8,draft,,,,,
+entecavir:ORAL,Entecavir,ORAL,">= 50: Usual dose: 0.5 mg once daily | Lamivudine-refractory or decompensated liver disease: 1 mg once daily
+30-49: Usual dose: 0.25 mg once daily or 0.5 mg every 48 hours | Lamivudine-refractory or decompensated liver disease: 0.5 mg once daily or 1 mg every 48 hours
+10-29: Usual dose: 0.15 mg once daily or 0.5 mg every 72 hours | Lamivudine-refractory or decompensated liver disease: 0.3 mg once daily or 1 mg every 72 hours
+< 10: Usual dose; hemodialysis or CAPD: 0.05 mg once daily or 0.5 mg every 7 days; after hemodialysis on dialysis days | Lamivudine-refractory or decompensated liver disease; hemodialysis or CAPD: 0.1 mg once daily or 1 mg every 7 days; after hemodialysis on dialysis days",,Adult HBV dosing; once-daily regimens preferred where label provides oral-solution doses.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=046e61c9-9298-4b2e-b76e-b26b81fecd20&version=42,draft,,,,,
+adefovir:ORAL,Adefovir dipivoxil,ORAL,">= 50: Chronic hepatitis B: 10 mg every 24 hours
+30-49: Chronic hepatitis B: 10 mg every 48 hours
+10-29: Chronic hepatitis B: 10 mg every 72 hours
+< 10: Hemodialysis: 10 mg every 7 days following dialysis | Non-hemodialysis: No dosing recommendation CrCl <10 mL/min",,Adult HBV dosing interval adjustment; no recommendation for non-hemodialysis CrCl below 10 mL/min.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=80595d45-2224-47d1-bd5c-4b11a824e5bd,draft,,,,,
+nirmatrelvir-ritonavir:ORAL,Nirmatrelvir and ritonavir,ORAL,">= 60: COVID-19 treatment: 300 mg nirmatrelvir with 100 mg ritonavir twice daily for 5 days
+30-59: Moderate renal impairment: 150 mg nirmatrelvir with 100 mg ritonavir twice daily for 5 days
+< 30: Severe renal impairment or hemodialysis, Day 1: 300 mg nirmatrelvir with 100 mg ritonavir once on Day 1 | Severe renal impairment or hemodialysis, Days 2-5: 150 mg nirmatrelvir with 100 mg ritonavir once daily on Days 2-5; after hemodialysis on dialysis days",,COVID-19 5-day course; label uses eGFR rather than Cockcroft-Gault CrCl.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8a99d6d6-fd9e-45bb-b1bf-48c7f761232a,draft,,,,,
+remdesivir:IV,Remdesivir,IV,All values: Renal impairment including dialysis: No renal dose adjustment usual adult schedule by indication,,COVID-19 IV dosing; renal impairment does not require dose adjustment.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=c0978fa8-53ff-4ca2-82a7-567fd3e958ca&version=23,draft,,,,,
+molnupiravir:ORAL,Molnupiravir,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule by indication,,COVID-19 oral 5-day course; label states renal impairment does not require dose adjustment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1b0da643-ab23-4a0b-a9ec-a434522446d0,draft,,,,,
+sofosbuvir-velpatasvir:ORAL,Sofosbuvir and velpatasvir,ORAL,All values: Renal impairment including dialysis: No renal dose adjustment usual adult schedule by HCV regimen,,"HCV combination; if used with ribavirin, ribavirin renal guidance must be reviewed separately.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?audience=consumer&setid=7f30631a-ee3b-4cfe-866b-964df3f0a44f,draft,,,,,
+ledipasvir-sofosbuvir:ORAL,Ledipasvir and sofosbuvir,ORAL,All values: Renal impairment including dialysis: No renal dose adjustment usual adult schedule by HCV regimen,,"HCV combination; if used with ribavirin, ribavirin renal guidance must be reviewed separately.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f4ec77e4-bae8-4db0-b3d5-bde09c5fa075,draft,,,,,
+sofosbuvir-velpatasvir-voxilaprevir:ORAL,"Sofosbuvir, velpatasvir, and voxilaprevir",ORAL,All values: Renal impairment including dialysis: No renal dose adjustment usual adult schedule by HCV regimen,,HCV retreatment combination; hepatic impairment restrictions are separate from renal guidance.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=17ffc094-8ca7-45d2-80d8-fd043bc9a221,draft,,,,,
+glecaprevir-pibrentasvir:ORAL,Glecaprevir and pibrentasvir,ORAL,All values: Renal impairment including dialysis: No renal dose adjustment usual adult schedule by HCV regimen,,HCV combination; hepatic impairment contraindications are separate from renal guidance.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7bf99777-0401-9095-8645-16c6e907fcc0,draft,,,,,
+letermovir:IV+ORAL,Letermovir,"ORAL, IV","> 10: Renal impairment: No renal dose adjustment usual adult schedule; adjust separately if coadministered with cyclosporine
+0-10: CLcr <=10 mL/min or dialysis: No dosing recommendation insufficient label data",,CMV prophylaxis; separate cyclosporine interaction dose adjustment still applies.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=1b49df80-be4f-47e0-a0b7-123f3e69395b&version=28,draft,,,,,
+sirolimus:ORAL,Sirolimus,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule with therapeutic drug monitoring,,Immunosuppressant with therapeutic drug monitoring; renal impairment alone does not require adjustment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5908cd1a-fc5a-462f-99ed-1d8983e253c9,draft,,,,,
+everolimus:ORAL,Everolimus,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule with therapeutic drug monitoring,,Transplant immunosuppression with trough-guided dosing; renal impairment alone does not require adjustment.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e082a024-7850-400b-a5c2-2a140612562a&version=29,draft,,,,,
+apixaban:ORAL,Apixaban,ORAL,"All values: NVAF; usual adult dose when fewer than 2 dose-reduction criteria are present: 5 mg twice daily | NVAF with at least 2 of age >=80 years, body weight <=60 kg, or serum creatinine >=1.5 mg/dL: 2.5 mg twice daily","All values [dialysis=none, indication=nvaf-usual]: 5 mg twice daily
+All values [dialysis=none, indication=nvaf-reduced]: 2.5 mg twice daily
+All values [dialysis=none, indication=dvt-pe]: 10 mg twice daily for 7 days, then 5 mg twice daily
+All values [dialysis=none, indication=recurrent-risk]: 2.5 mg twice daily after at least 6 months treatment
+All values [dialysis=none, indication=hip-knee-prophylaxis]: 2.5 mg twice daily
+All values [dialysis=hd]: Dialysis dosing requires product-label review manual clinical review required",Adult NVAF renal-related dose criterion is based on serum creatinine plus age/weight; other indications need indication-specific review.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=095a08ac-cf0e-497e-a682-ddef38d6b29c,draft,,,,,
+rivaroxaban:ORAL,Rivaroxaban,ORAL,"> 50: NVAF stroke/systemic embolism risk reduction: 20 mg once daily with evening meal
+15-50: NVAF stroke/systemic embolism risk reduction: 15 mg once daily with evening meal
+>= 15: Treatment of DVT and/or PE; initial 21 days: 15 mg twice daily with food | Treatment of DVT and/or PE; after 21 days: 20 mg once daily with food | Reduction in recurrent DVT/PE risk after at least 6 months of standard anticoagulant treatment: 10 mg once daily with or without food | DVT prophylaxis after hip replacement surgery: 10 mg once daily for 35 days, 6 to 10 hours after surgery once hemostasis established | DVT prophylaxis after knee replacement surgery: 10 mg once daily for 12 days, 6 to 10 hours after surgery once hemostasis established | VTE prophylaxis in acutely ill medical patients not at high bleeding risk: 10 mg once daily for 31 to 39 days
+< 15: NVAF stroke/systemic embolism risk reduction: Avoid use CrCl <15 mL/min or dialysis | DVT/PE treatment or recurrent-risk reduction: Avoid use not applicable | DVT prophylaxis after hip or knee replacement surgery: Avoid use not applicable | VTE prophylaxis in acutely ill medical patients: Avoid use not applicable
+All values: CAD major cardiovascular event risk reduction: 2.5 mg plus aspirin 75 to 100 mg twice daily; no dose adjustment needed based on CrCl | PAD major thrombotic vascular event risk reduction, including after lower extremity revascularization: 2.5 mg plus aspirin 75 to 100 mg twice daily; no dose adjustment needed based on CrCl","> 50 [dialysis=none, indication=nvaf]: 20 mg once daily with evening meal
+15-50 [dialysis=none, indication=nvaf]: 15 mg once daily with evening meal
+>= 15 [dialysis=none, indication=dvt-pe-initial]: 15 mg twice daily with food
+>= 15 [dialysis=none, indication=dvt-pe-maintenance]: 20 mg once daily with food
+>= 15 [dialysis=none, indication=recurrent-risk]: 10 mg once daily with or without food
+>= 15 [dialysis=none, indication=hip-prophylaxis]: 10 mg once daily for 35 days
+>= 15 [dialysis=none, indication=knee-prophylaxis]: 10 mg once daily for 12 days
+All values [dialysis=none, indication=cad-pad]: 2.5 mg plus aspirin 75-100 mg twice daily
+< 15 [any]: Avoid use review label for indication
+All values [dialysis=hd]: Avoid use / no clean dosing row manual clinical review required",Adult dosing varies substantially by indication; CrCl should be calculated using actual body weight per label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=65727928-9421-4df8-bff2-f72a9cc78069,draft,,,,,
+dabigatran:ORAL,Dabigatran etexilate,ORAL,"> 30: NVAF: 150 mg twice daily | DVT/PE treatment after 5-10 days parenteral anticoagulation, or recurrence risk reduction after previous treatment: 150 mg twice daily
+15-30: NVAF: 75 mg twice daily | DVT/PE treatment or recurrence risk reduction: Dosing recommendations cannot be provided not applicable
+30-50: NVAF with concomitant dronedarone or systemic ketoconazole: 75 mg twice daily
+< 15: NVAF, CrCl <15 mL/min or on dialysis: Dosing recommendations cannot be provided not applicable | DVT/PE treatment or recurrence risk reduction, CrCl <=30 mL/min or on dialysis: Dosing recommendations cannot be provided not applicable
+< 30: NVAF with concomitant P-gp inhibitors: Avoid coadministration not applicable
+< 50: DVT/PE treatment or recurrence risk reduction with concomitant P-gp inhibitors: Avoid coadministration not applicable","> 30 [dialysis=none, indication=nvaf]: 150 mg twice daily
+15-30 [dialysis=none, indication=nvaf]: 75 mg twice daily
+30-50 [dialysis=none, indication=nvaf-pgp]: 75 mg twice daily
+< 30 [dialysis=none, indication=nvaf-pgp]: Avoid coadministration not applicable
+> 30 [dialysis=none, indication=dvt-pe]: 150 mg twice daily
+0-30 [dialysis=none, indication=dvt-pe]: Dosing recommendations cannot be provided not applicable
+< 50 [dialysis=none, indication=dvt-pe-pgp]: Avoid coadministration not applicable
+All values [dialysis=hd]: Dosing recommendations cannot be provided not applicable",Adult capsule dosing; renal and P-gp inhibitor recommendations differ by indication.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=19b3bfc1-4fcb-4eb9-a611-02c27c05c56e,draft,,,,,
+edoxaban:ORAL,Edoxaban,ORAL,"> 95: NVAF: Do not use; use another anticoagulant not applicable
+50-95: NVAF: 60 mg once daily
+15-50: NVAF: 30 mg once daily | DVT/PE after 5-10 days parenteral anticoagulant: 30 mg once daily
+> 50: DVT/PE after 5-10 days parenteral anticoagulant; reduce to 30 mg if weight <=60 kg or certain P-gp inhibitors: 60 mg once daily
+< 15: NVAF: Not recommended CrCl <15 mL/min | DVT/PE after 5-10 days parenteral anticoagulant: Not recommended CrCl <15 mL/min","> 95 [indication=nvaf]: Do not use; use another anticoagulant not applicable
+50-95 [indication=nvaf]: 60 mg once daily
+15-50 [indication=nvaf]: 30 mg once daily
+< 15 [indication=nvaf]: Not recommended not applicable
+> 50 [indication=dvt-pe]: 60 mg once daily
+> 50 [indication=dvt-pe-low-weight-pgp]: 30 mg once daily
+15-50 [indication=dvt-pe]: 30 mg once daily
+15-50 [indication=dvt-pe-low-weight-pgp]: 30 mg once daily
+< 15 [indication=dvt-pe]: Not recommended not applicable
+< 15 [indication=dvt-pe-low-weight-pgp]: Not recommended not applicable",NVAF has a high-CrCl limitation; DVT/PE dose also depends on body weight and selected P-gp inhibitors.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e77d3400-56ad-11e3-949a-0800200c9a66,draft,,,,,
+enoxaparin:SC,Enoxaparin sodium,SC,"< 30: DVT prophylaxis in abdominal surgery: 30 mg once daily | DVT prophylaxis in hip or knee replacement surgery: 30 mg once daily | DVT prophylaxis in medical patients during acute illness: 30 mg once daily | Inpatient treatment of acute DVT with or without PE, with warfarin: 1 mg/kg once daily | Outpatient treatment of acute DVT without PE, with warfarin: 1 mg/kg once daily | Prophylaxis of ischemic complications of unstable angina/non-Q-wave MI with aspirin: 1 mg/kg once daily | Acute STEMI treatment with aspirin, age <75 years: 30 mg IV bolus plus 1 mg/kg SC, then 1 mg/kg SC once daily | Acute STEMI treatment with aspirin, age >=75 years: 1 mg/kg SC; no initial bolus once daily
+>= 30: Mild or moderate renal impairment: No renal dose adjustment usual adult schedule by indication; observe for bleeding",">= 30 [any]: No renal dose adjustment usual adult schedule by indication; observe bleeding
+< 30 [indication=prophylaxis]: 30 mg once daily
+< 30 [indication=dvt-treatment]: 1 mg/kg once daily
+< 30 [indication=ua-nstemi]: 1 mg/kg once daily
+< 30 [indication=stemi-under-75]: 30 mg IV bolus plus 1 mg/kg SC, then 1 mg/kg SC once daily
+< 30 [indication=stemi-75-plus]: 1 mg/kg SC; no initial bolus once daily",Adult prophylaxis/treatment table for severe renal impairment; observe bleeding risk in mild/moderate renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=3d263380-4f44-4fd8-aa2a-e69702ab258f,draft,,,,,
+fondaparinux:SC,Fondaparinux sodium,SC,"< 30: VTE prophylaxis or treatment: Do not use; contraindicated not applicable
+30-50: VTE prophylaxis or treatment: Use with caution usual adult schedule by indication","< 30 [any]: Do not use; contraindicated not applicable
+30-50 [any]: Use with caution usual adult schedule by indication
+> 50 [any]: No renal dose adjustment in label renal section usual adult schedule by indication",Adult VTE prophylaxis/treatment renal contraindication and caution; dose otherwise depends on indication and weight.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ec235119-cb58-4939-942c-11d3923d289f,draft,,,,,
+dofetilide:ORAL,Dofetilide,ORAL,"> 60: Starting dose by calculated CrCl, before QT-based adjustment: 500 mcg twice daily
+40-60: Starting dose by calculated CrCl, before QT-based adjustment: 250 mcg twice daily
+20-39: Starting dose by calculated CrCl, before QT-based adjustment: 125 mcg twice daily
+< 20: Calculated CrCl: Contraindicated not applicable",,Initiation/re-initiation requires inpatient ECG monitoring; further adjustments depend on QTc/QT response.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4c1a5a6d-bd69-473c-8caa-d0d242b7708d,draft,,,,,
+sotalol:ORAL,Sotalol,ORAL,"> 60: Ventricular arrhythmia dosing interval: Initial 80 mg and subsequent doses every 12 hours | AFIB/AFL dosing interval: Initial 80 mg and subsequent doses every 12 hours
+30-59: Ventricular arrhythmia dosing interval: Initial 80 mg and subsequent doses every 24 hours
+40-59: AFIB/AFL dosing interval: Initial 80 mg and subsequent doses every 24 hours
+10-29: Ventricular arrhythmia dosing interval: Initial 80 mg and subsequent doses every 36 to 48 hours
+< 10: Ventricular arrhythmia dosing interval: Individualize dose specialist monitoring
+< 40: AFIB/AFL: Contraindicated not applicable","> 60 [indication=ventricular]: Initial 80 mg and subsequent doses every 12 hours
+30-59 [indication=ventricular]: Initial 80 mg and subsequent doses every 24 hours
+10-29 [indication=ventricular]: Initial 80 mg and subsequent doses every 36 to 48 hours
+< 10 [indication=ventricular]: Individualize dose specialist monitoring
+> 60 [indication=afib-afl]: Initial 80 mg and subsequent doses every 12 hours
+40-60 [indication=afib-afl]: Initial 80 mg and subsequent doses every 24 hours
+< 40 [indication=afib-afl]: Contraindicated not applicable",Adult initial dose commonly 80 mg; renal rule modifies interval and AFIB/AFL has stricter contraindication below CrCl 40.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=253da1e1-022a-4175-bd7f-e7673cba0767,draft,,,,,
+flecainide:ORAL,Flecainide acetate,ORAL,"0-35: Severe renal impairment, CrCl <=35 mL/min/1.73 m2: 100 mg once daily or 50 mg twice daily
+> 35: Less severe renal disease during dosage adjustment: 100 mg every 12 hours",,Initial dosing in renal disease; plasma level monitoring and cautious titration are required.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc304b04-9373-4e47-905d-6b3367ad3be7,draft,,,,,
+digoxin:IV+ORAL,Digoxin,"ORAL, IV",All values: Adult maintenance dosing: Use label maintenance table by lean body weight and renal function; monitor serum concentrations usually once daily for oral maintenance,,"Maintenance dose depends on lean body weight, renal function, age, interacting drugs, response, and serum digoxin concentrations.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=51925501-ab5b-4e12-a67e-ec2b4b592e83,draft,,,,,
+lisinopril:ORAL,Lisinopril,ORAL,"> 30: Renal impairment: No renal dose adjustment usual adult schedule by indication
+10-30: Initial dose; hypertension/HFrEF/acute MI examples in label: Half usual recommended initial dose once daily; titrate as tolerated up to 40 mg/day
+< 10: Hemodialysis or CrCl <10: 2.5 mg once daily initially",,Adult initial dose adjustment; titrate to response and indication-specific maximum.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1ccc946a-f8f4-4136-9b3e-4bf95e69c94f,draft,,,,,
+enalapril:ORAL,Enalapril maleate,ORAL,"> 30: Hypertension; CrCl >30: 5 mg once daily initially
+0-30: Hypertension; CrCl <=30: 2.5 mg once daily initially
+All values: Dialysis patients: 2.5 mg on dialysis days; adjust nondialysis days by blood pressure response dialysis-day dosing",,Adult hypertensive renal impairment table; heart failure titration requires monitoring.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2cc892e2-1d91-e52a-e063-6394a90a6649,draft,,,,,
+ramipril:ORAL,Ramipril,ORAL,"> 40: Estimated CrCl >40: No renal dose adjustment usual adult schedule by indication
+0-40: Hypertension with renal impairment: 1.25 mg once daily initially; titrate to max 5 mg/day | Heart failure post-MI with renal impairment: 1.25 mg once daily initially; may increase to 1.25 mg twice daily then max 2.5 mg twice daily",,Adult renal impairment initial dosing differs for hypertension and post-MI heart failure.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a8cdec12-81d1-4ef4-82c0-d05d93c37a07,draft,,,,,
+benazepril:ORAL,Benazepril hydrochloride,ORAL,< 30: Adults with GFR <30 mL/min/1.73 m2: 5 mg once daily initially; titrate to max 40 mg/day,,Adult renal impairment initial dose; titrate to blood pressure response.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e0ddcfbc-c9d8-45b1-9c11-0d1eff8c1e9e,draft,,,,,
+trandolapril:ORAL,Trandolapril,ORAL,< 30: CrCl <30 mL/min or hepatic cirrhosis: 0.5 mg once daily initially; titrate to response,,Adult renal impairment or hepatic cirrhosis starting dose.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0107d19a-b43a-4a36-8b8c-4dfc247630e9,draft,,,,,
+quinapril:ORAL,Quinapril,ORAL,"> 60: Hypertension; maximum recommended initial dose: 10 mg once daily initially
+30-60: Hypertension; maximum recommended initial dose: 5 mg once daily initially
+10-30: Hypertension; maximum recommended initial dose: 2.5 mg once daily initially
+< 10: CrCl <10: Insufficient data for dosage recommendation not applicable
+> 30: Heart failure with renal impairment: 5 mg initial dose; may proceed to twice daily if tolerated
+10-30: Heart failure with renal impairment: 2.5 mg initial dose; may proceed to twice daily if tolerated",,Adult maximum recommended initial doses by creatinine clearance; heart failure has a separate renal/hyponatremia note.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=8ded0773-3aec-4e89-9836-d22a5a84abf0,draft,,,,,
+perindopril:ORAL,Perindopril erbumine,ORAL,"< 30: CrCl <30 mL/min: Not recommended not applicable
+>= 30: Renal impairment with CrCl >=30 mL/min: 2 mg initially; do not exceed 8 mg/day once daily",,Adult renal dose adjustment; not recommended when CrCl is below 30 mL/min.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=87768fbf-7c63-47da-8925-0316f343d6ef,draft,,,,,
+losartan:ORAL,Losartan potassium,ORAL,All values: Renal impairment unless also volume depleted: No renal dose adjustment usual adult schedule by indication,,Adult renal impairment statement; volume-depleted patients may need lower initial dosing.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=25651749-8950-43ff-bcbd-3bb85f57a360,draft,,,,,
+valsartan:ORAL,Valsartan,ORAL,"30-90: Mild or moderate renal impairment: No renal dose adjustment usual adult schedule by indication
+< 30: Severe renal impairment: Safety and effectiveness not established not applicable",,Adult renal impairment statement; severe renal impairment lacks established safety/effectiveness.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6e2cd953-88bf-4094-8ba8-2c9ba020f4d7,draft,,,,,
+candesartan:ORAL,Candesartan cilexetil,ORAL,"All values: Renal insufficiency, including severe impairment/hemodialysis pharmacokinetic population: No initial dosage adjustment usual adult schedule by indication",,Adult renal insufficiency statement; monitor renal function and potassium clinically.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4621249c-1f44-4d95-8513-a1a2b1859e41,draft,,,,,
+sacubitril-valsartan:ORAL,Sacubitril and valsartan,ORAL,"< 30: Severe renal impairment, eGFR <30 mL/min/1.73 m2: Half the usually recommended starting dose twice daily; titrate per heart failure schedule
+>= 30: Mild or moderate renal impairment: No starting dose adjustment usual adult heart failure schedule",,Adult heart failure dosing; same half-starting-dose rule may also apply when ACEi/ARB naive or previously on low doses.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ec37696b-eaac-4c74-9328-94857ce998e5,draft,,,,,
+spironolactone:ORAL,Spironolactone,ORAL,"> 50: Heart failure with serum potassium <=5.0 mEq/L: 25 mg once daily initially; may increase to 50 mg once daily if tolerated
+30-50: Heart failure; consider due to hyperkalemia risk: 25 mg every other day initially
+< 30: Heart failure, eGFR <30 mL/min/1.73 m2: No label initiation recommendation manual specialist review; hyperkalemia risk",,Adult HFrEF/NYHA III-IV dosing; requires serum potassium <=5 mEq/L and close potassium/renal monitoring. Label gives initiation guidance only for eGFR >=30.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=860b08bf-c6c1-4310-8510-10b6779f3d59,draft,,,,,
+eplerenone:ORAL,Eplerenone,ORAL,"0-30: All patients: Contraindicated not applicable
+< 50: Hypertension: Contraindicated not applicable
+> 30: Heart failure post-MI; potassium-guided dosing table applies: 25 mg once daily initially; titrate to 50 mg once daily as tolerated",,Contraindications differ by indication; post-MI HFrEF dose also changes by serum potassium and moderate CYP3A inhibitors.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a52bedc-8e2c-4116-a296-a87770676b4a,draft,,,,,
+torsemide:ORAL,Torsemide,ORAL,"All values: Manual review: edema associated with chronic renal failure; not renal impairment adjustment: 20 mg once daily initially; double as needed, doses >200 mg not adequately studied",,"Manual review: renal-disease indication dosing for edema associated with chronic renal failure, not a CrCl/eGFR dose-adjustment rule.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7fc14338-92e4-cf57-a3e8-ef64d8d1026c,draft,,,,,
+metolazone:ORAL,Metolazone,ORAL,All values: Manual review: edema of renal disease; not renal impairment adjustment: 5 to 20 mg once daily; titrate to response,,"Manual review: renal-disease indication dosing for edema of renal disease, not a CrCl/eGFR dose-adjustment rule.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=efa5244a-9cdf-a806-e053-2a95a90a912e,draft,,,,,
+rosuvastatin:ORAL,Rosuvastatin calcium,ORAL,"< 30: Severe renal impairment, CrCl <30 mL/min/1.73 m2, not on hemodialysis: 5 mg initially; do not exceed 10 mg/day once daily
+>= 30: Mild or moderate renal impairment: No renal dose adjustment usual adult schedule by indication",,Adult severe renal impairment dosing when not on hemodialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=598ecc9c-bfd4-4247-a2c3-bd0ce5aa20d0,draft,,,,,
+fenofibrate:ORAL,Fenofibrate,ORAL,"30-59: Mild to moderate renal impairment, eGFR 30 to <60 mL/min/1.73 m2: 48 mg once daily initially; increase only after evaluating renal function and triglycerides
+< 30: Severe renal impairment, ESRD, or dialysis: Contraindicated not applicable",,Adult 48/145 mg tablet labeling; renal function should be assessed before and during therapy.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=283e754e-6ffa-4d6a-882f-9bbb3cbc8ca8,draft,,,,,
+fenofibric-acid:ORAL,Fenofibric acid,ORAL,"30-59: Mild to moderate renal impairment, eGFR 30 to <60 mL/min/1.73 m2: 45 mg once daily initially; increase only after evaluating renal function and triglycerides
+< 30: Severe renal impairment, ESRD, or dialysis: Contraindicated not applicable",,Adult delayed-release capsule labeling; renal function should be assessed before and during therapy.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=daa488be-f580-430c-a72c-80ac31bb3e40,draft,,,,,
+pitavastatin:ORAL,Pitavastatin,ORAL,"15-59: Moderate or severe renal impairment, eGFR 15-59 mL/min/1.73 m2: 1 mg initially; do not exceed 2 mg/day once daily
+All values: ESRD receiving hemodialysis: 1 mg initially; do not exceed 2 mg/day once daily
+>= 60: Mild renal impairment: No renal dose adjustment usual adult schedule",,Adult renal dosing; maximum is lower for moderate/severe renal impairment and ESRD on hemodialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0f11ee80-871e-4f13-e063-6394a90af19d,draft,,,,,
+bivalirudin:IV,Bivalirudin,IV,">= 30: Maintenance infusion; bolus dose needs no renal reduction: No renal infusion reduction usual adult PCI infusion schedule
+< 30: Maintenance infusion; bolus dose needs no renal reduction: 1 mg/kg/hour continuous infusion
+All values: Hemodialysis: 0.25 mg/kg/hour continuous infusion",,"Adult PCI anticoagulant labeling; bolus is unchanged by renal impairment, but maintenance infusion is reduced.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4119b710-ef30-4e3e-b99a-38e42b4b3fca,draft,,,,,
+eptifibatide:IV,Eptifibatide,IV,">= 50: ACS: 180 mcg/kg IV bolus then 2 mcg/kg/min continuous infusion per ACS duration limits | PCI: 180 mcg/kg IV bolus then 2 mcg/kg/min plus second 180 mcg/kg bolus 10 minutes later continuous infusion per PCI duration limits
+< 50: ACS: 180 mcg/kg IV bolus then 1 mcg/kg/min continuous infusion per ACS duration limits | PCI: 180 mcg/kg IV bolus then 1 mcg/kg/min plus second 180 mcg/kg bolus 10 minutes later continuous infusion per PCI duration limits
+All values: Dependency on renal dialysis: Contraindicated not applicable",,Adult ACS/PCI dosing; bolus remains weight-based while infusion is reduced for CrCl <50 mL/min.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=5f46b76b-5c83-49b9-ada8-4ad5cf81a38c,draft,,,,,
+tirofiban:IV,Tirofiban hydrochloride,IV,"> 60: NSTE-ACS: 25 mcg/kg IV within 5 minutes, then 0.15 mcg/kg/min continuous infusion for up to 18 hours
+0-60: NSTE-ACS with CrCl <=60 mL/min: 25 mcg/kg IV within 5 minutes, then 0.075 mcg/kg/min continuous infusion for up to 18 hours",,Adult NSTE-ACS dosing; CrCl calculated by Cockcroft-Gault using actual body weight.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=13ea7fb8-4b01-4286-9464-26c0b624bc3b,draft,,,,,
+argatroban:IV,Argatroban,IV,"All values: Renal dysfunction, including severe renal impairment studied pharmacokinetically: No renal dose adjustment usual adult aPTT/ACT-guided schedule; adjust for hepatic impairment if present",,"Adult HIT/PCI anticoagulant; hepatic impairment, not renal impairment, drives dose reduction.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e5ccb93c-f411-4e7e-824a-4a592b4947ec&version=5,draft,,,,,
+atenolol:ORAL,Atenolol,ORAL,"15-35: Renal impairment; maximum oral dose: 50 mg once daily maximum
+< 15: Renal impairment; maximum oral dose: 25 mg once daily maximum
+All values: Hemodialysis: 25 mg or 50 mg after each dialysis under supervision",,Adult maximum oral dosage table for elderly or renally impaired patients; hypertension may require 25 mg starting dose.,https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=290f4de3-8815-466c-81dc-8bc632375896,draft,,,,,
+nadolol:ORAL,Nadolol,ORAL,"> 50: Renal failure interval table: Usual dose by indication every 24 hours
+31-50: Renal failure interval table: Usual dose by indication every 24 to 36 hours
+10-30: Renal failure interval table: Usual dose by indication every 24 to 48 hours
+< 10: Renal failure interval table: Usual dose by indication every 40 to 60 hours",,Adult renal failure interval-adjustment table; dose amount remains indication/response based.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=2d126308-c58d-4950-9dcb-eaadb1a2054f&version=103,draft,,,,,
+ivabradine:ORAL,Ivabradine,ORAL,"15-60: CrCl 15 to 60 mL/min: No renal dose adjustment usual adult heart failure schedule
+< 15: CrCl <15 mL/min: No data available not applicable",,Adult heart failure dosing; no data below CrCl 15 mL/min.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=92018a65-38f6-45f7-91d4-a34921b81d0d,draft,,,,,
+metformin:ORAL,Metformin,ORAL,">= 45: eGFR >=45 mL/min/1.73 m2: No renal dose adjustment usual adult schedule by indication
+30-44.99: eGFR 30-45 mL/min/1.73 m2: Do not initiate; assess benefit/risk if already receiving individualize continuation
+< 30: eGFR <30 mL/min/1.73 m2: Contraindicated; discontinue if eGFR falls below 30 do not use",,Type 2 diabetes; renal recommendations are based on eGFR rather than Cockcroft-Gault CrCl.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a2e762ea-732b-a590-e053-2a95a90aa5e5,draft,,,,,
+sitagliptin:ORAL,Sitagliptin,ORAL,">= 45: eGFR >=45 mL/min/1.73 m2: 100 mg once daily
+30-44.99: eGFR 30-44 mL/min/1.73 m2: 50 mg once daily
+< 30: eGFR <30 mL/min/1.73 m2 or ESRD: 25 mg once daily; without regard to dialysis timing",,Type 2 diabetes; eGFR-based adult dosing.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6a970e80-b753-48fa-9fff-87e7a5044982,draft,,,,,
+saxagliptin:ORAL,Saxagliptin,ORAL,">= 45: eGFR >=45 mL/min/1.73 m2: 2.5 mg or 5 mg once daily
+< 45: eGFR <45 mL/min/1.73 m2 or ESRD: 2.5 mg once daily; administer after hemodialysis",,Type 2 diabetes; eGFR-based adult dosing.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f3ea58bb-0002-4a5d-9213-7e9066e3dc9c,draft,,,,,
+alogliptin:ORAL,Alogliptin,ORAL,">= 60: CrCl >=60 mL/min: 25 mg once daily
+30-59.99: CrCl 30-59 mL/min: 12.5 mg once daily
+< 30: CrCl <30 mL/min or ESRD: 6.25 mg once daily; without regard to hemodialysis timing",,Type 2 diabetes; CrCl-based adult dosing.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b25f155a-1259-47c2-aa3b-7c1356e4c7f6,draft,,,,,
+linagliptin:ORAL,Linagliptin,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule by indication,,Type 2 diabetes.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cbdbd4b2-c07b-00e1-e053-2995a90a5fc9,draft,,,,,
+glimepiride:ORAL,Glimepiride,ORAL,All values: Renal impairment when initiating or retitrating therapy: Start 1 mg; not a renal maintenance maximum once daily with breakfast or first main meal; titrate slowly by glycemic response,,"Type 2 diabetes; renal label language is conservative initiation/titration guidance, not a renal maintenance dose cap.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=26cd0240-245f-554a-e063-6394a90a6919,draft,,,,,
+dapagliflozin:ORAL,Dapagliflozin,ORAL,">= 45: Glycemic control, eGFR >=45: 5 mg; may increase to 10 mg once daily | HF/CKD/cardiorenal indications, eGFR >=45: 10 mg once daily
+25-44.99: Glycemic control, eGFR <45: Not recommended for glycemic control do not initiate for this purpose | HF/CKD/cardiorenal indications, eGFR 25-44: 10 mg once daily
+< 25: eGFR <25: Initiation not recommended; continuation may be allowed for cardiorenal risk reduction 10 mg once daily if continuing per indication",,Renal guidance differs for glycemic control versus HF/CKD/cardiorenal indications.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=17586ec6-0104-4b08-ad87-12a837568d6c,draft,,,,,
+canagliflozin:ORAL,Canagliflozin,ORAL,">= 60: eGFR >=60 mL/min/1.73 m2: 100 mg; may increase to 300 mg once daily before first meal
+30-59.99: eGFR 30-59 mL/min/1.73 m2: Maximum 100 mg once daily before first meal
+< 30: eGFR <30 mL/min/1.73 m2: Initiation not recommended; selected albuminuric patients may continue 100 mg once daily if continuing",,Type 2 diabetes/cardiorenal indications; continuation below eGFR 30 is limited to albuminuric kidney disease risk reduction.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4e946ba3-02c4-4a10-9d5e-f2d87b534dc3,draft,,,,,
+gabapentin:ORAL,Gabapentin,ORAL,">= 60: CrCl >=60 mL/min: 900-3600 mg/day divided TID
+30-59.99: CrCl >30-59 mL/min: 400-1400 mg/day divided BID
+15-29.99: CrCl >15-29 mL/min: 200-700 mg/day once daily
+< 15: CrCl <15 mL/min, not on hemodialysis: 100-300 mg/day at CrCl 15; reduce proportionally below 15 once daily | Hemodialysis: Maintenance dose by CrCl estimate plus 125-350 mg supplement after each 4 hours of hemodialysis; select supplement from label table",">= 60 [dialysis=none]: 900-3600 mg/day divided TID
+30-59.99 [dialysis=none]: 400-1400 mg/day divided BID
+15-29.99 [dialysis=none]: 200-700 mg/day once daily
+< 15 [dialysis=none]: 100-300 mg/day at CrCl 15; reduce proportionally below 15 once daily
+All values [dialysis=hd]: Maintenance dose by CrCl plus 125-350 mg supplement after each 4 hours of HD",Dose range depends on indication and titration; table is for patients 12 years and older.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=59a01ec3-97d4-c099-e053-2a91aa0af754,draft,,,,,
+pregabalin:ORAL,Pregabalin,ORAL,">= 60: CrCl >=60 mL/min: 150-600 mg/day divided BID or TID
+30-59.99: CrCl 30-60 mL/min: 75-300 mg/day divided BID or TID
+15-29.99: CrCl 15-30 mL/min: 25-150 mg/day QD or divided BID
+< 15: CrCl <15 mL/min, not on hemodialysis: 25-75 mg/day once daily | Hemodialysis: Renal-adjusted daily dose plus 25-150 mg supplemental dose immediately after each 4-hour hemodialysis; select supplement by daily regimen",">= 60 [dialysis=none]: 150-600 mg/day divided BID or TID
+30-59.99 [dialysis=none]: 75-300 mg/day divided BID or TID
+15-29.99 [dialysis=none]: 25-150 mg/day once daily or divided BID
+< 15 [dialysis=none]: 25-75 mg/day once daily
+All values [dialysis=hd]: Renal-adjusted daily dose plus 25-150 mg supplement immediately after each 4-hour HD",Total daily dose depends on indication and normal-renal-function target dose; hemodialysis requires an additional post-HD supplement.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8fb45a78-b2d8-45dd-b844-0de21d1fdde9,draft,,,,,
+levetiracetam:IV+ORAL,Levetiracetam,"ORAL, IV","> 80: CrCl >80 mL/min/1.73 m2: 500-1500 mg every 12 hours
+50-80: CrCl 50-80 mL/min/1.73 m2: 500-1000 mg every 12 hours
+30-49.99: CrCl 30-50 mL/min/1.73 m2: 250-750 mg every 12 hours
+< 30: Severe impairment, CrCl <30 mL/min/1.73 m2, not on dialysis: 250-500 mg every 12 hours | ESRD using dialysis: 500-1000 mg plus 250-500 mg supplemental dose every 24 hours; supplement following dialysis","> 80 [dialysis=none]: 500-1500 mg every 12 hours
+50-80 [dialysis=none]: 500-1000 mg every 12 hours
+30-49.99 [dialysis=none]: 250-750 mg every 12 hours
+< 30 [dialysis=none]: 250-500 mg every 12 hours
+All values [dialysis=hd]: 500-1000 mg plus 250-500 mg supplement every 24 hours; supplement after dialysis",Immediate-release adult dosing; CrCl adjusted to body surface area per label. ESRD on dialysis has a separate every-24-hour regimen.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1d67cb3c-1173-4dce-a79b-a3c36934ab2e,draft,,,,,
+topiramate:ORAL,Topiramate,ORAL,">= 70: CrCl >=70 mL/min/1.73 m2: No renal dose adjustment usual adult schedule by indication
+< 70: CrCl <70 mL/min/1.73 m2, not on hemodialysis: One-half usual adult dose usual interval by indication | Hemodialysis: One-half usual adult dose plus possible supplemental dose manual review; individualize supplement per dialysis parameters",">= 70 [dialysis=none]: No renal dose adjustment usual adult schedule by indication
+< 70 [dialysis=none]: One-half usual adult dose usual interval by indication
+All values [dialysis=hd]: One-half usual adult dose plus possible supplemental dose individualize to dialysis parameters",Dose depends on epilepsy or migraine regimen; renal rule halves the usual adult dose. Hemodialysis supplementation is individualized.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=41a5a961-8756-464c-aef3-22f2c9047609,draft,,,,,
+lacosamide:IV+ORAL,Lacosamide,"ORAL, IV","> 30: CrCl >30 mL/min: No renal dose adjustment usual adult schedule by indication
+0-30: CrCl <=30 mL/min or ESRD: Maximum 300 mg/day divided per indication; consider post-HD supplement up to 50%",,Renal maximum applies to severe impairment and ESRD; hemodialysis supplementation may be considered.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1310e776-65c8-413d-aab5-81a8c15719c5,draft,,,,,
+oxcarbazepine:ORAL,Oxcarbazepine,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment usual adult schedule by indication
+< 30: CrCl <30 mL/min: Initiate at one-half usual starting dose (300 mg/day) divided twice daily; increase slowly",,Immediate-release adult dosing; titrate slowly to clinical response.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=867eaf99-3e31-4f75-bfae-2898804d956d,draft,,,,,
+memantine:ORAL,Memantine,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment titrate to usual target 10 mg twice daily
+5-29.99: CrCl 5-29 mL/min: Target dose 5 mg twice daily
+< 5: CrCl <5 mL/min: No DailyMed dose recommendation located manual review",,Immediate-release tablets for moderate to severe Alzheimer dementia.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=becb09dc-174d-4817-88d4-f38c8adcd309,draft,,,,,
+galantamine:ORAL,Galantamine,ORAL,">= 60: CrCl >=60 mL/min: No renal dose adjustment usual adult titration schedule
+9-59.99: CrCl 9-59 mL/min: Do not exceed 16 mg/day per formulation schedule
+< 9: CrCl <9 mL/min: Use not recommended do not use",,Immediate-release and extended-release Alzheimer dementia products share the same renal maximum.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e80ec152-3616-4a13-9266-715550a8c398,draft,,,,,
+duloxetine:ORAL,Duloxetine,ORAL,">= 30: GFR >=30 mL/min: No renal dose adjustment specified usual adult schedule by indication
+< 30: GFR <30 mL/min: Avoid use do not use",,"Psychiatric, neuropathic pain, fibromyalgia, and chronic musculoskeletal pain indications.",https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4121bd3f-2d6d-3bdd-e063-6294a90a3088,draft,,,,,
+desvenlafaxine:ORAL,Desvenlafaxine,ORAL,"> 50: CrCl >50 mL/min: 50 mg once daily
+30-50: CrCl 30-50 mL/min: Maximum 50 mg once daily
+< 30: CrCl <30 mL/min or ESRD: 25 mg daily or 50 mg every other day no supplemental post-dialysis dose",,Major depressive disorder; extended-release tablet.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=25bdfc41-c7cb-4d16-b6a8-f102f9b8c984,draft,,,,,
+venlafaxine:ORAL,Venlafaxine,ORAL,"60-89: CrCl 60-89 mL/min: Reduce total daily dose by 25%-50% usual interval for selected formulation
+30-59.99: CrCl 30-59 mL/min: Reduce total daily dose by 25%-50% usual interval for selected formulation
+< 30: CrCl <30 mL/min or hemodialysis: Reduce total daily dose by 50% or more usual interval for selected formulation",,Extended-release tablet label; reduction is percentage-based rather than a fixed dose.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e81a2daf-b8b2-7c05-b532-bc775700b100&version=4,draft,,,,,
+paliperidone:ORAL,Paliperidone,ORAL,">= 80: CrCl >=80 mL/min: No renal dose adjustment usual adult schedule by indication
+50-79.99: CrCl 50-79 mL/min: Start 3 mg; maximum 6 mg once daily
+10-49.99: CrCl 10-49 mL/min: Start 1.5 mg; maximum 3 mg once daily
+< 10: CrCl <10 mL/min: Use not recommended do not use",,Extended-release oral tablets; not applicable to long-acting injectable products.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=463db841-297f-7692-e063-6394a90a8c14,draft,,,,,
+risperidone:ORAL,Risperidone,ORAL,">= 60: CrCl >=60 mL/min: No renal dose reduction specified usual adult schedule by indication
+30-59.99: CrCl 30-59 mL/min; moderate renal disease: Reduce dose; no fixed numeric renal regimen in label manual review and cautious titration
+15-29.99: CrCl 15-29 mL/min; severe renal impairment: Start 0.5 mg twice daily; titrate by <=0.5 mg twice daily; increase above 1.5 mg twice daily no more often than weekly
+< 15: CrCl <15 mL/min or dialysis: No clean DailyMed regimen beyond severe-impairment start manual review",,"Adult oral dosing; moderate-to-severe renal disease requires dose reduction, but the label only gives a fixed start/titration regimen for severe impairment.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a6347895-5f16-43b4-92a0-b9904ac81937,draft,,,,,
+lurasidone:ORAL,Lurasidone,ORAL,">= 50: CrCl >=50 mL/min: No renal dose adjustment usual adult schedule by indication
+< 50: CrCl <50 mL/min: Start 20 mg; maximum 80 mg once daily with food",,Schizophrenia and bipolar depression; take with food per label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fa9f0d28-c525-4a1e-acec-84c82e10b9a2,draft,,,,,
+acamprosate:ORAL,Acamprosate,ORAL,"> 50: CrCl >50 mL/min: 666 mg three times daily
+0-30: CrCl <=30 mL/min: Contraindicated do not use
+30-50: CrCl >30-50 mL/min: 333 mg only if CrCl is >30 mL/min three times daily",,Maintenance of alcohol abstinence; delayed-release 333 mg tablets.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=ae6e79c0-a307-4888-b647-1b7be4cb9127&version=4,draft,,,,,
+varenicline:ORAL,Varenicline,ORAL,">= 30: Mild to moderate renal impairment: No renal dose adjustment usual adult titration schedule
+< 30: CrCl <30 mL/min: Start 0.5 mg daily; maximum 0.5 mg twice daily titrate as needed and tolerated | ESRD on hemodialysis: Maximum 0.5 mg once daily if tolerated",,Smoking cessation; severe renal impairment and ESRD dosing.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0004a0bb-87c0-46f8-b36a-95c98107395d,draft,,,,,
+pramipexole:ORAL,Pramipexole,ORAL,"> 60: CrCl >60 mL/min: Start 0.125 mg; maximum 1.5 mg three times daily
+35-60: CrCl 35-59 mL/min: Start 0.125 mg; maximum 1.5 mg twice daily
+15-34.99: CrCl 15-34 mL/min: Start 0.125 mg; maximum 1.5 mg once daily
+< 15: CrCl <15 mL/min or hemodialysis: Use not adequately studied manual review",,Parkinson disease immediate-release dosing table; restless legs dosing requires separate review.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=04bf2b80-5371-4641-bbf5-e19587c0e9cf,draft,,,,,
+ropinirole:ORAL,Ropinirole,ORAL,"> 50: CrCl >50 mL/min: No renal dose adjustment usual Parkinson or RLS schedule by indication
+30-50: CrCl 30-50 mL/min: No renal dose adjustment usual Parkinson or RLS schedule by indication
+< 30: Severe renal impairment without regular dialysis: Use not studied manual review | ESRD on hemodialysis; Parkinson disease: Start 0.25 mg; maximum total daily dose 18 mg three times daily; no post-HD supplement | ESRD on hemodialysis; restless legs syndrome: Start 0.25 mg; maximum total daily dose 3 mg once daily 1-3 hours before bedtime; no post-HD supplement",,Immediate-release product; ESRD hemodialysis dosing differs for Parkinson disease and restless legs syndrome; severe impairment without dialysis was not studied.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1cdb9d61-5bbc-4026-a449-fec8c9ce5c65,draft,,,,,
+tramadol:ORAL,Tramadol,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment specified usual adult immediate-release schedule
+< 30: CrCl <30 mL/min: Maximum 200 mg/day increase dosing interval to every 12 hours",,Immediate-release tablets for pain; ER products have different restrictions.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=cabccc8a-6f9f-414c-93f0-6dec331ed74b,draft,,,,,
+tapentadol:ORAL,Tapentadol,ORAL,">= 30: CrCl 30-90 mL/min or normal renal function: No renal dose adjustment usual adult schedule by indication
+< 30: CrCl <30 mL/min: Use not recommended do not use",,Immediate-release tablets for acute pain.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=863f3fd3-1e8d-41b0-855f-8f9a29237cda,draft,,,,,
+allopurinol:ORAL,Allopurinol,ORAL,"> 60: eGFR >60 mL/min: No initial dosage modification usual adult gout initiation
+30-60: eGFR >30-60 mL/min: 50 mg once daily
+15-30: eGFR >15-30 mL/min: 50 mg every other day
+5-15: eGFR 5-15 mL/min: 50 mg twice weekly
+< 5: eGFR <5 mL/min: 50 mg once weekly",,Initial adult gout dosing by eGFR; titrate to serum urate with monitoring.,https://www.dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4f5c4fbc-3d31-5068-e063-6294a90ab315,draft,,,,,
+febuxostat:ORAL,Febuxostat,ORAL,"30-89: CrCl 30-89 mL/min: No renal dose adjustment usual adult schedule
+15-29.99: CrCl 15-29 mL/min: Limit to 40 mg once daily
+< 15: CrCl <15 mL/min or dialysis: Not studied in ESRD patients on dialysis; no clean DailyMed regimen manual review",,"Chronic gout hyperuricemia; severe renal impairment limit is explicit, while serum urate response guides therapy. ESRD patients on dialysis were not studied.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=54de10ef-fe5f-4930-b91d-6bbb04c664bd,draft,,,,,
+famotidine:ORAL,Famotidine,ORAL,">= 60: CrCl >=60 mL/min: No renal dose adjustment usual adult schedule by indication
+30-59.99: Active duodenal or gastric ulcer: 20 mg daily or 40 mg every other day maximum recommended renal regimen | Symptomatic non-erosive GERD: 20 mg once daily | Erosive esophagitis; usual 20 mg BID regimen: 20 mg daily or 40 mg every other day maximum recommended renal regimen | Erosive esophagitis; usual 40 mg BID regimen: 40 mg once daily | Pathological hypersecretory conditions: Avoid use; doses may exceed renal-safety-evaluated maximums manual review | Reduction of DU recurrence: 20 mg every other day
+< 30: Active duodenal or gastric ulcer: 20 mg every other day; alternate 10 mg once daily requires another formulation | Symptomatic non-erosive GERD: 20 mg every other day; alternate 10 mg once daily requires another formulation | Erosive esophagitis; usual 20 mg BID regimen: 20 mg every other day; alternate 10 mg once daily requires another formulation | Erosive esophagitis; usual 40 mg BID regimen: 20 mg once daily | Pathological hypersecretory conditions: Avoid use; doses may exceed renal-safety-evaluated maximums manual review | Reduction of DU recurrence: 10 mg every other day; requires another formulation",">= 60 [any]: No renal dose adjustment usual adult schedule by indication
+30-59.99 [indication=ulcer]: 20 mg daily or 40 mg every other day maximum renal regimen
+30-59.99 [indication=gerd]: 20 mg once daily
+30-59.99 [indication=erosive-20-bid]: 20 mg daily or 40 mg every other day maximum renal regimen
+30-59.99 [indication=erosive-40-bid]: 40 mg once daily
+30-59.99 [indication=du-recurrence]: 20 mg every other day
+30-59.99 [indication=hypersecretory]: Avoid use manual review
+< 30 [indication=ulcer]: 20 mg every other day; 10 mg daily needs another formulation
+< 30 [indication=gerd]: 20 mg every other day; 10 mg daily needs another formulation
+< 30 [indication=erosive-20-bid]: 20 mg every other day; 10 mg daily needs another formulation
+< 30 [indication=erosive-40-bid]: 20 mg once daily
+< 30 [indication=du-recurrence]: 10 mg every other day; needs another formulation
+< 30 [indication=hypersecretory]: Avoid use manual review",Tablet label; renal maximum dose varies by acid-suppression indication. Use lowest effective dose and monitor CNS/QT risk in moderate/severe impairment.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a06502d9-7903-4f37-833e-e5763d502def,draft,,,,,
+metoclopramide:ORAL,Metoclopramide,ORAL,"> 60: CrCl >60 mL/min: No renal dose adjustment usual adult schedule by indication
+0-60: GERD, CrCl <=60 or ESRD: 5 mg QID or 10 mg BID; max 20 mg/day 30 minutes before meals and at bedtime or twice daily | Diabetic gastroparesis, CrCl <=60 or ESRD: 5 mg twice daily; max 10 mg/day",,Oral tablet dosing; renal adjustment differs for GERD versus diabetic gastroparesis.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7eeaa7bc-c94f-47d0-94e5-e35ccadca19e,draft,,,,,
+alendronate:ORAL,Alendronate,ORAL,">= 35: CrCl >=35 mL/min: No renal dose adjustment usual adult schedule by indication
+< 35: CrCl <35 mL/min: Use not recommended do not use",,Osteoporosis/Paget disease oral bisphosphonate.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4323d3aa-cbb0-41e2-aba7-7a94a0516993,draft,,,,,
+risedronate:ORAL,Risedronate,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment specified usual adult schedule by indication
+< 30: CrCl <30 mL/min: Use not recommended do not use",,Osteoporosis/Paget disease oral bisphosphonate.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a42a35e6-3e08-4b4f-ae56-47d4aec2322a,draft,,,,,
+zoledronic-acid:IV,Zoledronic acid,IV,">= 35: CrCl >=35 mL/min: 5 mg IV; no renal dose adjustment per indication schedule
+< 35: CrCl <35 mL/min or acute renal impairment: Contraindicated do not use",,Reclast osteoporosis/Paget disease 5 mg IV product; oncology zoledronic acid products require separate rules.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=16fcf8c9-ef8a-4e93-9ee6-acfadd35a861,draft,,,,,
+hydroxyurea:ORAL,Hydroxyurea,ORAL,">= 60: Measured CrCl >=60 mL/min: 15 mg/kg once daily
+< 60: Measured CrCl <60 mL/min or ESRD: 7.5 mg/kg once daily; give after hemodialysis on dialysis days",,Capsule products; initial dose shown for adult oncology-style capsule labeling and sickle-cell capsule labeling.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6053c775-68de-45e4-9af9-33b18fd0e140,draft,,,,,
+capecitabine:ORAL,Capecitabine,ORAL,"> 50: CLcr >50 mL/min by Cockcroft-Gault: No renal starting-dose reduction usual adult cycle by indication
+30-50: CLcr 30-50 mL/min by Cockcroft-Gault: Reduce starting dose by 25% usual adult cycle by indication
+< 30: CLcr <30 mL/min: Dosage has not been established source-summary; manual clinical review required",,Oral tablets; dose reduction applies to the usual indication-specific starting dose.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=29885ada-b743-419c-8f15-edd4247c76ca,draft,,,,,
+pemetrexed:IV,Pemetrexed,IV,">= 45: CrCl >=45 mL/min by Cockcroft-Gault: 500 mg/m2 day 1 of each 21-day cycle
+< 45: CrCl <45 mL/min: No recommended dose do not administer per label",,NSCLC or mesothelioma regimens; requires vitamin supplementation and other label precautions.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=3ae68628-7ab0-4491-b3ae-6a8330b719c8,draft,,,,,
+lenalidomide:ORAL,Lenalidomide,ORAL,"30-60: CLcr 30-60; MM/MCL or FL/MZL combination therapy: 10 mg once daily | CLcr 30-60; MM maintenance after auto-HSCT or MDS: 5 mg once daily
+< 30: CLcr <30 not requiring dialysis; MM/MCL combination therapy: 15 mg every other day | CLcr <30 not requiring dialysis; FL/MZL combination therapy: 5 mg once daily | CLcr <30 not requiring dialysis; MM maintenance after auto-HSCT or MDS: 2.5 mg once daily | CLcr <30 requiring dialysis; MM/MCL or FL/MZL combination therapy: 5 mg once daily after dialysis on dialysis days | CLcr <30 requiring dialysis; MM maintenance after auto-HSCT or MDS: 2.5 mg once daily after dialysis on dialysis days",,Dose bands differ by myeloma/lymphoma combination therapy versus maintenance or MDS.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=84d9dec7-9250-4dbd-9a0d-23e75f111892,draft,,,,,
+fludarabine:IV,Fludarabine phosphate,IV,">= 80: CrCl >=80 mL/min: 25 mg/m2 daily for 5 days every 28 days
+50-79.99: CrCl 50-79 mL/min: 20 mg/m2 daily for 5 days every 28 days
+30-49.99: CrCl 30-49 mL/min: 15 mg/m2 daily for 5 days every 28 days
+< 30: CrCl <30 mL/min: Do not administer contraindicated/not recommended by label",,IV formulation for adult CLL; oral fludarabine has a separate dose basis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=20e5acf0-90b7-45c8-be78-91eaf77c9ac0,draft,,,,,
+fludarabine-tablets:ORAL,Fludarabine phosphate tablets,ORAL,"> 70: CrCl >70 mL/min/1.73 m2: 40 mg/m2 daily for 5 days every 28 days
+30-70: CrCl 30-70 mL/min/1.73 m2: Reduce dose by 20% daily for 5 days every 28 days
+< 30: CrCl <30 mL/min/1.73 m2: Reduce dose by 50% daily for 5 days every 28 days",,Oral formulation for adult CLL; tablet dose is not interchangeable with IV dose.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ac76aca8-e718-4232-92ab-399166ce9e46,draft,,,,,
+bendamustine:IV,Bendamustine,IV,">= 30: CrCl >=30 mL/min: No renal dose adjustment specified usual adult cycle by indication
+< 30: CrCl <30 mL/min: Do not use not recommended by label",,CLL and indolent NHL products; renal threshold is a use restriction rather than a dose table.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=766b73e2-49bb-47f9-bbb1-44cfa1a3197e,draft,,,,,
+oxaliplatin:IV,Oxaliplatin,IV,">= 30: CrCl >=30 mL/min by Cockcroft-Gault: No renal dose reduction usual adult cycle by indication
+< 30: CrCl <30 mL/min by Cockcroft-Gault: 65 mg/m2 per regimen cycle",,Colorectal cancer regimens; renal dose shown for severe impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=95b05292-36a1-4946-b8b3-835a3a77f4a7,draft,,,,,
+etoposide:IV,Etoposide,IV,"> 50: Measured CrCl >50 mL/min: 100% of dose usual adult schedule by regimen
+15-50: Measured CrCl 15-50 mL/min: 75% of dose usual adult schedule by regimen
+< 15: Measured CrCl <15 mL/min: Further dose reduction should be considered; data unavailable specialist review",,Initial dose modification; subsequent dosing must follow tolerance and clinical effect.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4f850eb2-3542-43a0-90e8-bb37fa05cf15,draft,,,,,
+topotecan-injection:IV,Topotecan injection,IV,">= 40: CLcr >=40 mL/min: No renal dose adjustment specified daily on regimen days
+20-39.99: CLcr 20-39 mL/min by Cockcroft-Gault using ideal body weight: 0.75 mg/m2/day daily on regimen days
+< 20: CLcr <20 mL/min: Insufficient data to provide a dosage recommendation source-summary; manual clinical review required",,Single-agent IV dosing; cervical cancer combination therapy has serum-creatinine trial constraints.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b6019088-cd94-43b4-b5ce-ba20b6b8021e,draft,,,,,
+topotecan-capsules:ORAL,Topotecan capsules,ORAL,">= 50: CLcr >=50 mL/min: 2.3 mg/m2/day once daily for 5 consecutive days of a 21-day cycle
+30-49.99: CLcr 30-49 mL/min: 1.5 mg/m2/day once daily for 5 consecutive days of a 21-day cycle
+< 30: CLcr <30 mL/min: 0.6 mg/m2/day once daily for 5 consecutive days of a 21-day cycle",,Oral capsule product; renal dosing differs from IV topotecan.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=b23b46f5-c276-47f5-8bbd-940680b3f579,draft,,,,,
+imatinib:ORAL,Imatinib,ORAL,">= 60: CrCL >=60 mL/min: No renal dose adjustment specified usual adult schedule by indication
+40-59.99: CrCL 40-59 mL/min: Do not exceed 600 mg/day once daily or divided per indication
+20-39.99: CrCL 20-39 mL/min: Decrease recommended starting dose by 50%; do not exceed 400 mg/day once daily or divided per indication
+< 20: CrCL <20 mL/min: Use with caution; 100 mg/day tolerated in limited patients specialist review",,Multiple oncology indications; renal language modifies starting dose and maximum dose rather than a single regimen.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1debf3a0-7587-47d7-8ea6-e739698d7297,draft,,,,,
+venetoclax:ORAL,Venetoclax,ORAL,>= 15: CLcr >=15 mL/min: No renal dose adjustment usual adult ramp-up or schedule by indication,,CLL/SLL and AML regimens; TLS prophylaxis/monitoring remains indication- and risk-specific.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b118a40d-6b56-cee3-10f6-ded821a97018,draft,,,,,
+anastrozole:ORAL,Anastrozole,ORAL,All values: Renal impairment: No renal dose adjustment 1 mg once daily,,Postmenopausal breast cancer endocrine therapy.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7e0bd2cc-d3cc-403f-a6b6-4597ccb2f685,draft,,,,,
+letrozole:ORAL,Letrozole,ORAL,>= 10: CrCl >=10 mL/min: No renal dose adjustment 2.5 mg once daily,,Postmenopausal breast cancer endocrine therapy.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=2d1f18f0-2c77-407c-b702-2d1b07f92510&version=3,draft,,,,,
+exemestane:ORAL,Exemestane,ORAL,"All values: Renal impairment, including CrCl <35 mL/min/1.73 m2: No renal dose adjustment 25 mg once daily after a meal",,Postmenopausal breast cancer endocrine therapy.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e24b08eb-4693-41c7-81cb-b536947f7070,draft,,,,,
+bicalutamide:ORAL,Bicalutamide,ORAL,All values: Renal impairment: No renal dose adjustment 50 mg once daily,,Use with an LHRH analog for metastatic prostate cancer; 150 mg monotherapy is not approved.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7a08d88b-051a-4c16-9560-12685c500c58&version=3,draft,,,,,
+abiraterone:ORAL,Abiraterone acetate,ORAL,All values: Renal impairment: No renal dose adjustment usual adult once-daily product-specific regimen,,Prostate cancer regimens; must be used with corticosteroid per product-specific label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6f5b628b-69da-4a04-a4d5-623b18d1fd5d,draft,,,,,
+palbociclib:ORAL,Palbociclib,ORAL,"> 15: CrCl >15 mL/min: No renal dose adjustment once daily for 21 days, then 7 days off",,Breast cancer CDK4/6 inhibitor; tablet and capsule schedules use 21 days on then 7 days off.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=fecbdd7d-b729-41b5-9872-231b8fe104ce,draft,,,,,
+olaparib:ORAL,Olaparib,ORAL,">= 51: CLcr >=51 mL/min by Cockcroft-Gault: No renal dose adjustment 300 mg twice daily
+31-50.99: CLcr 31-50 mL/min by Cockcroft-Gault: 200 mg twice daily
+< 31: CLcr <=30 mL/min or ESRD: No data specialist review",,PARP inhibitor tablets; do not substitute capsule-era dosing.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=741ff3e3-dc1a-45a6-84e5-2481b27131aa,draft,,,,,
+rucaparib:ORAL,Rucaparib,ORAL,">= 90: CrCl >=90 mL/min: 600 mg twice daily
+30-89.99: CLcr 30-89 mL/min by Cockcroft-Gault: No renal dose adjustment 600 mg twice daily
+< 30: CLcr <30 mL/min or dialysis: Not studied specialist review",,PARP inhibitor for selected ovarian/prostate cancer indications.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0295d202-1cfe-7659-e063-6294a90a476e,draft,,,,,
+talazoparib:ORAL,Talazoparib,ORAL,">= 60: CLcr >=60 mL/min: No renal dose adjustment usual adult once-daily schedule by indication
+30-59.99: CLcr 30-59; breast cancer monotherapy: 0.75 mg once daily | CLcr 30-59; HRR-mutated mCRPC with enzalutamide: 0.35 mg once daily
+15-29.99: CLcr 15-29; breast cancer monotherapy; not requiring hemodialysis: 0.5 mg once daily | CLcr 15-29; HRR-mutated mCRPC with enzalutamide; not requiring hemodialysis: 0.25 mg once daily
+< 15: CLcr <15 mL/min or requiring hemodialysis: Not studied source-summary; manual clinical review required",,PARP inhibitor; renal doses differ for breast cancer monotherapy versus mCRPC with enzalutamide.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=13839d4f-6acf-4ffb-a128-79df59319273,draft,,,,,
+tamsulosin:ORAL,Tamsulosin,ORAL,">= 10: Renal impairment with CLcr >=10 mL/min/1.73 m2: No renal dose adjustment 0.4 mg once daily after the same meal; may increase per label response
+< 10: End-stage renal disease, CLcr <10 mL/min/1.73 m2: Not studied specialist review",,BPH symptoms; not indicated for hypertension.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=6771ad8e-ac92-4aec-b484-5d8350a353f8,draft,,,,,
+silodosin:ORAL,Silodosin,ORAL,"> 50: CCr >50 mL/min: No renal dose adjustment 8 mg once daily with a meal
+30-50: CCr 30-50 mL/min: 4 mg once daily with a meal
+< 30: CCr <30 mL/min: Contraindicated do not use",,BPH symptoms; take with a meal.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ea3bbafb-d32a-d0d3-e053-2a95a90ac387,draft,,,,,
+mirabegron:ORAL,Mirabegron,ORAL,">= 30: eGFR 30-89 mL/min/1.73 m2 or normal renal function: 25 mg initially; max 50 mg once daily
+15-29.99: eGFR 15-29 mL/min/1.73 m2: 25 mg once daily; do not exceed 25 mg
+< 15: eGFR <15 mL/min/1.73 m2 or requiring dialysis: Not recommended do not use",,Adult overactive bladder dosing; label renal table uses MDRD eGFR.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e597023d-6dcc-4d9e-8ce0-2d28a5d862f3&version=1,draft,,,,,
+solifenacin:ORAL,Solifenacin,ORAL,">= 30: CLcr >=30 mL/min: 5 mg; may increase to 10 mg if tolerated once daily
+< 30: CLcr <30 mL/min: Do not exceed 5 mg once daily",,Adult overactive bladder tablets.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=aea71cde-6d62-4f8d-b813-47064cb213d9,draft,,,,,
+tolterodine:ORAL,Tolterodine extended-release,ORAL,"> 30: CCr >30 mL/min: 4 mg once daily
+10-30: CCr 10-30 mL/min: 2 mg once daily
+< 10: CCr <10 mL/min: Not recommended do not use",,Extended-release capsules for adult overactive bladder; immediate-release dosing may differ.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9710ad7b-93c2-4ec1-95ff-597563be4314,draft,,,,,
+fesoterodine:ORAL,Fesoterodine,ORAL,">= 90: CLcr >=90 mL/min: 4 mg initially; max 8 mg once daily
+30-89.99: CLcr 30-89 mL/min by Cockcroft-Gault: 8 mg once daily maximum
+15-29.99: CLcr 15-29 mL/min by Cockcroft-Gault: 4 mg once daily
+< 15: CLcr <15 mL/min by Cockcroft-Gault: 4 mg once daily",,Adult overactive bladder extended-release tablets; pediatric NDO table is excluded.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=dc8f6158-3c2b-4ec0-a951-e04468b83bb1,draft,,,,,
+mycophenolate-mofetil:ORAL,Mycophenolate mofetil,ORAL,"< 25: Kidney transplant with severe chronic graft impairment, GFR <25 mL/min/1.73 m2: Do not administer doses greater than 1 g twice daily",,Oral tablet/capsule transplant immunosuppression label; renal cap applies only to kidney transplant patients with severe chronic graft impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8015f042-54fb-4a7a-a10b-6219e1a450c8,draft,,,,,
+darolutamide:ORAL,Darolutamide,ORAL,">= 30: eGFR >=30 mL/min/1.73 m2: 600 mg twice daily with food
+15-29.99: eGFR 15-29 mL/min/1.73 m2 and not receiving hemodialysis: 300 mg twice daily with food
+< 15: eGFR <15 mL/min/1.73 m2 or receiving hemodialysis: Effect unknown / outside label recommendation source-summary; manual clinical review required",,Prostate cancer androgen receptor inhibitor; severe renal impairment recommendation excludes hemodialysis.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=1a7cb212-56e4-4b9d-a73d-bfee7fe4735e,draft,,,,,
+cimetidine:ORAL,Cimetidine,ORAL,All values: Manual review: nonnumeric severe renal impairment category: Source summary only DailyMed: 300 mg every 12 hours orally in severe renal impairment; do not apply to all CrCl values without clinical review,,"Acid suppression; oral tablet label gives a reduced regimen for severe renal impairment without a numeric CrCl cutoff, so this record is source-summary only.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=28fd7158-a617-436a-8f5c-71ffbaafe527,draft,,,,,
+nizatidine:ORAL,Nizatidine,ORAL,"> 50: CrCl >50 mL/min: No renal dose adjustment usual adult schedule by indication
+20-50: CrCl 20-50 mL/min; active duodenal ulcer, GERD, or benign gastric ulcer: 150 mg once daily | CrCl 20-50 mL/min; maintenance therapy: 150 mg every other day
+< 20: CrCl <20 mL/min; active duodenal ulcer, GERD, or benign gastric ulcer: 150 mg every other day | CrCl <20 mL/min; maintenance therapy: 150 mg every 3 days",,Active ulcer/GERD and maintenance regimens have different renal-adjusted intervals.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=e9957997-8b85-48a0-9bb3-b878cb223236,draft,,,,,
+esomeprazole:ORAL,Esomeprazole magnesium,ORAL,All values: Renal insufficiency: No renal dose adjustment usual adult schedule by indication,,Delayed-release oral PPI; renal rule does not cover antibiotic co-therapy components for H. pylori regimens.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6f650345-0bca-4fe9-96eb-4d7ac80928ec,draft,,,,,
+lansoprazole:ORAL,Lansoprazole,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule by indication,,Delayed-release oral PPI.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=7d811f01-f0c2-4753-bb36-80b48dabb58c,draft,,,,,
+pantoprazole:ORAL,Pantoprazole sodium,ORAL,All values: Renal impairment or hemodialysis: No renal dose adjustment usual adult schedule by indication,,Delayed-release oral PPI.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7c958802-daad-4c7e-88eb-73be7d2261d8,draft,,,,,
+dexlansoprazole:ORAL,Dexlansoprazole,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule by indication,,Delayed-release oral PPI for GERD/erosive esophagitis.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=3ed69e5a-aa78-4118-aa32-59a10f80c901,draft,,,,,
+levocetirizine:ORAL,Levocetirizine dihydrochloride,ORAL,"> 80: CrCl >80 mL/min: 5 mg once daily in the evening
+50-80: CrCl 50-80 mL/min: 2.5 mg once daily
+30-49.99: CrCl 30-50 mL/min: 2.5 mg every other day
+10-29.99: CrCl 10-30 mL/min: 2.5 mg twice weekly, once every 3 to 4 days
+< 10: CrCl <10 mL/min or hemodialysis: Do not use not applicable",,Allergic rhinitis/urticaria; adult and age 12+ renal table.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=348eadb6-5be2-f8c7-e063-6394a90a1314,draft,,,,,
+fexofenadine:ORAL,Fexofenadine hydrochloride,ORAL,All values: Manual review: nonnumeric decreased renal function category: Source summary only DailyMed: 60 mg once daily as adult starting dose in decreased renal function; do not apply to all CrCl values without clinical review,,"Seasonal allergic rhinitis/chronic idiopathic urticaria tablet label; decreased renal function is not numerically defined, so this record is source-summary only.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=a3d17e8d-a8ce-4e1a-9ec2-13736af1d7b5,draft,,,,,
+desloratadine:ORAL,Desloratadine,ORAL,All values: Manual review: renal impairment category not dose-band selectable: Source summary only DailyMed: 5 mg every other day as adult starting dose in renal impairment; do not apply to all CrCl values without clinical review,,"Allergic rhinitis/chronic idiopathic urticaria; adult renal impairment dose is not tied to a CrCl cutoff, so this record is source-summary only.",https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=4d094001-b85a-47b3-bc67-a46660384ece,draft,,,,,
+montelukast:ORAL,Montelukast sodium,ORAL,All values: Renal insufficiency: No renal dose adjustment usual adult schedule by indication,,Asthma/allergic rhinitis tablet label.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=488e08d7-59d8-499e-bac6-a0783651d67b,draft,,,,,
+roflumilast:ORAL,Roflumilast,ORAL,All values: Renal impairment: No renal dose adjustment 500 mcg once daily after any initial 250 mcg tolerability lead-in,,COPD exacerbation risk reduction in severe COPD associated with chronic bronchitis; not for acute bronchospasm.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4251c764-7224-4f94-9de7-b6c76cb1f5cd,draft,,,,,
+tiotropium:INHALATION,Tiotropium bromide,INHALATION,All values: Renal impairment: No renal dose adjustment usual adult inhaled schedule; monitor anticholinergic effects if moderate/severe impairment,,SPIRIVA HANDIHALER inhalation powder for COPD maintenance; monitor anticholinergic effects in moderate/severe renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c6343458-617b-41ed-8e96-763e91dc8e90,draft,,,,,
+trospium:ORAL,Trospium chloride,ORAL,">= 30: CrCl >=30 mL/min: 20 mg twice daily on an empty stomach
+< 30: CrCl <30 mL/min: 20 mg once daily at bedtime",,Immediate-release tablets for overactive bladder; extended-release capsules are not recommended when CrCl <30 mL/min.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=d5c837a4-d1c6-4615-b7ad-27f3162a03aa,draft,,,,,
+vibegron:ORAL,Vibegron,ORAL,"All values: Manual review: FDA label is eGFR-based, not CrCl-based: Source summary only DailyMed: no adjustment for eGFR 15 to <90 mL/min/1.73 m2; not recommended for eGFR <15 or hemodialysis",,"Adult overactive bladder beta-3 agonist; label uses eGFR rather than Cockcroft-Gault CrCl, so this record is source-summary only in the CrCl-based rules shape.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=25f21d25-14f8-4fda-91f6-7aa8b68aa1c8,draft,,,,,
+ibandronate:ORAL,Ibandronate sodium,ORAL,">= 30: CrCl >=30 mL/min: No renal dose adjustment usual osteoporosis schedule
+< 30: CrCl <30 mL/min: Not recommended do not use",,Oral postmenopausal osteoporosis tablet; injectable product has separate administration-specific labeling.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=a5741ef6-0599-4657-8cda-2902ded4f680&version=12,draft,,,,,
+cinacalcet:ORAL,Cinacalcet,ORAL,All values: Renal impairment: No renal dose adjustment usual adult titration by indication and labs,,Secondary hyperparathyroidism in adult CKD on dialysis and selected hypercalcemia indications.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=28262843-b0a8-4ca7-8b92-41b7f0e896b4,draft,,,,,
+ondansetron:ORAL,Ondansetron,ORAL,All values: Impaired renal function: No renal dose adjustment usual adult schedule by indication,,Oral tablets; renal statement notes limited experience beyond first-day administration.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=69b9a032-f2d1-4c5a-a35e-9cdc3c620716,draft,,,,,
+granisetron:SC,Granisetron,SC,">= 60: CrCl >=60 mL/min: 10 mg subcutaneously on day 1 of chemotherapy; not more often than every 7 days
+30-59.99: CrCl 30-59 mL/min: 10 mg subcutaneously on day 1 of chemotherapy; not more often than every 14 days
+< 30: CrCl <30 mL/min: Avoid use not applicable",,SUSTOL extended-release injection for chemotherapy-induced nausea and vomiting; not the immediate-release granisetron products.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f7c7ffdd-8270-4030-bc1e-a1cb28a6de56,draft,,,,,
+aprepitant:ORAL,Aprepitant,ORAL,All values: Renal impairment or ESRD on hemodialysis: No renal dose adjustment usual adult regimen by indication,,Oral capsules for CINV/PONV; check regimen-specific co-administered antiemetic and corticosteroid dosing separately.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ec44482e-6194-4829-a3f7-ebe8d48a41a5,draft,,,,,
+rimegepant:ORAL,Rimegepant,ORAL,">= 15: CLcr >=15 mL/min: No renal dose adjustment usual adult schedule by acute or preventive migraine indication
+< 15: CLcr <15 mL/min or dialysis: Avoid use not applicable",,Orally disintegrating tablet for acute and preventive migraine treatment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9ef08e09-1098-35cc-e053-2a95a90a3e1d,draft,,,,,
+ubrogepant:ORAL,Ubrogepant,ORAL,">= 30: CLcr >=30 mL/min: 50 mg or 100 mg; maximum 200 mg/day as needed; second dose at least 2 hours later if needed
+15-29.99: CLcr 15-29 mL/min: 50 mg; second dose 50 mg if needed second dose at least 2 hours later
+< 15: CLcr <15 mL/min: Avoid use not applicable",,Acute migraine treatment in adults; interaction dose modifications may be more restrictive.,https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=human&query=Ubrogepant,draft,,,,,
+atogepant:ORAL,Atogepant,ORAL,">= 30: CLcr >=30 mL/min: No renal dose adjustment usual adult preventive schedule by migraine type
+< 30: CLcr <30 mL/min or ESRD; episodic migraine: 10 mg once daily; take after dialysis on dialysis days | CLcr <30 mL/min or ESRD; chronic migraine: Not recommended do not use",">= 30 [any]: No renal dose adjustment usual adult preventive schedule
+< 30 [indication=episodic-migraine]: 10 mg once daily; after dialysis on dialysis days
+< 30 [indication=chronic-migraine]: Not recommended do not use",Migraine prevention; renal recommendations differ for episodic versus chronic migraine.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8c8ab8f4-32bd-497a-befa-70c8a51d8d52,draft,,,,,
+ramelteon:ORAL,Ramelteon,ORAL,All values: Renal impairment: No renal dose adjustment 8 mg within 30 minutes of bedtime; maximum 8 mg/day,,Insomnia sleep-onset treatment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9de82310-70e8-47b9-b1fc-6c6848b99455,draft,,,,,
+eszopiclone:ORAL,Eszopiclone,ORAL,All values: Renal impairment: No renal dose adjustment usual adult bedtime schedule,,Insomnia treatment; hepatic/CNS depressant adjustments are separate.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=af86b753-d2ee-9b5f-e053-2a95a90ad23d,draft,,,,,
+zaleplon:ORAL,Zaleplon,ORAL,All values: Manual review: mild/moderate renal impairment is not CrCl-mapped: Source summary only DailyMed: no adjustment in mild to moderate renal impairment; severe renal impairment not adequately studied,,"Insomnia treatment; mild/moderate renal impairment is not numerically defined in the label and severe renal impairment was not adequately studied, so this record is source-summary only.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bc7639e9-c2cb-47bb-a295-efb0f656ccd1,draft,,,,,
+suvorexant:ORAL,Suvorexant,ORAL,All values: Renal impairment: No renal dose adjustment usual adult bedtime schedule,,Insomnia treatment; controlled substance and CYP3A interaction adjustments are separate.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e5b72731-1acb-45b7-9c13-290ad12d3951,draft,,,,,
+lemborexant:ORAL,Lemborexant,ORAL,"All values: Mild, moderate, or severe renal impairment: No renal dose adjustment usual adult bedtime schedule; monitor somnolence risk",,Insomnia treatment; severe renal impairment may increase somnolence risk despite no required dose adjustment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7074cb65-77b3-45d2-8e8d-da8dc0f70bfd,draft,,,,,
+tadalafil:ORAL,Tadalafil,ORAL,"> 50: CrCl >50 mL/min: No renal dose adjustment usual adult schedule by ED/BPH indication
+30-50: CrCl 30-50 mL/min; ED use as needed: Start 5 mg; maximum 10 mg not more than once daily; max 10 mg every 48 hours | CrCl 30-50 mL/min; once-daily ED, BPH, or ED/BPH: Start 2.5 mg; may increase to 5 mg once daily based on response
+< 30: CrCl <30 mL/min or hemodialysis; ED use as needed: Do not exceed 5 mg every 72 hours | CrCl <30 mL/min or hemodialysis; once-daily ED, BPH, or ED/BPH: Not recommended do not use","> 50 [formulation=ed-prn]: No renal dose adjustment usual ED as-needed schedule
+> 50 [formulation=daily-ed-bph]: No renal dose adjustment once daily
+30-50 [formulation=ed-prn]: Start 5 mg; maximum 10 mg not more than once daily; max 10 mg every 48 hours
+30-50 [formulation=daily-ed-bph]: Start 2.5 mg; may increase to 5 mg once daily based on response
+< 30 [formulation=ed-prn]: Do not exceed 5 mg every 72 hours
+< 30 [formulation=daily-ed-bph]: Not recommended do not use
+All values [formulation=pah]: PAH/ADCIRCA not encoded in this ED/BPH record review product-specific label",ED/BPH tablet label; pulmonary arterial hypertension products such as ADCIRCA use a different renal regimen and are not encoded here.,https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=f9e9a953-2802-4bb1-91a3-a29be347801e,draft,,,,,
+darifenacin:ORAL,Darifenacin,ORAL,All values: Renal impairment: No renal dose adjustment usual adult schedule,,Extended-release tablets for overactive bladder.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7e9f2cec-8c9f-7668-dfb4-6ab57c9d3e8a,draft,,,,,
+apremilast:ORAL,Apremilast,ORAL,">= 30: CLcr >=30 mL/min: 30 mg twice daily after titration
+< 30: CLcr <30 mL/min: 30 mg once daily after AM-only titration",">= 30 [any]: 30 mg twice daily after titration
+< 30 [any]: 30 mg once daily after AM-only titration","Immediate-release OTEZLA tablets for adult psoriatic arthritis, plaque psoriasis, and Behcet oral ulcers; OTEZLA XR severe-renal guidance differs.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=f6b1f516-4972-4d82-bced-113e47b41cc5,draft,,,,,
+azithromycin:IV,Azithromycin,IV,All values: Adult dosing per DailyMed label: No renal dose adjustment Use usual adult dosing by indication. Use caution in severe renal impairment; verify the selected azithromycin DailyMed label,,Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6a22beb6-57e8-480d-97b5-44d9dbfabf93,unreviewed,,,,,
+clindamycin:IV,Clindamycin,IV,All values: Adult dosing per DailyMed label: No renal dose adjustment Use usual adult dosing by indication. Clindamycin is commonly used without renal adjustment; verify the selected DailyMed label,,Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=7a6967b3-5563-4bed-9eee-d400f800e799,unreviewed,,,,,
+doxycycline:IV,Doxycycline,IV,All values: Adult dosing per DailyMed label: No renal dose adjustment Use usual adult dosing by indication. Doxycycline is commonly used without renal adjustment; verify the selected DailyMed label,,Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0faee97d-2707-48fe-a739-143cd1a1c4e3,unreviewed,,,,,
+fluconazole:IV,Fluconazole,IV,"> 50: Adult dosing per DailyMed label: 100% of usual daily dose after loading dose after loading dose; then daily dose by indication
+0-50: Adult dosing per DailyMed label: 50% of usual daily dose after loading dose after loading dose; then daily dose by indication",,Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=22ebc3fb-ee81-44bd-a6e3-5e759ee724a8,unreviewed,,,,,
+lisinopril-and-hydrochlorothiazide:ORAL,Lisinopril and Hydrochlorothiazide,ORAL,"> 30: Adult dosing per DailyMed label: No renal dose adjustment Use the usual regimen. Monitor renal function and potassium as described in label warnings
+0-30: Adult dosing per DailyMed label: Not recommended Loop diuretics are preferred to thiazides in severe renal impairment; the combination label does not recommend use",,Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=00f67e1a-6999-4295-9c9f-fcb1ce9711b8,unreviewed,,,,,

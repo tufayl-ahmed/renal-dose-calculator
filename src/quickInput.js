@@ -48,8 +48,53 @@ export function parseQuickInput(value) {
     .map((token) => token.clean)
     .join(" ")
     .trim();
+  result.drugs = parseDrugSegments(tokens, used);
 
   return result;
+}
+
+/**
+ * Splits leftover words into separate drugs. A drug ends at a comma,
+ * semicolon, "+" or any recognised clinical token; a route word straight
+ * after a drug applies to that drug only ("meropenem IV, doxy oral").
+ */
+function parseDrugSegments(tokens, used) {
+  const drugs = [];
+  let current = [];
+  const close = () => {
+    if (current.length) {
+      drugs.push({ name: current.join(" "), route: "" });
+      current = [];
+    }
+  };
+
+  tokens.forEach((token, index) => {
+    const route = isIvRoute(token.lower)
+      ? "IV"
+      : isOralRoute(token.lower)
+        ? "ORAL"
+        : isScRoute(token.lower)
+          ? "SC"
+          : "";
+    if (route) {
+      close();
+      const last = drugs.at(-1);
+      if (last && !last.route) {
+        last.route = route;
+      }
+      return;
+    }
+    if (/^[+&]$/.test(token.clean) || used.has(index) || isIgnorableToken(token.lower)) {
+      close();
+      return;
+    }
+    current.push(token.clean);
+    if (/[,;+]$/.test(token.raw)) {
+      close();
+    }
+  });
+  close();
+  return drugs;
 }
 
 function tokenize(value) {
@@ -57,13 +102,14 @@ function tokenize(value) {
     .trim()
     .split(/\s+/)
     .map((raw) => {
-      const clean = raw.replace(/^[,;:()]+|[,;:()]+$/g, "");
+      const clean = raw.replace(/^[,;:()+]+|[,;:()+]+$/g, "");
       return {
         raw,
         clean,
         lower: clean.toLowerCase(),
       };
     })
+    .map((token) => (/^[+&]$/.test(token.raw) ? { ...token, clean: token.raw, lower: token.raw } : token))
     .filter((token) => token.clean.length > 0);
 }
 
@@ -86,6 +132,11 @@ function parseDirectTokens(tokens, used, result) {
     }
     if (isOralRoute(token.lower)) {
       result.route = "ORAL";
+      used.add(index);
+      return;
+    }
+    if (isScRoute(token.lower)) {
+      result.route = "SC";
       used.add(index);
       return;
     }
@@ -113,6 +164,23 @@ function parseDirectTokens(tokens, used, result) {
       return;
     }
 
+    const attachedMicromol = token.lower.match(/^(\d+(?:\.\d+)?)(?:umol|µmol|μmol|micromol)(?:\/l)?$/);
+    if (attachedMicromol) {
+      if (assignNumber(result, "creatinine", micromolToMgDl(Number(attachedMicromol[1])))) {
+        used.add(index);
+      }
+      return;
+    }
+    const nextIsMicromol = isMicromolUnit(tokens[index + 1]?.lower);
+    const bareNumber = numberValue(token.clean);
+    if (nextIsMicromol && Number.isFinite(bareNumber)) {
+      if (assignNumber(result, "creatinine", micromolToMgDl(bareNumber))) {
+        used.add(index);
+        used.add(index + 1);
+      }
+      return;
+    }
+
     const attachedUnit = token.lower.match(/^(\d+(?:\.\d+)?)(mg\/?dl|mgdl|kg|kgs|cm|y|yr|yrs|yo)$/);
     if (attachedUnit) {
       const field = fieldForLabel(attachedUnit[2]);
@@ -133,7 +201,32 @@ function parseLabelNeighbors(tokens, used, result) {
       return;
     }
 
+    // Units ("110 kg", "175 cm") follow their number, so look back first.
+    const isUnitLabel = /^(?:mg\/?dl|kgs?|cm|yrs?|y|yo)$/.test(token.lower);
+    if (isUnitLabel) {
+      const previousIndex = findNearestNumber(tokens, used, index, -1);
+      if (previousIndex >= 0 && assignNumber(result, field, numberValue(tokens[previousIndex].clean))) {
+        used.add(index);
+        used.add(previousIndex);
+        return;
+      }
+    }
     const nextIndex = findNearestNumber(tokens, used, index, 1);
+    if (
+      nextIndex >= 0 &&
+      field === "creatinine" &&
+      !isUnitLabel &&
+      looksLikeMicromol(numberValue(tokens[nextIndex].clean))
+    ) {
+      if (assignNumber(result, field, micromolToMgDl(numberValue(tokens[nextIndex].clean)))) {
+        used.add(index);
+        used.add(nextIndex);
+        if (isMicromolUnit(tokens[nextIndex + 1]?.lower)) {
+          used.add(nextIndex + 1);
+        }
+        return;
+      }
+    }
     if (nextIndex >= 0 && assignNumber(result, field, numberValue(tokens[nextIndex].clean))) {
       used.add(index);
       used.add(nextIndex);
@@ -155,7 +248,12 @@ function parseFallbackNumbers(tokens, used, result) {
 
   const unlabelled = remaining.map((item) => item.value);
   const hasAnyExplicitClinicalValue = Boolean(result.age || result.creatinine || result.weight || result.height);
-  if (!hasAnyExplicitClinicalValue && unlabelled.length >= 3) {
+  const orderedFits =
+    isValidFieldValue("age", unlabelled[0]) &&
+    isValidFieldValue("creatinine", unlabelled[1]) &&
+    isValidFieldValue("weight", unlabelled[2]);
+  // "age creatinine weight" order; otherwise fall through to plausibility matching.
+  if (!hasAnyExplicitClinicalValue && unlabelled.length >= 3 && orderedFits) {
     assignNumber(result, "age", unlabelled[0]);
     assignNumber(result, "creatinine", unlabelled[1]);
     assignNumber(result, "weight", unlabelled[2]);
@@ -257,6 +355,19 @@ function isValidFieldValue(field, value) {
   return false;
 }
 
+// A labelled creatinine above the mg/dL range (e.g. "SCr 132") is read as µmol/L.
+function looksLikeMicromol(value) {
+  return Number.isFinite(value) && value > 25 && value <= 2210;
+}
+
+function isMicromolUnit(value) {
+  return /^(?:umol|µmol|μmol|micromol)(?:\/l)?$/.test(String(value || ""));
+}
+
+function micromolToMgDl(value) {
+  return Math.round((value / 88.42) * 100) / 100;
+}
+
 function numberValue(value) {
   return /^\d+(?:\.\d+)?$/.test(String(value || "")) ? Number(value) : NaN;
 }
@@ -277,12 +388,17 @@ function isOralRoute(value) {
   return /^(?:po|oral|tablet|tab|capsule|cap)\d*$/i.test(value);
 }
 
+function isScRoute(value) {
+  return /^(?:sc|s\.c\.|subcut|subq|sq|subcutaneous)$/i.test(value);
+}
+
 function isAllRoute(value) {
   return /^(?:all|any)$/i.test(value);
 }
 
 function isIgnorableToken(value) {
   return (
+    /^[+&]$/.test(value) ||
     AGE_LABELS.has(value) ||
     SEX_LABELS.has(value) ||
     WEIGHT_LABELS.has(value) ||
@@ -291,10 +407,12 @@ function isIgnorableToken(value) {
     DRUG_LABELS.has(value) ||
     ROUTE_LABELS.has(value) ||
     FILLER_LABELS.has(value) ||
+    isMicromolUnit(value) ||
     isMale(value) ||
     isFemale(value) ||
     isIvRoute(value) ||
     isOralRoute(value) ||
+    isScRoute(value) ||
     isAllRoute(value)
   );
 }

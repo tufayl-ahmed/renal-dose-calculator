@@ -8,3 +8,7 @@ npm-debug.log*
 coverage/
 docs/testing/generated/
 test-results/
+dist/
+dev-dist/
+playwright-report/
+.cache/

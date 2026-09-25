@@ -1,24 +1,42 @@
 {
   "name": "renal-dose-calculator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
-    "dev": "python3 -m http.server 5173",
-    "cf:dev": "wrangler pages dev . --compatibility-date=2026-05-06",
-    "deploy": "wrangler pages deploy . --project-name renal-dose-calculator --commit-dirty=true",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "cf:dev": "vite build && node scripts/cf-dev.mjs",
+    "deploy": "vite build && wrangler pages deploy dist --project-name renal-dose-calculator --branch main",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --test \"test/**/*.test.js\"",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm test && npm run build",
     "qa:live200": "node scripts/qa-live-200.mjs --limit=200 --concurrency=2",
     "qa:autocomplete200": "node scripts/qa-live-200.mjs --source=autocomplete --route-mode=ivoral --limit=200 --concurrency=2",
     "qa:autocomplete-full": "node scripts/qa-autocomplete-full.mjs --concurrency=2",
     "validation:table": "node scripts/generate-clinical-validation-table.mjs",
     "validation:renal:mdcalc": "node scripts/validate-renal-against-mdcalc.mjs",
     "validation:dailymed:routes": "node scripts/validate-dailymed-route-dosing.mjs",
-    "test": "node --test"
+    "rules:export": "node scripts/export-rules-for-review.mjs",
+    "rules:import": "node scripts/import-rule-verifications.mjs",
+    "fixtures:record": "node scripts/record-api-fixtures.mjs",
+    "candidates:extract": "node scripts/extract-renal-candidates.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.9",
+    "vite": "^8.3.1",
+    "vite-plugin-pwa": "^1.3.0",
     "wrangler": "^4.90.0"
   }
 }

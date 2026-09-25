@@ -108,7 +108,7 @@ export function getDrugAutocompleteSuggestions(query, options = {}) {
   return scored
     .sort((a, b) => b.score - a.score || b.count - a.count || a.label.localeCompare(b.label))
     .slice(0, limit)
-    .map(({ score, count, ...suggestion }) => suggestion);
+    .map(({ score: _score, count: _count, ...suggestion }) => suggestion);
 }
 
 function buildSearchIndex(entries) {

@@ -9,12 +9,8 @@ import {
   validateAssistResponse,
 } from "../src/llmDoseAssistCore.js";
 import { buildAssistPayload as buildClientAssistPayload, normalizeAssistPayload } from "../src/llmDoseAssist.js";
-import {
-  buildOpenFdaSearches,
-  buildMissingLabelSpecialResult,
-  buildSpecialDrugResult,
-  lookupDrugLabel,
-} from "../functions/api/renal-dose/assist.js";
+import { buildOpenFdaSearches, lookupDrugLabel } from "../server/renalDose/openfda.js";
+import { buildMissingLabelSpecialResult, buildSpecialDrugResult } from "../server/renalDose/specialDrugs.js";
 import { extractDoseRows } from "../src/doseGuidance.js";
 
 const sourceText =
@@ -409,7 +405,7 @@ test("LLM prompt includes renal values and source text only in user payload", ()
 
   assert.equal(prompt.messages.length, 2);
   assert.match(prompt.messages[0].content, /Do not use memory/i);
-  assert.match(prompt.messages[1].content, /\"crcl\": 44/);
+  assert.match(prompt.messages[1].content, /"crcl": 44/);
   assert.match(prompt.messages[1].content, /1 g every 12 hours/);
 });
 
@@ -1305,4 +1301,26 @@ test("app runtime does not import or call curated guidance", async () => {
   assert.doesNotMatch(appSource, /curatedDoseRules/);
   assert.doesNotMatch(appSource, /findCuratedRenalDoseGuidance/);
   assert.doesNotMatch(appSource, /getCuratedDrugOptions/);
+});
+
+test("lisinopril/hydrochlorothiazide combination is not recommended at CrCl <= 30", () => {
+  const label = { title: "Lisinopril and Hydrochlorothiazide", genericName: "LISINOPRIL AND HYDROCHLOROTHIAZIDE", sections: [] };
+  const low = buildSpecialDrugResult({
+    label,
+    patient: { drug: "lisinopril and hydrochlorothiazide", route: "ORAL", crcl: 8 },
+  });
+  assert.equal(low.dose, "Not recommended");
+  assert.equal(low.renalBand, "CrCl <= 30 mL/min");
+
+  const mild = buildSpecialDrugResult({
+    label,
+    patient: { drug: "lisinopril and hydrochlorothiazide", route: "ORAL", crcl: 55 },
+  });
+  assert.equal(mild.status, "no_renal_adjustment");
+
+  const mono = buildSpecialDrugResult({
+    label: { title: "Lisinopril", genericName: "LISINOPRIL", sections: [] },
+    patient: { drug: "lisinopril", route: "ORAL", crcl: 8 },
+  });
+  assert.equal(mono.dose, "2.5 mg");
 });
