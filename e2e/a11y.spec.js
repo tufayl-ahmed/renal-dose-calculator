@@ -10,7 +10,8 @@ const pages = [
 for (const scheme of ["light", "dark"]) {
   for (const target of pages) {
     test(`${target.name} has no accessibility violations (${scheme})`, async ({ page, api: _api }) => {
-      await page.emulateMedia({ colorScheme: scheme });
+      // Check settled colours: mid-animation opacity would skew contrast.
+      await page.emulateMedia({ colorScheme: scheme, reducedMotion: "reduce" });
       await page.goto(target.path);
       if (target.setup) {
         await page.locator(".example-chip").nth(1).click();
