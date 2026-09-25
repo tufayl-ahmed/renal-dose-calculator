@@ -2645,3 +2645,30 @@ a.brand {
   padding: 2px 8px;
   font-size: 10px;
 }
+
+.update-banner {
+  position: fixed;
+  left: 50%;
+  top: calc(72px + env(safe-area-inset-top));
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  font-size: 14px;
+  font-weight: 700;
+  transform: translateX(-50%);
+  animation: rise-in 0.25s var(--ease);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .update-banner {
+    white-space: normal;
+    width: calc(100% - 32px);
+  }
+}

@@ -1179,12 +1179,32 @@ function formatBand(rule, metric = RENAL_METRICS.crcl) {
     return `${metric.label} > ${formatNumber(rule.min)} ${metric.unit}`;
   }
   if (rule.type === "gte") {
-    return `${metric.label} >= ${formatNumber(rule.min)} ${metric.unit}`;
+    return `${metric.label} ≥ ${formatNumber(rule.min)} ${metric.unit}`;
   }
   if (rule.type === "lt") {
     return `${metric.label} < ${formatNumber(rule.max)} ${metric.unit}`;
   }
-  return `${metric.label} ${formatNumber(rule.min)}-${formatNumber(rule.max)} ${metric.unit}`;
+  return `${metric.label} ${formatRange(rule.min, rule.max)} ${metric.unit}`;
+}
+
+/**
+ * Extracted records encode "above 30" as 30.01 and "below 60" as 59.99;
+ * show those the way labels write them ("30 to <60", ">30 to 60").
+ */
+export function formatRange(min, max) {
+  const low = isJustAbove(min) ? `>${Math.floor(min)}` : formatNumber(min);
+  const high = isJustBelow(max) ? `<${Math.ceil(max)}` : formatNumber(max);
+  return /[<>]/.test(low + high) ? `${low} to ${high}` : `${low}-${high}`;
+}
+
+function isJustAbove(value) {
+  const fraction = value - Math.floor(value);
+  return fraction > 0 && fraction < 0.05;
+}
+
+function isJustBelow(value) {
+  const fraction = Math.ceil(value) - value;
+  return fraction > 0 && fraction < 0.05;
 }
 
 function formatVariants(variants) {
