@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test test/",
+    "test": "node --test \"test/**/*.test.js\"",
     "test:e2e": "playwright test",
     "check": "npm run lint && npm test && npm run build",
     "qa:live200": "node scripts/qa-live-200.mjs --limit=200 --concurrency=2",
