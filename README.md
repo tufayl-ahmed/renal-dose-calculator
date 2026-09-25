@@ -3,7 +3,7 @@
 Adult kidney-function calculator and renal-dose guidance app built by
 **Dr. Tufayl (Cortex Labs)**.
 
-[Live app](https://renal-dose-calculator.pages.dev) ·
+[Live app](https://renal-dose-calculator-3fl.pages.dev) ·
 [Dose database & review](docs/RENAL_DOSE_CURATION.md) ·
 [Deployment](docs/DEPLOYMENT.md) ·
 [Security](SECURITY.md)

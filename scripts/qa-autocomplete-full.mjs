@@ -5,7 +5,7 @@ import { isSystemicAutocompleteCandidate } from "../src/drugAutocomplete.js";
 import { DRUG_AUTOCOMPLETE_ITEMS } from "../src/drugAutocompleteData.js";
 import { normalizeAssistPayload } from "../src/llmDoseAssist.js";
 
-const DEFAULT_BASE_URL = "https://renal-dose-calculator.pages.dev";
+const DEFAULT_BASE_URL = "https://renal-dose-calculator-3fl.pages.dev";
 const REPORT_DIR = new URL("../docs/testing/generated/", import.meta.url);
 const TRANSIENT_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 const INTERNAL_TOKEN_PATTERN = /\b(?:review_source|dose_found|no_renal_adjustment|not_found)\b/i;

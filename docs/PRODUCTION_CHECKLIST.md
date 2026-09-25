@@ -7,7 +7,7 @@ This app is a free-first adult renal calculator. Dose guidance comes from a loca
 - Frontend: HTML/CSS/JavaScript built with Vite into `dist/`.
 - Local development: `npm run dev` (Vite, UI only) or `npm run cf:dev` (built app + Functions on `http://localhost:8788`, no Cloudflare login needed).
 - Production hosting target: Cloudflare Pages.
-- Current Cloudflare Pages URL: `https://renal-dose-calculator.pages.dev`.
+- Current Cloudflare Pages URL: `https://renal-dose-calculator-3fl.pages.dev`.
 - Backend target: Cloudflare Pages Function at `/api/renal-dose/assist`.
 - Telegram target: Mini App launcher at `/api/telegram/webhook`.
 - Drug source: openFDA label JSON with DailyMed source links.

@@ -9,13 +9,13 @@ button that opens the calculator inside Telegram.
 ## Mini App URL
 
 ```text
-https://renal-dose-calculator.pages.dev/?telegram=1
+https://renal-dose-calculator-3fl.pages.dev/?telegram=1
 ```
 
 ## Webhook URL
 
 ```text
-https://renal-dose-calculator.pages.dev/api/telegram/webhook
+https://renal-dose-calculator-3fl.pages.dev/api/telegram/webhook
 ```
 
 ## Cloudflare Secrets
@@ -39,7 +39,7 @@ the new values.
 
 ```bash
 curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
-  -d "url=https://renal-dose-calculator.pages.dev/api/telegram/webhook" \
+  -d "url=https://renal-dose-calculator-3fl.pages.dev/api/telegram/webhook" \
   -d "secret_token=$TELEGRAM_WEBHOOK_SECRET" \
   -d "allowed_updates=[\"message\"]"
 ```
@@ -54,7 +54,7 @@ curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setChatMenuButton"
       "type": "web_app",
       "text": "Open Calculator",
       "web_app": {
-        "url": "https://renal-dose-calculator.pages.dev/?telegram=1"
+        "url": "https://renal-dose-calculator-3fl.pages.dev/?telegram=1"
       }
     }
   }'

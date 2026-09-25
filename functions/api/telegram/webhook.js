@@ -1,4 +1,4 @@
-const APP_URL = "https://renal-dose-calculator.pages.dev";
+const APP_URL = "https://renal-dose-calculator-3fl.pages.dev";
 
 const MAX_TELEGRAM_TEXT_LENGTH = 3900;
 const MINI_APP_URL = `${APP_URL}/?telegram=1`;

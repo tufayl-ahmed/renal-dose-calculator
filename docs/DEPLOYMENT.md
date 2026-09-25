@@ -2,6 +2,11 @@
 
 ## Current Target
 
+- Live URL: https://renal-dose-calculator-3fl.pages.dev (Cloudflare account
+  shekha.tufayl@gmail.com, created 2026-09-26). The original
+  `renal-dose-calculator.pages.dev` belongs to an older Cloudflare account and
+  still serves the pre-v2 version.
+
 - GitHub repository: `tufayl-ahmed/renal-dose-calculator`
 - Production branch: `main`
 - Cloudflare Pages project: `renal-dose-calculator`

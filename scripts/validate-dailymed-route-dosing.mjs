@@ -6,7 +6,7 @@ import { normalizeAssistPayload } from "../src/llmDoseAssist.js";
 import { validateAssistResponse } from "../src/llmDoseAssistCore.js";
 import { buildOpenFdaSearches, lookupDrugLabel } from "../server/renalDose/openfda.js";
 
-const DEFAULT_BASE_URL = "https://renal-dose-calculator.pages.dev";
+const DEFAULT_BASE_URL = "https://renal-dose-calculator-3fl.pages.dev";
 const REPORT_DIR = new URL("../docs/testing/generated/", import.meta.url);
 const SUMMARY_DIR = new URL("../docs/clinical-validation/", import.meta.url);
 const CASE_COUNT = 100;
