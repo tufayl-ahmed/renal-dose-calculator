@@ -258,3 +258,31 @@ test("share link reopens the same check", async ({ page, context, browserName })
   await expect(other.locator(".chip")).toHaveCount(1);
   expect(other.url()).not.toContain("#c=");
 });
+
+test("dose guidance appears as soon as details and a drug are entered, without pressing Calculate", async ({
+  page,
+}) => {
+  await fillPatient(page, { age: "65", weight: "70", creatinine: "2" });
+  await expect(page.locator("#crcl-value")).toHaveText("36.5");
+  await page.locator(".segmented input[name=route][value=IV] + span").click();
+  await addDrug(page, "meropenem");
+  const card = page.locator(".dose-card");
+  await expect(card.locator(".dose-band strong")).toHaveText("26-50");
+  await expect(card.locator(".badge")).toHaveText("Clinician-verified");
+
+  // Editing creatinine refreshes the dose after typing pauses.
+  await page.fill("#creatinine", "4");
+  await expect(card.locator(".dose-band strong")).toHaveText("10-25");
+
+  // Incomplete details drop the old answer instead of showing it.
+  await page.fill("#creatinine", "");
+  await expect(card).toContainText("enter age, weight and creatinine");
+  await expect(card.locator(".dose-value")).toHaveCount(0);
+});
+
+test("a drug added before the patient details is checked once they are complete", async ({ page }) => {
+  await addDrug(page, "sitagliptin");
+  await expect(page.locator(".dose-card")).toContainText("enter age, weight and creatinine");
+  await fillPatient(page);
+  await expect(page.locator(".dose-card .dose-value strong")).toHaveText("100 mg once daily");
+});
