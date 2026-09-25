@@ -7,7 +7,7 @@
       name="description"
       content="Adult renal dosing in seconds: CKD-EPI 2021 eGFR, Cockcroft-Gault CrCl and label-based dose guidance for several drugs at once, each linked to its DailyMed source."
     />
-    <meta name="theme-color" content="#0b3b3a" />
+    <meta name="theme-color" content="#041f1f" />
     <meta name="color-scheme" content="light dark" />
     <meta property="og:title" content="Renal Dose Calculator" />
     <meta
@@ -21,213 +21,315 @@
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href="https://renal-dose-calculator-3fl.pages.dev/" />
-    <title>Renal Dose Calculator</title>
+    <title>Renal Dose Calculator — renal dosing, checked in seconds</title>
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/assets/pwa/icon-192.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png" />
     <link rel="preload" href="/assets/fonts/manrope-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <script src="/js-flag.js"></script>
     <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/landing.css" />
   </head>
   <body class="landing">
-    <header class="landing-nav">
-      <div class="landing-nav-inner">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="lp-nav" id="lp-nav">
+      <div class="lp-nav-inner">
         <a class="brand" href="/">
-          <img class="brand-mark" src="/assets/brand/renal-logo.png" alt="" width="36" height="36" />
+          <img class="brand-mark" src="/assets/brand/renal-logo.png" alt="" width="34" height="34" />
           <span class="brand-name">Renal Dose</span>
         </a>
         <nav aria-label="Page sections">
           <a href="#features">Features</a>
           <a href="#how">How it works</a>
           <a href="#safety">Safety</a>
+          <a href="#faq">FAQ</a>
         </nav>
-        <a class="button button-primary button-small" href="/app/">Open calculator</a>
+        <a class="lp-nav-cta" href="/app/">
+          Open calculator
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M5 12h14" />
+            <path d="m13 6 6 6-6 6" />
+          </svg>
+        </a>
       </div>
     </header>
 
-    <main>
-      <section class="hero" aria-labelledby="hero-title">
-        <div class="hero-inner">
-          <div class="hero-copy">
-            <p class="eyebrow">Adult renal dosing · free · no sign-up</p>
-            <h1 id="hero-title">Renal dosing, <span>checked in seconds.</span></h1>
-            <p class="hero-lede">
-              Enter age, weight and creatinine once. Get CKD-EPI 2021 eGFR, Cockcroft-Gault CrCl and the renal dose band
-              for every drug you add — each answer linked to its DailyMed label and labelled with how much to trust it.
+    <main id="main">
+      <!-- Hero -->
+      <section class="lp-hero" aria-labelledby="hero-title">
+        <div class="lp-orb lp-orb-a" aria-hidden="true"></div>
+        <div class="lp-orb lp-orb-b" aria-hidden="true"></div>
+        <div class="lp-orb lp-orb-c" aria-hidden="true"></div>
+        <div class="lp-grid-bg" aria-hidden="true"></div>
+
+        <div class="lp-hero-inner">
+          <div class="lp-hero-copy">
+            <p class="lp-pill" data-enter="0">
+              <span class="lp-pill-dot" aria-hidden="true"></span>
+              New · dialysis-aware dosing and multi-drug checks
             </p>
-            <div class="hero-actions">
-              <a class="button button-hero" href="/app/">
-                Start a dose check
+            <h1 id="hero-title">
+              <span class="lp-line" data-enter="1">Renal dosing,</span>
+              <span class="lp-line lp-gradient-text" data-enter="2">checked in seconds.</span>
+            </h1>
+            <p class="lp-lede" data-enter="3">
+              Enter a patient once. Get CKD-EPI 2021 eGFR, Cockcroft-Gault CrCl and the renal dose band for every drug
+              on the chart — each answer linked to its DailyMed label and honest about how much to trust it.
+            </p>
+            <div class="lp-actions" data-enter="4">
+              <a class="lp-btn-primary" href="/app/">
+                <span>Start a dose check</span>
                 <svg aria-hidden="true" viewBox="0 0 24 24">
                   <path d="M5 12h14" />
                   <path d="m13 6 6 6-6 6" />
                 </svg>
               </a>
-              <a class="button button-ghost" href="#how">See how it works</a>
+              <a class="lp-btn-ghost" href="#how">See how it works</a>
             </div>
-            <ul class="hero-trust" aria-label="Highlights">
-              <li><strong>200+</strong> curated drug rules</li>
-              <li><strong>2,000</strong> drugs searchable</li>
-              <li><strong>DailyMed</strong> source on every answer</li>
+            <ul class="lp-hero-meta" data-enter="5" aria-label="Highlights">
+              <li>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                Free, no sign-up
+              </li>
+              <li>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                Works offline
+              </li>
+              <li>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10" /></svg>
+                DailyMed source on every answer
+              </li>
             </ul>
           </div>
 
-          <div class="hero-visual" aria-hidden="true">
-            <div class="mock mock-kidney">
-              <div class="mock-row">
-                <div>
-                  <p class="mock-label">CrCl</p>
-                  <p class="mock-number">52.6<span>mL/min</span></p>
+          <!-- Live product demo (decorative; the real app is one click away) -->
+          <div class="lp-demo-wrap" data-enter="3" aria-hidden="true">
+            <div class="lp-demo" id="lp-demo">
+              <div class="lp-demo-bar">
+                <span></span><span></span><span></span>
+                <p>renal-dose · calculator</p>
+              </div>
+              <div class="lp-demo-body">
+                <div class="lp-demo-input">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" />
+                  </svg>
+                  <span id="demo-typed"></span><span class="lp-caret"></span>
                 </div>
-                <div>
-                  <p class="mock-label">eGFR</p>
-                  <p class="mock-number">53.4<span>G3a</span></p>
+                <div class="lp-demo-metrics">
+                  <div>
+                    <p>CrCl <small>Cockcroft-Gault</small></p>
+                    <strong id="demo-crcl">—</strong><span>mL/min</span>
+                  </div>
+                  <div>
+                    <p>eGFR <small>CKD-EPI 2021</small></p>
+                    <strong id="demo-egfr">—</strong><span id="demo-stage">—</span>
+                  </div>
                 </div>
-              </div>
-              <div class="mock-gauge">
-                <span></span><span></span><span></span><span class="on"></span><span></span><span></span>
+                <div class="lp-demo-gauge">
+                  <i></i><i></i><i></i><i></i><i></i><i></i>
+                  <b id="demo-marker"></b>
+                </div>
+                <div class="lp-demo-status" id="demo-status"></div>
+                <div class="lp-demo-cards" id="demo-cards"></div>
               </div>
             </div>
-            <div class="mock mock-dose">
-              <div class="mock-dose-head">
-                <strong>Meropenem · IV</strong>
-                <span class="badge" data-tone="good">Clinician-verified</span>
-              </div>
-              <p class="mock-dose-value">Every 12 hours</p>
-              <p class="mock-dose-band">CrCl 26–50 · <span class="decision" data-tone="warn">Adjust dose</span></p>
-            </div>
-            <div class="mock mock-dose mock-dose-small">
-              <div class="mock-dose-head">
-                <strong>Apixaban · oral</strong>
-                <span class="decision" data-tone="info">Label dose</span>
-              </div>
-              <p class="mock-dose-value">2.5 mg twice daily</p>
-              <p class="mock-dose-band">NVAF criteria met: 2 of 3</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="landing-section" id="features" aria-labelledby="features-title">
-        <div class="section-inner">
-          <p class="eyebrow">What it does</p>
-          <h2 id="features-title">Everything a renal dose check needs, on one screen</h2>
-          <div class="feature-grid">
-            <article class="feature">
-              <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M9 3h6" />
-                  <path d="M10 3v5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-10V3" />
-                </svg>
-              </span>
-              <h3>Several drugs at once</h3>
-              <p>
-                Add every drug on the chart — oral, IV or subcutaneous — and get one card per drug with its band, dose
-                and cautions.
-              </p>
-            </article>
-            <article class="feature">
-              <span class="feature-icon" aria-hidden="true">
+            <div class="lp-float lp-float-a">
+              <span class="lp-float-icon">
                 <svg viewBox="0 0 24 24">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
                   <path d="m9 12 2 2 4-5" />
                 </svg>
               </span>
-              <h3>Honest source badges</h3>
-              <p>
-                Clinician-verified, curated, auto-extracted, label logic or AI summary — you always know where an answer
-                came from.
-              </p>
-            </article>
-            <article class="feature">
-              <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4" /></svg>
-              </span>
-              <h3>Dialysis and AKI aware</h3>
-              <p>
-                Hemodialysis, peritoneal dialysis and CRRT change the guidance shown; an unstable creatinine flags every
-                result.
-              </p>
-            </article>
-            <article class="feature">
-              <span class="feature-icon" aria-hidden="true">
+              <div><strong>Clinician-verified</strong><span>rule, not a guess</span></div>
+            </div>
+            <div class="lp-float lp-float-b">
+              <span class="lp-float-icon lp-float-icon-blue">
                 <svg viewBox="0 0 24 24">
-                  <path d="M4 7h16" />
-                  <path d="M4 12h10" />
-                  <path d="M4 17h7" />
-                  <circle cx="18" cy="15" r="3" />
+                  <path d="M6 2h9l5 5v15H6z" />
+                  <path d="M14 2v6h6" />
                 </svg>
               </span>
-              <h3>Your units, your weight</h3>
-              <p>Creatinine in mg/dL or µmol/L; Cockcroft-Gault with actual, ideal or adjusted body weight.</p>
+              <div><strong>DailyMed label</strong><span>one tap away</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drug marquee -->
+        <div class="lp-marquee" aria-hidden="true">
+          <div class="lp-marquee-track" id="lp-marquee"></div>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="lp-stats" aria-label="Coverage">
+        <div class="lp-container lp-stats-grid">
+          <div data-reveal>
+            <strong><span data-count="200">200</span>+</strong>
+            <p>curated renal drug rules</p>
+          </div>
+          <div data-reveal>
+            <strong><span data-count="2000">2000</span></strong>
+            <p>drugs searchable by name, brand or shorthand</p>
+          </div>
+          <div data-reveal>
+            <strong><span data-count="3">3</span> routes</strong>
+            <p>oral, IV and subcutaneous</p>
+          </div>
+          <div data-reveal>
+            <strong>&lt;<span data-count="1">1</span> s</strong>
+            <p>for curated answers — no network needed</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features (bento) -->
+      <section class="lp-section" id="features" aria-labelledby="features-title">
+        <div class="lp-container">
+          <div class="lp-section-head" data-reveal>
+            <p class="lp-eyebrow">What it does</p>
+            <h2 id="features-title">Everything a renal dose check needs, on one screen</h2>
+            <p class="lp-section-lede">
+              Built for ward rounds and pharmacy checks: fast to enter, careful in what it claims.
+            </p>
+          </div>
+
+          <div class="lp-bento">
+            <article class="lp-card lp-card-wide" data-reveal>
+              <div class="lp-card-copy">
+                <h3>Every drug on the chart, at once</h3>
+                <p>
+                  Add drugs by name, brand or shorthand — each gets its own card with band, dose, cautions and the full
+                  label table.
+                </p>
+              </div>
+              <div class="lp-illo lp-illo-chips" aria-hidden="true">
+                <span class="lp-chip">Meropenem <em>IV</em></span>
+                <span class="lp-chip">Apixaban <em>Oral</em></span>
+                <span class="lp-chip">Enoxaparin <em>SC</em></span>
+                <span class="lp-chip">Gabapentin <em>Oral</em></span>
+                <span class="lp-chip">Piptaz <em>IV</em></span>
+                <span class="lp-chip lp-chip-add">+ add drug</span>
+              </div>
             </article>
-            <article class="feature">
-              <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
-                  <path d="m16 6-4-4-4 4" />
-                  <path d="M12 2v13" />
-                </svg>
-              </span>
-              <h3>Share, copy, print</h3>
-              <p>Send a link that reopens the same check, copy a text summary for notes, or print a one-page sheet.</p>
+
+            <article class="lp-card" data-reveal>
+              <div class="lp-card-copy">
+                <h3>Honest source badges</h3>
+                <p>Know whether an answer is clinician-verified, curated, extracted, label logic or an AI summary.</p>
+              </div>
+              <div class="lp-illo lp-illo-badges" aria-hidden="true">
+                <span class="badge" data-tone="good">Clinician-verified</span>
+                <span class="badge" data-tone="info">Curated · draft</span>
+                <span class="badge" data-tone="info">Auto-extracted</span>
+                <span class="badge" data-tone="warn">AI summary</span>
+              </div>
             </article>
-            <article class="feature">
-              <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <rect x="6" y="2" width="12" height="20" rx="3" />
-                  <path d="M11 18h2" />
-                </svg>
-              </span>
-              <h3>Installs like an app</h3>
-              <p>
-                Add it to your home screen. Kidney calculations work offline; light and dark themes follow your device.
-              </p>
+
+            <article class="lp-card" data-reveal>
+              <div class="lp-card-copy">
+                <h3>Dialysis &amp; AKI aware</h3>
+                <p>HD, PD and CRRT change the guidance; an unstable creatinine flags every result.</p>
+              </div>
+              <div class="lp-illo lp-illo-toggle" aria-hidden="true">
+                <span class="lp-seg"><i>None</i><i class="on">HD</i><i>PD</i><i>CRRT</i></span>
+                <span class="lp-ecg"
+                  ><svg viewBox="0 0 120 30"><path d="M0 15h30l6-10 8 20 6-10h70" /></svg
+                ></span>
+              </div>
+            </article>
+
+            <article class="lp-card" data-reveal>
+              <div class="lp-card-copy">
+                <h3>Your units, your weight</h3>
+                <p>mg/dL or µmol/L. Actual, ideal or adjusted body weight for Cockcroft-Gault.</p>
+              </div>
+              <div class="lp-illo lp-illo-units" aria-hidden="true">
+                <span class="lp-unit-value">1.4 <em>mg/dL</em></span>
+                <span class="lp-unit-swap">⇄</span>
+                <span class="lp-unit-value">124 <em>µmol/L</em></span>
+              </div>
+            </article>
+
+            <article class="lp-card" data-reveal>
+              <div class="lp-card-copy">
+                <h3>Share, copy, print</h3>
+                <p>A link that reopens the same check, a text summary for notes, or a one-page PDF.</p>
+              </div>
+              <div class="lp-illo lp-illo-share" aria-hidden="true">
+                <span class="lp-link">renal-dose…/app/#c=eyJ2…</span>
+                <span class="lp-link-copied">Link copied</span>
+              </div>
+            </article>
+
+            <article class="lp-card lp-card-full lp-card-dark" data-reveal>
+              <div class="lp-card-copy">
+                <h3>Installs like an app. Works offline.</h3>
+                <p>
+                  Add it to your home screen. Kidney calculations work without signal; light and dark themes follow your
+                  device.
+                </p>
+              </div>
+              <div class="lp-illo lp-illo-phone" aria-hidden="true">
+                <div class="lp-phone">
+                  <span class="lp-phone-notch"></span>
+                  <p class="lp-phone-num">52.6</p>
+                  <p class="lp-phone-label">CrCl mL/min</p>
+                  <span class="lp-phone-bar"></span>
+                  <span class="lp-phone-bar short"></span>
+                </div>
+              </div>
             </article>
           </div>
         </div>
       </section>
 
-      <section class="landing-section landing-section-alt" id="how" aria-labelledby="how-title">
-        <div class="section-inner">
-          <p class="eyebrow">How it works</p>
-          <h2 id="how-title">Three steps, about ten seconds</h2>
-          <ol class="steps">
-            <li>
-              <span class="step-number">1</span>
+      <!-- How it works -->
+      <section class="lp-section lp-section-soft" id="how" aria-labelledby="how-title">
+        <div class="lp-container">
+          <div class="lp-section-head" data-reveal>
+            <p class="lp-eyebrow">How it works</p>
+            <h2 id="how-title">Three steps, about ten seconds</h2>
+          </div>
+          <ol class="lp-steps" id="lp-steps">
+            <li data-reveal>
+              <span class="lp-step-num">1</span>
               <h3>Enter the patient</h3>
               <p>Age, sex, weight and creatinine — or paste one line like <code>72 M 78 kg SCr 1.4</code>.</p>
             </li>
-            <li>
-              <span class="step-number">2</span>
+            <li data-reveal>
+              <span class="lp-step-num">2</span>
               <h3>Add drugs</h3>
               <p>
-                Type a name, brand or shorthand (<code>piptaz</code>, <code>vanco</code>, <code>doxy</code>). Results
+                Type a name, brand or shorthand — <code>piptaz</code>, <code>vanco</code>, <code>doxy</code>. Results
                 appear as you go.
               </p>
             </li>
-            <li>
-              <span class="step-number">3</span>
+            <li data-reveal>
+              <span class="lp-step-num">3</span>
               <h3>Read band, dose and source</h3>
-              <p>
-                Each card shows the renal band, the label dose, cautions, the full dose table and the DailyMed link.
-              </p>
+              <p>Each card shows the renal band, the label dose, cautions, the dose table and the DailyMed link.</p>
             </li>
           </ol>
         </div>
       </section>
 
-      <section class="landing-section" id="safety" aria-labelledby="safety-title">
-        <div class="section-inner safety-grid">
-          <div>
-            <p class="eyebrow">Safety first</p>
+      <!-- Safety -->
+      <section class="lp-section" id="safety" aria-labelledby="safety-title">
+        <div class="lp-container lp-safety">
+          <div data-reveal>
+            <p class="lp-eyebrow">Safety first</p>
             <h2 id="safety-title">Built to be honest about uncertainty</h2>
-            <p class="section-lede">
-              A label that doesn't mention the kidneys is never shown as "no adjustment". When an indication or product
-              changes the dose, the card says which one it assumed. When nothing reliable is found, it says so and links
-              the label.
-            </p>
+            <ul class="lp-principles">
+              <li>A label that doesn't mention the kidneys is <strong>never</strong> shown as "no adjustment".</li>
+              <li>When indication or product changes the dose, the card says which one it assumed.</li>
+              <li>Dialysis and unstable creatinine are called out on every result.</li>
+              <li>Nothing reliable found? It says so — and links the label.</li>
+            </ul>
           </div>
-          <dl class="tier-list">
+          <dl class="lp-tiers" data-reveal>
             <div>
               <dt><span class="badge" data-tone="good">Clinician-verified</span></dt>
               <dd>Reviewed and signed off by a clinician.</dd>
@@ -241,6 +343,10 @@
               <dd>Renal table extracted from the label.</dd>
             </div>
             <div>
+              <dt><span class="badge" data-tone="info">Label logic</span></dt>
+              <dd>Worked out live from the current label.</dd>
+            </div>
+            <div>
               <dt><span class="badge" data-tone="warn">AI summary</span></dt>
               <dd>May be wrong — always open the source.</dd>
             </div>
@@ -252,11 +358,62 @@
         </div>
       </section>
 
-      <section class="cta-band" aria-labelledby="cta-title">
-        <div class="section-inner">
+      <!-- FAQ -->
+      <section class="lp-section lp-section-soft" id="faq" aria-labelledby="faq-title">
+        <div class="lp-container lp-faq-wrap">
+          <div class="lp-section-head" data-reveal>
+            <p class="lp-eyebrow">FAQ</p>
+            <h2 id="faq-title">Questions, answered</h2>
+          </div>
+          <div class="lp-faq" data-reveal>
+            <details>
+              <summary>Is it free? Do I need an account?</summary>
+              <p>
+                Yes, it's free and there is no sign-up. Nothing you enter is stored on a server; recent checks stay on
+                your device.
+              </p>
+            </details>
+            <details>
+              <summary>Where does the dosing come from?</summary>
+              <p>
+                From FDA drug labels (DailyMed / openFDA). Curated rules are extracted from those labels and can be
+                verified by a clinician; drugs without a rule are looked up in the live label. Every card links its
+                source.
+              </p>
+            </details>
+            <details>
+              <summary>Which equations does it use?</summary>
+              <p>
+                CKD-EPI 2021 (race-free) for eGFR and KDIGO category, and Cockcroft-Gault for creatinine clearance, with
+                a choice of actual, ideal or adjusted body weight.
+              </p>
+            </details>
+            <details>
+              <summary>Can I use it to prescribe?</summary>
+              <p>
+                No. It is an educational decision aid. Always confirm against the official prescribing information,
+                local protocols and a pharmacist.
+              </p>
+            </details>
+            <details>
+              <summary>Does it work offline or on my phone?</summary>
+              <p>
+                Yes. Install it from your browser's menu. Kidney calculations work offline; drug lookups need a
+                connection unless the drug has a curated rule cached.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="lp-cta" aria-labelledby="cta-title">
+        <div class="lp-orb lp-orb-a" aria-hidden="true"></div>
+        <div class="lp-container" data-reveal>
           <h2 id="cta-title">Ready for your next patient?</h2>
-          <a class="button button-hero" href="/app/">
-            Start a dose check
+          <p>Open the calculator — it takes about ten seconds.</p>
+          <a class="lp-btn-primary" href="/app/">
+            <span>Start a dose check</span>
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <path d="M5 12h14" />
               <path d="m13 6 6 6-6 6" />
@@ -266,14 +423,26 @@
       </section>
     </main>
 
-    <footer class="landing-footer">
-      <p>
-        <strong>Educational purpose only.</strong> Results are estimates and are not for prescribing. Always check the
-        official prescribing information, local protocols and a pharmacist.
-      </p>
-      <p>
-        Made by Dr. Tufayl (Cortex Labs) · Sources: DailyMed / openFDA, RxNorm · <a href="/review.html">Rule review</a>
-      </p>
+    <footer class="lp-footer">
+      <div class="lp-container lp-footer-grid">
+        <div>
+          <a class="brand" href="/">
+            <img class="brand-mark" src="/assets/brand/renal-logo.png" alt="" width="30" height="30" />
+            <span class="brand-name">Renal Dose</span>
+          </a>
+          <p>Made by Dr. Tufayl (Cortex Labs).</p>
+        </div>
+        <nav aria-label="Footer">
+          <a href="/app/">Calculator</a>
+          <a href="#features">Features</a>
+          <a href="#faq">FAQ</a>
+          <a href="/review.html">Rule review</a>
+        </nav>
+        <p class="lp-footer-legal">
+          <strong>Educational purpose only.</strong> Results are estimates and are not for prescribing. Sources:
+          DailyMed / openFDA, RxNorm.
+        </p>
+      </div>
     </footer>
 
     <script type="module" src="/src/landing.js"></script>
