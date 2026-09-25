@@ -98,7 +98,11 @@ export function buildDoseView(assist, values = {}) {
     metric,
     band,
     dose: cleanFrequencyLabel(dose),
-    frequency: isPlaceholder(frequency) ? "" : cleanFrequencyLabel(frequency),
+    frequency:
+      isPlaceholder(frequency) ||
+      cleanFrequencyLabel(dose).toLowerCase().endsWith(cleanFrequencyLabel(frequency).toLowerCase())
+        ? ""
+        : cleanFrequencyLabel(frequency),
     cautions,
     defaultedControls: ["indication", "formulation"].filter((key) =>
       cautions.some((caution) =>

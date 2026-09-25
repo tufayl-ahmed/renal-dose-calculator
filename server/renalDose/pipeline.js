@@ -90,6 +90,11 @@ async function resolveForPatient({ patient, env }) {
       route: patient.route,
       crcl: patient.crcl,
       egfr: patient.egfr,
+      // Some labels dose by serum creatinine (e.g. tranexamic acid) or weight.
+      serumCreatinineMgDl: Number.isFinite(patient.creatinine) ? patient.creatinine : null,
+      ageYears: Number.isFinite(patient.age) ? patient.age : null,
+      sex: patient.sex || null,
+      weightKg: Number.isFinite(patient.weight) ? patient.weight : null,
       dialysis: patient.dialysis,
       indication: patient.indication,
       formulation: patient.formulation,

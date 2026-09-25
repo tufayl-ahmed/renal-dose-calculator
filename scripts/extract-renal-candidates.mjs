@@ -244,7 +244,7 @@ function buildRecord(drug, route, label, answers, rules, metric = "crcl") {
     routes: [route],
     adultOnly: true,
     renalMetric: metric,
-    indicationNote: `Auto-extracted from the DailyMed label${metric === "egfr" ? " (eGFR-based)" : ""}; not clinician reviewed. Check indication-specific dosing in the label.`,
+    indicationNote: `Auto-extracted from the DailyMed label${metric === "egfr" ? " (eGFR-based)" : ""}; not yet checked by a clinician. Check indication-specific dosing in the label.`,
     sourceLabel: `DailyMed label (${first.sourceMode === "dailymed-special-review" ? "renal label logic" : "renal table"})`,
     sourceUrl: label.sourceUrl,
     reviewedBy: "Auto-extraction",

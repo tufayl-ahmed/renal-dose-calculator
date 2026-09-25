@@ -86,3 +86,11 @@ test("share text includes patient, each drug, sources and the disclaimer", () =>
   assert.match(text, /DailyMed: https:\/\/dailymed/);
   assert.match(text, /not for prescribing/);
 });
+
+test("frequency is not repeated when the dose text already ends with it", () => {
+  const view = buildDoseView(
+    assist({ result: { ...assist().result, dose: "1300 mg two times a day", frequency: "two times a day" } })
+  );
+  assert.equal(view.dose, "1300 mg two times a day");
+  assert.equal(view.frequency, "");
+});
