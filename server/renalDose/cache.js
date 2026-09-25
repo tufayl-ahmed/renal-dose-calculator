@@ -2,7 +2,7 @@ export const ASSIST_CACHE_TTL_SECONDS = 60 * 60 * 24;
 
 export const LABEL_CACHE_TTL_SECONDS = 60 * 60 * 24 * 7;
 
-const ASSIST_CACHE_VERSION = "v21-full-sweep-fixes";
+const ASSIST_CACHE_VERSION = "v22-parser-and-ai-context";
 
 export function buildAssistCacheKey({ patient, label }) {
   const crclBand = Number.isFinite(patient.crcl) ? Math.floor(patient.crcl / 5) * 5 : "unknown";
