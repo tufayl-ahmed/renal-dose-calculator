@@ -84,7 +84,10 @@ test("sendMiniAppLauncher posts Mini App button to Telegram", async () => {
   assert.equal(calls[0].body.chat_id, 123);
   assert.equal(calls[0].body.reply_to_message_id, 55);
   assert.match(calls[0].body.text, /Open the Telegram Mini App/);
-  assert.equal(calls[0].body.reply_markup.inline_keyboard[0][0].web_app.url, "https://renal-dose-calculator-3fl.pages.dev/app/?telegram=1");
+  assert.equal(
+    calls[0].body.reply_markup.inline_keyboard[0][0].web_app.url,
+    "https://renal-dose-calculator-3fl.pages.dev/app/?telegram=1"
+  );
 });
 
 test("Telegram webhook replies with Mini App launcher for any user message", async () => {
@@ -102,7 +105,10 @@ test("Telegram webhook replies with Mini App launcher for any user message", asy
   assert.equal(calls.length, 1);
   assert.match(calls[0].body.text, /Open the Telegram Mini App/);
   assert.doesNotMatch(calls[0].body.text, /eGFR\s+38\.8|CrCl\s+44\.0|Dose:/);
-  assert.equal(calls[0].body.reply_markup.inline_keyboard[0][0].web_app.url, "https://renal-dose-calculator-3fl.pages.dev/app/?telegram=1");
+  assert.equal(
+    calls[0].body.reply_markup.inline_keyboard[0][0].web_app.url,
+    "https://renal-dose-calculator-3fl.pages.dev/app/?telegram=1"
+  );
 });
 
 test("Telegram webhook ignores callback-only updates", async () => {

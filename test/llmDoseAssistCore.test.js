@@ -478,11 +478,11 @@ test("backend openFDA search prioritizes explicit IV route when selected", () =>
 
 test("backend openFDA search retries without dosage-form qualifiers", () => {
   const searches = buildOpenFdaSearches("acyclovir injection", "IV");
-  const strippedRouteIndex = searches.findIndex((search) =>
-    search.includes('openfda.generic_name:"acyclovir"') && search.includes('openfda.route:"INTRAVENOUS"')
+  const strippedRouteIndex = searches.findIndex(
+    (search) => search.includes('openfda.generic_name:"acyclovir"') && search.includes('openfda.route:"INTRAVENOUS"')
   );
-  const originalUnroutedIndex = searches.findIndex((search) =>
-    search.includes('openfda.generic_name:"acyclovir injection"') && !search.includes("openfda.route")
+  const originalUnroutedIndex = searches.findIndex(
+    (search) => search.includes('openfda.generic_name:"acyclovir injection"') && !search.includes("openfda.route")
   );
 
   assert.ok(searches.some((search) => search.includes('openfda.generic_name:"acyclovir"')));
@@ -509,7 +509,7 @@ test("backend route lookup can find IV label before oral labels for same drug", 
   const requestedUrls = [];
   globalThis.fetch = async (url) => {
     requestedUrls.push(String(url));
-    if (String(url).includes('openfda.route%3A%22INTRAVENOUS%22')) {
+    if (String(url).includes("openfda.route%3A%22INTRAVENOUS%22")) {
       return new Response(
         JSON.stringify({
           results: [
@@ -562,7 +562,10 @@ test("backend route lookup keeps searching after wrong-route results", async () 
   const requestedUrls = [];
   globalThis.fetch = async (url) => {
     requestedUrls.push(String(url));
-    if (String(url).includes('openfda.generic_name%3A%22fludarabine%22') && String(url).includes('openfda.route%3A%22ORAL%22')) {
+    if (
+      String(url).includes("openfda.generic_name%3A%22fludarabine%22") &&
+      String(url).includes("openfda.route%3A%22ORAL%22")
+    ) {
       return new Response(
         JSON.stringify({
           results: [
@@ -1010,13 +1013,27 @@ test("backend special handlers cover 30-case antibiotic QA warnings", () => {
   for (const [drug, title, crcl, dosePattern, frequencyPattern] of cases) {
     const result = buildSpecialDrugResult({
       label: { title, genericName: drug, sourceUrl },
-      patient: { drug, route: drug.includes("cefuroxime axetil") || drug.includes("cefpodoxime") || drug.includes("cefixime") || drug.includes("cefprozil") || drug.includes("moxifloxacin") ? "ORAL" : "IV", crcl },
+      patient: {
+        drug,
+        route:
+          drug.includes("cefuroxime axetil") ||
+          drug.includes("cefpodoxime") ||
+          drug.includes("cefixime") ||
+          drug.includes("cefprozil") ||
+          drug.includes("moxifloxacin")
+            ? "ORAL"
+            : "IV",
+        crcl,
+      },
     });
     assert.ok(result, `${drug} should return a deterministic result`);
     assert.notEqual(result.status, "review_source", `${drug} should avoid source-review fallback`);
     assert.match(result.dose, dosePattern, drug);
     assert.match(result.frequency, frequencyPattern, drug);
-    assert.doesNotMatch(`${result.dose} ${result.frequency}`, /recommended dose|review_source|dose_found|no_renal_adjustment/i);
+    assert.doesNotMatch(
+      `${result.dose} ${result.frequency}`,
+      /recommended dose|review_source|dose_found|no_renal_adjustment/i
+    );
   }
 });
 
@@ -1028,8 +1045,22 @@ test("backend special handlers cover full autocomplete QA warning reductions", (
     ["hydroxyurea", "Hydroxyurea", "ORAL", 32.7, /7\.5 mg\/kg/i, /hemodialysis/i],
     ["cobicistat", "Tybost", "ORAL", 26.4, /150 mg/i, /not recommended with TDF/i],
     ["Lorlatinib", "Lorbrena", "ORAL", 29.5, /75 mg/i, /once daily/i],
-    ["Olmesartan Medoxomil / Amlodipine / Hydrochlorothiazide", "Tribenzor", "ORAL", 28.4, /Avoid use/i, /alternative antihypertensive/i],
-    ["Amlodipine and Olmesartran Medoxomil", "Amlodipine and Olmesartan", "ORAL", 9.9, /No CrCl dose table/i, /5\/20 mg once daily/i],
+    [
+      "Olmesartan Medoxomil / Amlodipine / Hydrochlorothiazide",
+      "Tribenzor",
+      "ORAL",
+      28.4,
+      /Avoid use/i,
+      /alternative antihypertensive/i,
+    ],
+    [
+      "Amlodipine and Olmesartran Medoxomil",
+      "Amlodipine and Olmesartan",
+      "ORAL",
+      9.9,
+      /No CrCl dose table/i,
+      /5\/20 mg once daily/i,
+    ],
     ["capecitabine", "Xeloda", "ORAL", 38.4, /75% of usual starting dose/i, /regimen schedule/i],
     ["eribulin", "Halaven", "IV", 28.7, /1\.1 mg\/m2/i, /21-day cycle/i],
     ["entecavir", "Baraclude", "ORAL", 34.9, /Reduce dose or extend interval/i, /48 hours/i],
@@ -1053,7 +1084,10 @@ test("backend special handlers cover full autocomplete QA warning reductions", (
     assert.notEqual(result.status, "review_source", `${drug} should avoid source-review fallback`);
     assert.match(result.dose, dosePattern, drug);
     assert.match(result.frequency, frequencyPattern, drug);
-    assert.doesNotMatch(`${result.dose} ${result.frequency}`, /recommended dose|review_source|dose_found|no_renal_adjustment/i);
+    assert.doesNotMatch(
+      `${result.dose} ${result.frequency}`,
+      /recommended dose|review_source|dose_found|no_renal_adjustment/i
+    );
   }
 });
 
@@ -1150,7 +1184,10 @@ test("backend special handlers avoid raw review tokens for no-adjustment drugs",
   assert.equal(acyclovir.renalBand, "CrCl 25-50 mL/min");
   assert.match(acyclovir.dose, /100% of usual dose/i);
   assert.equal(acyclovir.frequency, "every 12 hours");
-  assert.doesNotMatch(`${doxy.dose} ${clindamycin.dose} ${azithromycin.dose} ${acyclovir.dose}`, /review_source|no_renal_adjustment/);
+  assert.doesNotMatch(
+    `${doxy.dose} ${clindamycin.dose} ${azithromycin.dose} ${acyclovir.dose}`,
+    /review_source|no_renal_adjustment/
+  );
 });
 
 test("backend special handlers force review for indication-sensitive anticoagulants and morphine", () => {
@@ -1304,7 +1341,11 @@ test("app runtime does not import or call curated guidance", async () => {
 });
 
 test("lisinopril/hydrochlorothiazide combination is not recommended at CrCl <= 30", () => {
-  const label = { title: "Lisinopril and Hydrochlorothiazide", genericName: "LISINOPRIL AND HYDROCHLOROTHIAZIDE", sections: [] };
+  const label = {
+    title: "Lisinopril and Hydrochlorothiazide",
+    genericName: "LISINOPRIL AND HYDROCHLOROTHIAZIDE",
+    sections: [],
+  };
   const low = buildSpecialDrugResult({
     label,
     patient: { drug: "lisinopril and hydrochlorothiazide", route: "ORAL", crcl: 8 },
@@ -1352,14 +1393,41 @@ test("AI answers keyed by serum creatinine are checked against the patient's cre
     importantCautions: [],
   };
 
-  const wrongRow = validateAssistResponse({ ...base, renalBand: "Above 5.7" }, scrSource, { crcl: 25, egfr: 25, creatinine: 3 });
+  const wrongRow = validateAssistResponse({ ...base, renalBand: "Above 5.7" }, scrSource, {
+    crcl: 25,
+    egfr: 25,
+    creatinine: 3,
+  });
   assert.equal(wrongRow.status, "review_source");
 
-  const rightRow = validateAssistResponse(
-    { ...base, renalBand: "Above 2.8 to 5.7", dose: "1300 mg" },
-    scrSource,
-    { crcl: 25, egfr: 25, creatinine: 3 }
-  );
+  const rightRow = validateAssistResponse({ ...base, renalBand: "Above 2.8 to 5.7", dose: "1300 mg" }, scrSource, {
+    crcl: 25,
+    egfr: 25,
+    creatinine: 3,
+  });
   assert.equal(rightRow.status, "dose_found");
   assert.equal(rightRow.renalMetricUsed, "scr");
+});
+
+test("bounded AI bands check both limits", () => {
+  const source = "Serum Creatinine (mg/dL): Above 1.4 and ≤ 2.8: 1300 mg two times a day.";
+  const result = (creatinine) =>
+    validateAssistResponse(
+      {
+        status: "dose_found",
+        drugName: "Tranexamic acid",
+        route: "Oral",
+        renalMetricUsed: "scr",
+        renalBand: "Above 1.4 and ≤ 2.8",
+        dose: "1300 mg",
+        frequency: "two times a day",
+        dialysisNote: "",
+        importantCautions: [],
+      },
+      source,
+      { crcl: 30, egfr: 30, creatinine }
+    ).status;
+  assert.equal(result(1.8), "dose_found");
+  assert.equal(result(6.5), "review_source");
+  assert.equal(result(1.4), "review_source");
 });

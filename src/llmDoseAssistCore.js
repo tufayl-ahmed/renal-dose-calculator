@@ -344,6 +344,18 @@ function renalBandMatchesMetric(renalBand, metric, fallback) {
 }
 
 function renalBandMatchesNumber(text, value) {
+  // "above 1.4 and ≤ 2.8", "> 30 and < 50", "≥ 30 to < 60": both bounds count.
+  const bounded = text.match(
+    /(>=|≥|>|greater than|more than|above|over|at least)\s*(\d+(?:\.\d+)?)\s*(?:and|to|-|–|—|but)\s*(<=|≤|<|less than|below|under|up to|not more than)?\s*(\d+(?:\.\d+)?)/
+  );
+  if (bounded) {
+    const low = Number(bounded[2]);
+    const high = Number(bounded[4]);
+    const lowOk = />=|≥|at least/.test(bounded[1]) ? value >= low : value > low;
+    const highOk = /^(?:<|less than|below|under)$/.test(bounded[3] || "") ? value < high : value <= high;
+    return lowOk && highOk;
+  }
+
   const rangeToLessThan = text.match(/(\d+(?:\.\d+)?)\s*(?:to|-|–|—)\s*(?:<|less than|below|under)\s*(\d+(?:\.\d+)?)/);
   if (rangeToLessThan) {
     const low = Number(rangeToLessThan[1]);
