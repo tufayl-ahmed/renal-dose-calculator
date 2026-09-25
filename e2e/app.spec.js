@@ -286,3 +286,15 @@ test("a drug added before the patient details is checked once they are complete"
   await fillPatient(page);
   await expect(page.locator(".dose-card .dose-value strong")).toHaveText("100 mg once daily");
 });
+
+test("a newly deployed version offers a reload", async ({ page, browserName }) => {
+  test.skip(browserName !== "chromium");
+  await page.evaluate(async () => navigator.serviceWorker.ready);
+  await page.reload();
+  await expect.poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller))).toBe(true);
+  await expect(page.locator("#update-banner")).toBeHidden();
+  // Simulate the new service worker taking control after a deploy.
+  await page.evaluate(() => navigator.serviceWorker.dispatchEvent(new Event("controllerchange")));
+  await expect(page.locator("#update-banner")).toBeVisible();
+  await expect(page.locator("#update-reload")).toBeVisible();
+});

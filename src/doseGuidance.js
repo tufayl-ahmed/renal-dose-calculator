@@ -397,13 +397,13 @@ function formatBand(row) {
     return `CrCl > ${formatNumber(row.min)} mL/min`;
   }
   if (row.type === "gte") {
-    return `CrCl >= ${formatNumber(row.min)} mL/min`;
+    return `CrCl ≥ ${formatNumber(row.min)} mL/min`;
   }
   if (row.type === "lt") {
     return `CrCl < ${formatNumber(row.max)} mL/min`;
   }
   if (row.type === "lte") {
-    return `CrCl <= ${formatNumber(row.max)} mL/min`;
+    return `CrCl ≤ ${formatNumber(row.max)} mL/min`;
   }
   if (row.type === "range_gt") {
     return `CrCl > ${formatNumber(row.min)}-${formatNumber(row.max)} mL/min`;

@@ -215,7 +215,7 @@ test("parses percent dose renal tables", () => {
   });
 
   assert.equal(guidance.status, "matched");
-  assert.equal(guidance.crclBand, "CrCl <= 50 mL/min");
+  assert.equal(guidance.crclBand, "CrCl ≤ 50 mL/min");
   assert.match(guidance.recommendation, /50% of usual daily dose/);
 });
 

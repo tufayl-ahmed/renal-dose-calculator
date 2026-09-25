@@ -132,7 +132,7 @@ test("fractional CrCl between whole-number label bands matches the rounded band"
     });
 
   assert.equal(lookup(59.4).crclBand, "CrCl 40-59 mL/min");
-  assert.equal(lookup(59.5).crclBand, "CrCl >= 60 mL/min");
+  assert.equal(lookup(59.5).crclBand, "CrCl ≥ 60 mL/min");
   assert.equal(lookup(24.6).crclBand, "CrCl 25-39 mL/min");
 });
 

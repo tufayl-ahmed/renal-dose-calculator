@@ -19,10 +19,28 @@ export function initPwa() {
   $("#install-app")?.addEventListener("click", promptInstall);
 
   if (import.meta.env.PROD && "serviceWorker" in navigator && window.isSecureContext) {
+    // A new deploy installs a new service worker that takes over at once;
+    // offer a reload so the page stops running the previous version.
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (hadController) {
+        $("#update-banner")?.classList.remove("hidden");
+      }
+    });
+    $("#update-reload")?.addEventListener("click", () => window.location.reload());
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {
-        // The app works without offline support if a browser blocks service workers.
-      });
+      navigator.serviceWorker
+        .register("/sw.js", { scope: "/" })
+        .then((registration) => {
+          document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+              registration.update().catch(() => {});
+            }
+          });
+        })
+        .catch(() => {
+          // The app works without offline support if a browser blocks service workers.
+        });
     });
   }
 }
