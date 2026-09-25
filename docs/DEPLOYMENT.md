@@ -14,6 +14,16 @@
 - Build output directory: `dist`
 - Runtime: Cloudflare Pages Functions
 
+## Deploying
+
+```bash
+npm run deploy   # builds and uploads dist/ to the production branch (main)
+```
+
+Run it from an up-to-date `main` after merging. The calculator shows a
+"new version is ready" reload bar to users who have the previous version
+cached.
+
 ## Cloudflare Bindings
 
 Configured in `wrangler.toml`:
