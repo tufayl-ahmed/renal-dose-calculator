@@ -200,18 +200,17 @@ export function buildParserFallbackResult({ label, patient }) {
   }
 
   if (guidance.status === "not_available") {
+    // Silence is not evidence of safety: the sections read may miss renal text.
     return {
-      status: "no_renal_adjustment",
+      status: "review_source",
       drugName: label.title || patient.drug || "Selected drug",
       route: routeDisplayName(patient.route),
       renalMetricUsed: "crcl",
       renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
-      dose: "No renal dose adjustment described in label",
-      frequency: "Use usual adult schedule by indication if otherwise appropriate.",
+      dose: "Review label",
+      frequency: "The label sections read do not mention kidney function. Check the full label before assuming no adjustment.",
       dialysisNote: "",
-      importantCautions: [
-        "The label sections checked do not mention kidney function; this is not proof that renal adjustment is unnecessary.",
-      ],
+      importantCautions: [],
       sourceSetId: label.setId || "",
       sourceUrl: label.sourceUrl || "",
     };

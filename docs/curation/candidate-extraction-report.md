@@ -8,8 +8,8 @@ table parser, no AI). They are served after hand-curated records and labelled
 - Candidate records in the database: **5**
 - Extracted or refreshed this run: 5
 - Already hand-curated (skipped): 48
-- Partial extraction (needs manual curation): 96
-- Label found but no renal dosing logic applied: 73
+- Partial extraction (needs manual curation): 61
+- Label found but no renal dosing logic applied: 108
 - No human label for the route: 102
 
 ## Needs manual curation
@@ -21,27 +21,18 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Ibuprofen (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Diclofenac (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Potassium Chloride (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
-- Cyclobenzaprine (ORAL): label silent on renal dosing in the sections checked
 - Baclofen (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
-- Sodium Fluoride (ORAL): label silent on renal dosing in the sections checked
-- Buspirone (ORAL): label silent on renal dosing in the sections checked
-- Methocarbamol (ORAL): label silent on renal dosing in the sections checked
-- Lidocaine (ORAL): label silent on renal dosing in the sections checked
-- Lidocaine (IV): label silent on renal dosing in the sections checked
 - Hydrochlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Famotidine (IV): non-specific guidance "Reduce dose or extend interval"
 - Furosemide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Ketorolac (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Ketorolac (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Hydroxyzine (ORAL): label silent on renal dosing in the sections checked
-- Nitrogen (ORAL): label silent on renal dosing in the sections checked
 - Ondansetron (IV): cached label predates Precautions parsing; re-fetch to confirm no adjustment
 - Celecoxib (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Sildenafil (ORAL): cached label predates Precautions parsing; re-fetch to confirm no adjustment
 - Sildenafil (IV): cached label predates Precautions parsing; re-fetch to confirm no adjustment
 - Pravastatin (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Allopurinol (IV): non-specific guidance "Use lower starting dose"
-- Estradiol (ORAL): label silent on renal dosing in the sections checked
 - Naproxen (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Glycopyrrolate (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Glycopyrrolate (IV): non-specific guidance "Renal caution or dose-reduction language in label"
@@ -50,35 +41,20 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Meloxicam (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Meloxicam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Phentermine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Diltiazem (IV): label silent on renal dosing in the sections checked
-- Amitriptyline (ORAL): label silent on renal dosing in the sections checked
-- Benzonatate (ORAL): label silent on renal dosing in the sections checked
 - Ciprofloxacin (IV): no clean answer at 4
-- Albuterol (ORAL): label silent on renal dosing in the sections checked
 - Glipizide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Lorazepam (ORAL): label silent on renal dosing in the sections checked
 - Lorazepam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Hydralazine (ORAL): label silent on renal dosing in the sections checked
 - Lamotrigine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
-- Clonazepam (ORAL): label silent on renal dosing in the sections checked
-- Clonazepam (IV): label silent on renal dosing in the sections checked
-- Nifedipine (ORAL): label silent on renal dosing in the sections checked
 - Hydrocortisone (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Tramadol (IV): no clean answer at 4, 8
 - Sulfamethoxazole and Trimethoprim (IV): no clean answer at 4, 8, 12
-- Methylphenidate (ORAL): label silent on renal dosing in the sections checked
-- Diazepam (ORAL): label silent on renal dosing in the sections checked
-- Labetalol (ORAL): label silent on renal dosing in the sections checked
-- Labetalol (IV): label silent on renal dosing in the sections checked
 - Tizanidine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Mirtazapine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
-- Nystatin (ORAL): label silent on renal dosing in the sections checked
 - Indomethacin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Indomethacin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
 - Oxybutynin (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Escitalopram (ORAL): cached label predates Precautions parsing; re-fetch to confirm no adjustment
 - Losartan and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Epinephrine (ORAL): label silent on renal dosing in the sections checked
 - Epinephrine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Vancomycin (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
 - Morphine (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
@@ -90,24 +66,13 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Bumetanide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Warfarin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Mesalamine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
-- Folic Acid (ORAL): label silent on renal dosing in the sections checked
-- Naloxone (IV): label silent on renal dosing in the sections checked
 - Phenylephrine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Phenylephrine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
-- Prazosin (ORAL): label silent on renal dosing in the sections checked
 - Triamterene and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Heparin (ORAL): label "Histamine Balancer" does not match the drug name
 - Lovastatin (ORAL): band CrCl 10-30 mL/min does not contain probe 4
-- Progesterone (ORAL): label silent on renal dosing in the sections checked
-- Temazepam (ORAL): label silent on renal dosing in the sections checked
-- Temazepam (IV): label silent on renal dosing in the sections checked
-- Atropine (ORAL): label silent on renal dosing in the sections checked
-- Nitroglycerin (IV): label silent on renal dosing in the sections checked
-- Nortriptyline (ORAL): label silent on renal dosing in the sections checked
-- Acetaminophen and Codeine (ORAL): label silent on renal dosing in the sections checked
 - Acetazolamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Acetazolamide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Donepezil (ORAL): label silent on renal dosing in the sections checked
 - Penicillin (ORAL): no clean answer at 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
 - Penicillin (IV): no clean answer at 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
 - Tobramycin (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
@@ -120,8 +85,14 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Prednisone (ORAL)
 - Atorvastatin (ORAL)
 - Potassium Chloride (IV)
+- Cyclobenzaprine (ORAL)
+- Sodium Fluoride (ORAL)
 - Sodium Fluoride (IV)
+- Buspirone (ORAL)
+- Methocarbamol (ORAL)
 - Methocarbamol (IV)
+- Lidocaine (ORAL)
+- Lidocaine (IV)
 - Metronidazole (ORAL)
 - Metronidazole (IV)
 - Hydrocodone and Acetaminophen (ORAL)
@@ -129,43 +100,61 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Metoprolol (IV)
 - Furosemide (ORAL)
 - Fluoxetine (ORAL)
+- Hydroxyzine (ORAL)
+- Nitrogen (ORAL)
 - Omeprazole (ORAL)
 - Propranolol (ORAL)
 - Propranolol (IV)
 - Sertraline (ORAL)
 - Divalproex (ORAL)
+- Estradiol (ORAL)
 - Rosuvastatin (IV)
 - Zolpidem (ORAL)
 - Zolpidem (IV)
 - Amlodipine (ORAL)
 - Diltiazem (ORAL)
+- Diltiazem (IV)
+- Amitriptyline (ORAL)
 - Aripiprazole (ORAL)
+- Benzonatate (ORAL)
 - Simvastatin (ORAL)
 - Carvedilol (ORAL)
 - Clonidine (ORAL)
 - Clonidine (IV)
+- Albuterol (ORAL)
+- Lorazepam (ORAL)
 - Clobetasol Propionate (ORAL)
+- Hydralazine (ORAL)
 - Hydralazine (IV)
 - Olanzapine (ORAL)
 - Trazodone (ORAL)
+- Clonazepam (ORAL)
+- Clonazepam (IV)
 - Promethazine (ORAL)
 - Promethazine (IV)
 - Quetiapine (ORAL)
 - Verapamil (ORAL)
 - Verapamil (IV)
+- Nifedipine (ORAL)
 - Doxepin (ORAL)
 - Carbamazepine (ORAL)
 - Hydrocortisone (ORAL)
 - Pantoprazole (IV)
 - Sodium Chloride (ORAL)
 - Sodium Chloride (IV)
+- Methylphenidate (ORAL)
 - Dexamethasone (ORAL)
 - Dexamethasone (IV)
+- Diazepam (ORAL)
 - Diazepam (IV)
+- Labetalol (ORAL)
+- Labetalol (IV)
+- Nystatin (ORAL)
 - Phenobarbital (ORAL)
 - Phenobarbital (IV)
 - Alprazolam (ORAL)
 - Chlorthalidone (ORAL)
+- Epinephrine (ORAL)
 - Haloperidol (ORAL)
 - Oxycodone and Acetaminophen (ORAL)
 - Minocycline (ORAL)
@@ -176,15 +165,26 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Paroxetine (ORAL)
 - Eszopiclone (IV)
 - Sucralfate (ORAL)
+- Folic Acid (ORAL)
 - Folic Acid (IV)
 - Naloxone (ORAL)
+- Naloxone (IV)
+- Prazosin (ORAL)
 - Heparin (IV)
 - Doxazosin (ORAL)
 - Ofloxacin (ORAL)
+- Progesterone (ORAL)
 - Erythromycin (ORAL)
 - Erythromycin (IV)
+- Temazepam (ORAL)
+- Temazepam (IV)
+- Atropine (ORAL)
 - Atropine (IV)
 - Metaxalone (ORAL)
 - Nitroglycerin (ORAL)
+- Nitroglycerin (IV)
+- Nortriptyline (ORAL)
 - Tretinoin (ORAL)
+- Acetaminophen and Codeine (ORAL)
 - Betamethasone Dipropionate (ORAL)
+- Donepezil (ORAL)

@@ -3,6 +3,7 @@
 //
 //   npm run candidates:extract -- --limit=150
 //   OPENFDA_API_KEY=... npm run candidates:extract -- --limit=2000
+//   (or put OPENFDA_API_KEY=... in the git-ignored .env.local file)
 //
 // For each generic drug in the autocomplete list and each route (oral, IV):
 //   1. fetch the DailyMed/openFDA label (cached in .cache/labels/)
@@ -43,6 +44,7 @@ const LABEL_FIELDS_VERSION = 2;
 const SIGNIFICANT_NAME_WORD = /^[a-z]{4,}$/;
 const NAME_STOP_WORDS = new Set(["with", "sodium", "potassium", "calcium", "hydrochloride", "extended", "release"]);
 
+await loadLocalEnv();
 let requestCount = 0;
 let rateLimited = false;
 installFetchGuard();
@@ -177,11 +179,6 @@ function extractCandidate(drug, route, label) {
     return { reason: `no clean answer at ${missing.map(({ value }) => value).join(", ")}` };
   }
 
-  const silent = answers.find(({ outcome }) => /described in label/i.test(outcome.result.dose));
-  if (silent) {
-    // "The label does not mention the kidney" is not reliable enough to store.
-    return { reason: "label silent on renal dosing in the sections checked" };
-  }
   const vague = answers.find(({ outcome }) => !isConcreteDose(outcome.result.dose));
   if (vague) {
     return { reason: `non-specific guidance "${vague.outcome.result.dose}"` };
@@ -268,7 +265,10 @@ function variantFor(result) {
   return {
     condition: "Adult dosing per DailyMed label",
     dose: result.dose,
-    interval: [result.frequency, ...(result.importantCautions || [])].filter(Boolean).join(". "),
+    interval: [result.frequency, ...(result.importantCautions || [])]
+      .map((part) => String(part || "").trim().replace(/\.+$/, ""))
+      .filter(Boolean)
+      .join(". "),
   };
 }
 
@@ -368,6 +368,21 @@ async function writeReport(list) {
   ];
   await mkdir(path.dirname(REPORT), { recursive: true });
   await writeFile(REPORT, lines.join("\n"));
+}
+
+// Reads KEY=value lines from the git-ignored .env.local (e.g. OPENFDA_API_KEY).
+async function loadLocalEnv() {
+  try {
+    const text = await readFile(path.join(root, ".env.local"), "utf8");
+    for (const line of text.split(/\r?\n/)) {
+      const match = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$/);
+      if (match && !process.env[match[1]]) {
+        process.env[match[1]] = match[2].replace(/^["']|["']$/g, "");
+      }
+    }
+  } catch {
+    // No .env.local; the script runs within the keyless rate limit.
+  }
 }
 
 function installFetchGuard() {

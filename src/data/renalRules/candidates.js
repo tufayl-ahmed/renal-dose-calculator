@@ -36,7 +36,7 @@ export const candidateRenalDoseRules = [
           {
             "condition": "Adult dosing per DailyMed label",
             "dose": "No renal dose adjustment",
-            "interval": "Use usual adult dosing by indication.. Use caution in severe renal impairment; verify the selected azithromycin DailyMed label."
+            "interval": "Use usual adult dosing by indication. Use caution in severe renal impairment; verify the selected azithromycin DailyMed label"
           }
         ]
       }
@@ -75,7 +75,7 @@ export const candidateRenalDoseRules = [
           {
             "condition": "Adult dosing per DailyMed label",
             "dose": "No renal dose adjustment",
-            "interval": "Use usual adult dosing by indication.. Clindamycin is commonly used without renal adjustment; verify the selected DailyMed label."
+            "interval": "Use usual adult dosing by indication. Clindamycin is commonly used without renal adjustment; verify the selected DailyMed label"
           }
         ]
       }
@@ -114,7 +114,7 @@ export const candidateRenalDoseRules = [
           {
             "condition": "Adult dosing per DailyMed label",
             "dose": "No renal dose adjustment",
-            "interval": "Use usual adult dosing by indication.. Doxycycline is commonly used without renal adjustment; verify the selected DailyMed label."
+            "interval": "Use usual adult dosing by indication. Doxycycline is commonly used without renal adjustment; verify the selected DailyMed label"
           }
         ]
       }
@@ -200,7 +200,7 @@ export const candidateRenalDoseRules = [
           {
             "condition": "Adult dosing per DailyMed label",
             "dose": "No renal dose adjustment",
-            "interval": "Use the usual regimen.. Monitor renal function and potassium as described in label warnings."
+            "interval": "Use the usual regimen. Monitor renal function and potassium as described in label warnings"
           }
         ]
       },
@@ -212,7 +212,7 @@ export const candidateRenalDoseRules = [
           {
             "condition": "Adult dosing per DailyMed label",
             "dose": "Not recommended",
-            "interval": "Loop diuretics are preferred to thiazides in severe renal impairment; the combination label does not recommend use."
+            "interval": "Loop diuretics are preferred to thiazides in severe renal impairment; the combination label does not recommend use"
           }
         ]
       }
