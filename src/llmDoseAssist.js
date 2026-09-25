@@ -73,6 +73,7 @@ export function buildAssistPayload(values) {
     age: values.age,
     sex: values.sex,
     weight: values.weight,
+    creatinine: values.creatinine,
     height: values.height || null,
     dialysis: values.dialysis || "none",
     indication: values.indication || "any",
@@ -84,6 +85,7 @@ export function normalizeAssistPayload(data, values = {}) {
   const isParserResult = data.sourceMode === "dailymed-table-parser" || data.sourceMode === "dailymed-table-parser-fallback";
   const isSpecialResult = data.sourceMode === "dailymed-special-review";
   const isRouteNotFound = data.sourceMode === "route-not-found";
+  const isCurated = String(data.sourceMode || "").startsWith("curated");
   const result = validateAssistResponse(data.result || data, data.sourceText || "", {
     drugName: data.drugName || values.drug,
     route: data.route || routeDisplayName(values.route),
@@ -91,7 +93,7 @@ export function normalizeAssistPayload(data, values = {}) {
     crcl: values.crcl,
     egfr: values.egfr,
     sourceUrl: data.sourceUrl || buildDailyMedSearchUrl(values.drug || ""),
-    trustSourceEvidence: isParserResult || isSpecialResult,
+    trustSourceEvidence: isParserResult || isSpecialResult || isCurated,
   });
   const guidance = buildAssistGuidance(result, values);
   if (isParserResult) {
@@ -105,6 +107,19 @@ export function normalizeAssistPayload(data, values = {}) {
     guidance.badge = "DailyMed renal label";
     guidance.sourceLabel = "DailyMed/openFDA deterministic renal guidance";
     guidance.sourceHeading = "DailyMed renal label summary";
+  }
+  if (isCurated) {
+    const verified = data.sourceMode === "curated-verified";
+    guidance.title = "Curated renal dose rule";
+    guidance.badge = verified ? "Clinician-verified" : "Curated draft";
+    guidance.sourceLabel = verified
+      ? `Curated rule verified by ${data.curated?.verification?.verifiedBy || "clinician"}`
+      : "Curated rule (draft, pending clinician review)";
+    guidance.sourceHeading = data.curated?.sourceLabel || "Curated renal dose rule";
+    guidance.rows = data.curated?.rows || guidance.rows;
+    guidance.options = data.curated?.options || null;
+    guidance.selectedControls = data.curated?.selectedControls || null;
+    guidance.verification = data.curated?.verification || null;
   }
   if (isRouteNotFound) {
     guidance.title = "Route unavailable";

@@ -1,5 +1,6 @@
 import { normalizeDrugKey } from "./drugNormalizer.js";
 import { draftRenalDoseRules } from "./data/renalRules/index.js";
+import { RULE_VERIFICATIONS } from "./data/renalRules/verifications.js";
 
 const STARTER_RENAL_RULES = [
   {
@@ -706,21 +707,44 @@ const STRUCTURED_RENAL_RULES = [
 
 const CURATED_RENAL_RULES = buildCuratedRuleSet();
 
-export function findCuratedRenalDoseGuidance({
-  drugQuery,
-  normalizedDrug,
-  crcl,
-  egfr,
-  route,
-  dialysis,
-  indication,
-  formulation,
-}) {
-  const record = findCuratedRecord(drugQuery, normalizedDrug, route);
-  if (!record) {
+export function findCuratedRenalDoseGuidance(input) {
+  const record = findCuratedRecord(input.drugQuery, input.normalizedDrug, input.route);
+  if (!record || getRecordVerification(record).status === "retired") {
     return null;
   }
 
+  return {
+    ...buildRecordGuidance(record, input),
+    recordId: curatedRecordId(record),
+    verification: getRecordVerification(record),
+  };
+}
+
+/** Stable id used to attach clinician verifications to a record. */
+export function curatedRecordId(record) {
+  return `${literalDrugKey(record.searchTerm || record.drugName).replaceAll(" ", "-")}:${[...record.routes].sort().join("+")}`;
+}
+
+/**
+ * Clinician sign-off lives in data/renalRules/verifications.js, separate from
+ * the extracted records, so draft extraction can never mark itself verified.
+ */
+export function getRecordVerification(record) {
+  const verification = RULE_VERIFICATIONS[curatedRecordId(record)];
+  if (verification?.status === "verified" || verification?.status === "retired") {
+    return { ...verification };
+  }
+  if (record.confidence === "starter-verified") {
+    return { status: "verified", verifiedBy: record.reviewedBy, verifiedOn: record.reviewedOn };
+  }
+  return { status: "draft", verifiedBy: "", verifiedOn: "" };
+}
+
+export function listCuratedRecords() {
+  return CURATED_RENAL_RULES;
+}
+
+function buildRecordGuidance(record, { crcl, egfr, route, dialysis, indication, formulation }) {
   const structuredGuidance = findStructuredGuidance({
     record,
     crcl,
@@ -735,11 +759,13 @@ export function findCuratedRenalDoseGuidance({
   }
 
   const routeRules = record.rules;
-  const selectedRule = routeRules.find((rule) => {
-    const metric = inferRuleMetric(record, rule);
-    const value = metric.value === "egfr" ? egfr : crcl;
-    return isRenalValueInRule(value, rule);
-  });
+  const selectedRule = findWithBandRounding((round) =>
+    routeRules.find((rule) => {
+      const metric = inferRuleMetric(record, rule);
+      const value = metric.value === "egfr" ? egfr : crcl;
+      return isRenalValueInRule(round(value), rule);
+    })
+  );
   const routeLabel = route === "ALL" ? record.routes.join(", ") : routeDisplayName(route);
   const badge = buildBadge(record);
   const status = selectedRule ? getMatchedStatus(record, selectedRule) : "curated_needs_review";
@@ -869,7 +895,16 @@ function routeMatches(record, route) {
   return record.routes.includes(route);
 }
 
-function isRenalValueInRule(value, rule) {
+/**
+ * Label tables usually use whole-number bands ("40-59", ">=60") while CrCl is
+ * calculated to one decimal, so 59.4 would otherwise fall between bands. Try
+ * the exact value first, then the value rounded to a whole number.
+ */
+function findWithBandRounding(select) {
+  return select((value) => value) || select((value) => (Number.isFinite(value) ? Math.round(value) : value));
+}
+
+export function isRenalValueInRule(value, rule) {
   if (!Number.isFinite(value)) {
     return false;
   }
@@ -896,10 +931,11 @@ function findStructuredGuidance({ record, crcl, egfr, route, dialysis, indicatio
   const controls = normalizeStructuredControls(record.structured, { dialysis, indication, formulation });
   const metric = RENAL_METRICS[record.structured.renalMetric] || inferRecordMetric(record);
   const renalValue = metric.value === "egfr" ? egfr : crcl;
-  const matchingRules = record.structured.rules
-    .filter((rule) => structuredRuleMatches(rule, controls, renalValue))
-    .sort((a, b) => scoreStructuredRule(b, controls) - scoreStructuredRule(a, controls));
-  const selectedRule = matchingRules[0];
+  const selectedRule = findWithBandRounding((round) =>
+    record.structured.rules
+      .filter((rule) => structuredRuleMatches(rule, controls, round(renalValue)))
+      .sort((a, b) => scoreStructuredRule(b, controls) - scoreStructuredRule(a, controls))[0]
+  );
   const routeLabel = route === "ALL" ? record.routes.join(", ") : routeDisplayName(route);
   const badge = buildBadge(record);
   const rows = record.structured.rules

@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { curatedRecordId, findCuratedRenalDoseGuidance, listCuratedRecords } from "../src/curatedDoseRules.js";
+import { RULE_VERIFICATIONS } from "../src/data/renalRules/verifications.js";
 
 const RULE_DIR = join(process.cwd(), "src/data/renalRules");
 const VALID_TYPES = new Set(["all", "gt", "gte", "lt", "range"]);
@@ -30,7 +32,7 @@ async function listRuleFiles() {
   try {
     const entries = await readdir(RULE_DIR, { withFileTypes: true });
     return entries
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".js"))
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".js") && entry.name !== "verifications.js")
       .map((entry) => entry.name)
       .sort();
   } catch {
@@ -101,3 +103,34 @@ function validateRule({ rule, label }) {
     assert.ok(variant.interval.trim(), `${variantLabel} interval cannot be blank`);
   });
 }
+
+test("curated records have unique ids (no duplicate drug/route records)", () => {
+  const ids = listCuratedRecords().map(curatedRecordId);
+  const duplicates = ids.filter((id, index) => ids.indexOf(id) !== index);
+  assert.deepEqual(duplicates, []);
+});
+
+test("clinician verifications point at existing records and name the reviewer", () => {
+  const ids = new Set(listCuratedRecords().map(curatedRecordId));
+  for (const [id, verification] of Object.entries(RULE_VERIFICATIONS)) {
+    assert.ok(ids.has(id), `${id} does not match a curated record`);
+    assert.ok(["verified", "retired"].includes(verification.status), `${id} has invalid status`);
+    assert.ok(verification.verifiedBy?.trim(), `${id} needs verifiedBy`);
+    assert.match(verification.verifiedOn || "", /^\d{4}-\d{2}-\d{2}$/, `${id} needs ISO verifiedOn`);
+  }
+});
+
+test("fractional CrCl between whole-number label bands matches the rounded band", () => {
+  const lookup = (crcl) =>
+    findCuratedRenalDoseGuidance({
+      drugQuery: "valganciclovir",
+      normalizedDrug: { searchTerm: "valganciclovir" },
+      crcl,
+      egfr: crcl,
+      route: "ORAL",
+    });
+
+  assert.equal(lookup(59.4).crclBand, "CrCl 40-59 mL/min");
+  assert.equal(lookup(59.5).crclBand, "CrCl >= 60 mL/min");
+  assert.equal(lookup(24.6).crclBand, "CrCl 25-39 mL/min");
+});

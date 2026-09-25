@@ -11,6 +11,7 @@ import {
   writeJsonCache,
 } from "../../../server/renalDose/cache.js";
 import { formatNumber, routeDisplayName } from "../../../server/renalDose/format.js";
+import { resolveCuratedPayload } from "../../../server/renalDose/curated.js";
 import { corsHeaders, jsonResponse } from "../../../server/renalDose/http.js";
 import { lookupDrugLabel, toPublicLabel, toPublicSections } from "../../../server/renalDose/openfda.js";
 import {
@@ -28,6 +29,14 @@ export async function onRequestPost(context) {
   try {
     const requestBody = await context.request.json();
     const patient = sanitizePatient(requestBody);
+
+    // 1. Curated renal-rule database (fast, no network).
+    const curatedPayload = resolveCuratedPayload(patient);
+    if (curatedPayload) {
+      return jsonResponse(curatedPayload, 200);
+    }
+
+    // 2+. DailyMed/openFDA label: deterministic handlers, table parser, AI, source review.
     const lookupTerm = patient.normalizedDrug?.searchTerm || patient.drug;
     const label = await lookupDrugLabel({ drug: lookupTerm, route: patient.route });
 
