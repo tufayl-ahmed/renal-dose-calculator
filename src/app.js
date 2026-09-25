@@ -74,6 +74,13 @@ form.addEventListener("reset", () => {
 });
 
 $("#quick-apply").addEventListener("click", applyQuickInput);
+$("#dose-empty").addEventListener("click", (event) => {
+  const example = event.target.closest("[data-example]");
+  if (example) {
+    $("#quick-input").value = example.dataset.example;
+    applyQuickInput();
+  }
+});
 $("#quick-input").addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();

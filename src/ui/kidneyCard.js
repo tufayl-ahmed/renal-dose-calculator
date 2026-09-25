@@ -41,8 +41,8 @@ export function computeRenal(values) {
 }
 
 export function renderKidneyCard(values, renal) {
-  $("#crcl-value").textContent = renal.crcl.toFixed(1);
-  $("#egfr-value").textContent = renal.egfr.toFixed(1);
+  countTo($("#crcl-value"), renal.crcl);
+  countTo($("#egfr-value"), renal.egfr);
   $("#crcl-note").textContent = describeCrcl(renal.crcl);
   $("#egfr-note").textContent = `${renal.stage.stage} · ${renal.stage.label}`;
 
@@ -115,6 +115,7 @@ export function kidneyAlert(values) {
 }
 
 export function resetKidneyCard() {
+  ["#crcl-value", "#egfr-value"].forEach((id) => window.cancelAnimationFrame(Number($(id).dataset.frame || 0)));
   $("#kidney-alert").classList.add("hidden");
   $("#kidney-card").classList.remove("is-dialysis");
   $("#crcl-value").textContent = "—";
@@ -132,6 +133,27 @@ export function resetKidneyCard() {
   setHtml($("#kidney-notes"), html`<li>Enter age, sex, weight and creatinine. Results update as you type.</li>`);
   $("#bar-crcl").textContent = "—";
   $("#bar-egfr").textContent = "—";
+}
+
+/** Animates a number to its new value (skipped for reduced motion). */
+function countTo(element, value) {
+  const from = Number.parseFloat(element.textContent);
+  window.cancelAnimationFrame(Number(element.dataset.frame || 0));
+  if (!Number.isFinite(from) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    element.textContent = value.toFixed(1);
+    return;
+  }
+  const start = performance.now();
+  const duration = 450;
+  const step = (now) => {
+    const progress = Math.min(1, (now - start) / duration);
+    const eased = 1 - (1 - progress) ** 3;
+    element.textContent = (from + (value - from) * eased).toFixed(1);
+    if (progress < 1) {
+      element.dataset.frame = String(window.requestAnimationFrame(step));
+    }
+  };
+  element.dataset.frame = String(window.requestAnimationFrame(step));
 }
 
 export function gaugePosition(egfr) {

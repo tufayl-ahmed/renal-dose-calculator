@@ -1,5 +1,6 @@
 import { normalizeDrugKey } from "./drugNormalizer.js";
 import { DRUG_AUTOCOMPLETE_ITEMS } from "./drugAutocompleteData.js";
+import { COVERAGE_INDEX } from "./data/coverageIndex.js";
 
 const MAX_DEFAULT_SUGGESTIONS = 8;
 const EXACT_ONLY_KEYS = new Set(["oxygen"]);
@@ -69,11 +70,26 @@ export function isSystemicAutocompleteCandidate(item) {
   }
 
   const key = normalizeDrugKey(name);
-  if (key.length < 3 || /^(?:sodium|potassium|calcium|magnesium|aluminum|silver|sulfur|phosphorus|helium|nitrogen|oxygen)$/.test(key)) {
+  if (
+    key.length < 3 ||
+    /^(?:sodium|potassium|calcium|magnesium|aluminum|silver|sulfur|phosphorus|helium|nitrogen|oxygen)$/.test(key)
+  ) {
     return false;
   }
 
   return true;
+}
+
+/**
+ * Best rule-database status for a drug name: { status: "verified" | "curated"
+ * | "extracted", routes } or null when only the live label lookup covers it.
+ */
+export function getDrugCoverage(name) {
+  const entry = COVERAGE_INDEX[normalizeDrugKey(name)];
+  if (!entry) {
+    return null;
+  }
+  return { status: { v: "verified", c: "curated", e: "extracted" }[entry.s], routes: entry.r };
 }
 
 export function getDrugAutocompleteSuggestions(query, options = {}) {
@@ -102,6 +118,7 @@ export function getDrugAutocompleteSuggestions(query, options = {}) {
       source: entry.source,
       score: match.score,
       count: entry.count,
+      coverage: getDrugCoverage(entry.value) || getDrugCoverage(entry.label),
     });
   }
 

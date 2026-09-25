@@ -3,7 +3,8 @@
 Adult kidney-function calculator and renal-dose guidance app built by
 **Dr. Tufayl (Cortex Labs)**.
 
-[Live app](https://renal-dose-calculator-3fl.pages.dev) ·
+[Live app](https://renal-dose-calculator-3fl.pages.dev) (calculator at
+[/app/](https://renal-dose-calculator-3fl.pages.dev/app/)) ·
 [Dose database & review](docs/RENAL_DOSE_CURATION.md) ·
 [Deployment](docs/DEPLOYMENT.md) ·
 [Security](SECURITY.md)
@@ -33,6 +34,10 @@ Adult kidney-function calculator and renal-dose guidance app built by
 - Share link (the check is stored in the URL fragment, never sent to the
   server) and print / save as PDF.
 - Clinician review page (`/review.html`) to verify or retire records.
+- Drug suggestions show whether a drug is **Verified**, **Curated** or
+  **Auto-extracted** in the database before you pick it.
+- Landing page at `/`; the installed app, Telegram and share links open the
+  calculator at `/app/` directly.
 - Every answer carries a source badge so you know how much to trust it:
   **Clinician-verified**, **Curated · draft**, **Auto-extracted**,
   **Label logic/table**, **AI summary** or **Review source**.
@@ -81,7 +86,8 @@ workflow (spreadsheet export/import) and how to grow the database.
 ## Repository layout
 
 ```text
-index.html, src/app.js          App shell and bootstrap
+index.html, src/landing.js      Landing page
+app/index.html, src/app.js      Calculator shell and bootstrap
 review.html, src/review.js      Clinician rule review page
 src/ui/                         UI modules (form, drug chips, dose cards, theme…)
 src/doseView.js                 View model for dose results
@@ -102,7 +108,7 @@ npm install
 npm run dev        # UI on http://localhost:5173
 npm run cf:dev     # built app + API on http://localhost:8788 (no login needed)
 npm run check      # lint, unit tests, build
-npm run test:e2e   # Playwright (run `npx playwright install chromium` once)
+npm run test:e2e   # Playwright incl. axe accessibility checks (run `npx playwright install chromium` once)
 ```
 
 Useful data scripts:
@@ -111,7 +117,9 @@ Useful data scripts:
 npm run rules:export                          # CSV for clinician review
 npm run rules:import -- docs/curation/rule-review.csv
 npm run candidates:extract -- --limit=200     # grow the database from labels
-npm run fixtures:record                       # refresh API replay fixtures
+npm run fixtures:record                       # re-record API replay fixtures (network)
+npm run fixtures:record -- --replay=true      # refresh expected outputs offline
+npm run coverage:index                        # rebuild autocomplete coverage badges
 ```
 
 ## Deployment

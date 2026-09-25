@@ -70,7 +70,7 @@ test("apixaban NVAF dose uses the label's age/weight/creatinine criteria", () =>
 
   const reduced = resolveCuratedPayload(patient({ drug: "apixaban", age: 82, weight: 55, creatinine: 1.3 }));
   assert.equal(reduced.result.dose, "2.5 mg");
-  assert.match(reduced.result.importantCautions[0], /2 of 3 \(age >= 80 years, weight <= 60 kg\)/);
+  assert.match(reduced.result.importantCautions[0], /2 of 3 \(age ≥ 80 years, weight ≤ 60 kg\)/);
 
   const dvt = resolveCuratedPayload(patient({ drug: "apixaban", age: 82, weight: 55, indication: "dvt-pe" }));
   assert.ok(!dvt.result.importantCautions.some((caution) => /NVAF dose-reduction/.test(caution)));

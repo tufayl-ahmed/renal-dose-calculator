@@ -91,9 +91,9 @@ export function applyApixabanNvafCriteria(guidance, patient) {
     return null;
   }
   const met = [
-    patient.age >= 80 ? "age >= 80 years" : "",
-    patient.weight <= 60 ? "weight <= 60 kg" : "",
-    patient.creatinine >= 1.5 ? "serum creatinine >= 1.5 mg/dL" : "",
+    patient.age >= 80 ? "age ≥ 80 years" : "",
+    patient.weight <= 60 ? "weight ≤ 60 kg" : "",
+    patient.creatinine >= 1.5 ? "serum creatinine ≥ 1.5 mg/dL" : "",
   ].filter(Boolean);
   if (!Number.isFinite(patient.age) || !Number.isFinite(patient.weight) || !Number.isFinite(patient.creatinine)) {
     return null;

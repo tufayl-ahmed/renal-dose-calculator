@@ -1,8 +1,18 @@
-import { getDrugAutocompleteSuggestions } from "../drugAutocomplete.js";
 import { $, html, setHtml } from "./dom.js";
 
 const MAX_DRUGS = 8;
+const COVERAGE_BADGES = {
+  verified: { label: "Verified", tone: "good" },
+  curated: { label: "Curated", tone: "info" },
+  extracted: { label: "Auto-extracted", tone: "info" },
+};
 let nextId = 1;
+// The 2,000-drug list is only downloaded when the drug box is first used.
+let autocompleteModule = null;
+function loadAutocomplete() {
+  autocompleteModule ||= import("../drugAutocomplete.js");
+  return autocompleteModule;
+}
 
 /**
  * Chip-style multi-drug input with a keyboard-accessible autocomplete.
@@ -25,6 +35,7 @@ export function createDrugInput({ onChange, getDefaultRoute }) {
     refresh();
   });
   input.addEventListener("focus", refresh);
+  input.addEventListener("pointerenter", loadAutocomplete, { once: true });
   input.addEventListener("keydown", handleKeydown);
   input.addEventListener("blur", () => window.setTimeout(close, 120));
   list.addEventListener("mousedown", (event) => event.preventDefault());
@@ -77,8 +88,12 @@ export function createDrugInput({ onChange, getDefaultRoute }) {
     }
   }
 
-  function refresh() {
+  async function refresh() {
     const query = input.value.trim();
+    const { getDrugAutocompleteSuggestions } = await loadAutocomplete();
+    if (input.value.trim() !== query) {
+      return; // A newer keystroke will refresh.
+    }
     suggestions = query.length >= 1 ? getDrugAutocompleteSuggestions(query, { limit: 8 }) : [];
     if (query.length >= 2 && !suggestions.some((item) => item.value.toLowerCase() === query.toLowerCase())) {
       suggestions.push({ label: `Use “${query}”`, value: query, description: "Search DailyMed with the typed name" });
@@ -96,7 +111,16 @@ export function createDrugInput({ onChange, getDefaultRoute }) {
       html`${suggestions.map(
         (item, index) => html`
           <li id="drug-option-${index}" role="option" aria-selected="${String(index === active)}" data-index="${index}">
-            <strong>${item.label}</strong>
+            <span class="suggestion-main">
+              <strong>${item.label}</strong>
+              ${
+                item.coverage
+                  ? html`<span class="badge" data-tone="${COVERAGE_BADGES[item.coverage.status].tone}"
+                      >${COVERAGE_BADGES[item.coverage.status].label}</span
+                    >`
+                  : ""
+              }
+            </span>
             <span>${item.description || ""}</span>
           </li>
         `

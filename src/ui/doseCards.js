@@ -312,7 +312,9 @@ function renderResult(entry) {
             <span class="badge" data-tone="${view.tier.tone}" title="${view.tier.description}">${view.tier.label}</span>
           </p>
         </div>
-        <span class="decision" data-tone="${view.decision.tone}">${view.decision.label}</span>
+        <span class="decision" data-tone="${view.decision.tone}"
+          >${decisionIcon(view.decision.id)}${view.decision.label}</span
+        >
       </header>
 
       <div class="dose-main">
@@ -361,6 +363,22 @@ function renderResult(entry) {
       </div>
     </div>
   `;
+}
+
+const DECISION_ICONS = {
+  "no-change": '<path d="m5 12 5 5 9-10" />',
+  usual: '<path d="m5 12 5 5 9-10" />',
+  "label-dose": '<circle cx="12" cy="12" r="8" /><path d="M12 8v5" /><path d="M12 16h.01" />',
+  adjust: '<path d="M12 19V5" /><path d="m6 11 6-6 6 6" />',
+  avoid: '<circle cx="12" cy="12" r="8" /><path d="m6.5 17.5 11-11" />',
+  review:
+    '<circle cx="12" cy="12" r="8" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.1" /><path d="M12 17h.01" />',
+  unavailable: '<circle cx="12" cy="12" r="8" /><path d="M8 12h8" />',
+};
+
+function decisionIcon(id) {
+  const paths = DECISION_ICONS[id] || DECISION_ICONS.review;
+  return raw(`<svg class="decision-icon" aria-hidden="true" viewBox="0 0 24 24">${paths}</svg>`);
 }
 
 function renderContextControls(view, context) {
