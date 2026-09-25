@@ -75,11 +75,8 @@ export function buildDoseView(assist, values = {}) {
   const tier = getSourceTier(assist.sourceMode);
   const reviewOnly = tier.id === "review" || result.status === "review_source" || result.status === "not_found";
   const band = cleanBand(guidance.crclBand || result.renalBand);
-  const metric = /egfr/i.test(
-    `${guidance.renalBandLabel || ""} ${guidance.crclBand || ""} ${result.renalMetricUsed || ""}`
-  )
-    ? "eGFR"
-    : "CrCl";
+  const metricText = `${guidance.renalBandLabel || ""} ${guidance.crclBand || ""} ${result.renalMetricUsed || ""}`;
+  const metric = /egfr/i.test(metricText) ? "eGFR" : /\bscr\b|serum creatinine/i.test(metricText) ? "SCr" : "CrCl";
   const cautions = splitCautions(guidance.indicationNote || result.importantCautions?.join(" ") || "");
   const dose = reviewOnly ? result.dose || "Review DailyMed source" : guidance.dose || result.dose || "";
   const frequency = reviewOnly ? result.frequency || "" : guidance.interval || result.frequency || "";

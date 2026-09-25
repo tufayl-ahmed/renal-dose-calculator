@@ -144,6 +144,7 @@ async function resolveForPatient({ patient, env }) {
     renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
     crcl: patient.crcl,
     egfr: patient.egfr,
+    creatinine: patient.creatinine,
     sourceSetId: label.setId,
     sourceUrl: label.sourceUrl,
   });

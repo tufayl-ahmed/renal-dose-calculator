@@ -1337,3 +1337,29 @@ test("cobicistat handler does not apply to darunavir/cobicistat combinations", (
   });
   assert.equal(standalone.dose, "150 mg");
 });
+
+test("AI answers keyed by serum creatinine are checked against the patient's creatinine", () => {
+  const scrSource =
+    "Renal impairment: Serum Creatinine (mg/dL) Adjusted Dose: Above 1.4 and ≤ 2.8: 1300 mg two times a day. Above 2.8 and ≤ 5.7: 1300 mg once a day. Above 5.7: 650 mg once a day.";
+  const base = {
+    status: "dose_found",
+    drugName: "Tranexamic acid",
+    route: "Oral",
+    renalMetricUsed: "crcl",
+    dose: "650 mg",
+    frequency: "once a day",
+    dialysisNote: "",
+    importantCautions: [],
+  };
+
+  const wrongRow = validateAssistResponse({ ...base, renalBand: "Above 5.7" }, scrSource, { crcl: 25, egfr: 25, creatinine: 3 });
+  assert.equal(wrongRow.status, "review_source");
+
+  const rightRow = validateAssistResponse(
+    { ...base, renalBand: "Above 2.8 to 5.7", dose: "1300 mg" },
+    scrSource,
+    { crcl: 25, egfr: 25, creatinine: 3 }
+  );
+  assert.equal(rightRow.status, "dose_found");
+  assert.equal(rightRow.renalMetricUsed, "scr");
+});

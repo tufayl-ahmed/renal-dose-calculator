@@ -2,12 +2,7 @@ const AI_ASSIST_CAVEAT =
   "Educational purpose only. AI-assisted output may be wrong. Results are estimates and are not for prescribing.";
 export const AI_SOURCE_TEXT_LIMIT = 9000;
 
-const ASSIST_STATUSES = new Set([
-  "dose_found",
-  "no_renal_adjustment",
-  "review_source",
-  "not_found",
-]);
+const ASSIST_STATUSES = new Set(["dose_found", "no_renal_adjustment", "review_source", "not_found"]);
 
 const VAGUE_DOSE =
   /\b(?:usual dose|usual dosage|see label|see prescribing information|as directed|adjust(?:\s+the)?\s+dose|adjust(?:\s+the)?\s+dosage|dose adjustment|dosage adjustment|review source|not applicable|n\/a)\b/i;
@@ -140,7 +135,7 @@ export function parseAndValidateAssistResponse(rawValue, sourceText, fallback = 
 
 export function validateAssistResponse(value, sourceText, fallback = {}) {
   const requestedMetric = normalizeRenalMetric(value.renalMetricUsed);
-  const inferredMetric = inferRenalMetric(value.renalBand, requestedMetric);
+  const inferredMetric = inferRenalMetric(value.renalBand, requestedMetric, sourceText);
   const result = {
     status: ASSIST_STATUSES.has(value.status) ? value.status : "review_source",
     drugName: compactText(value.drugName) || fallback.drugName || "Selected drug",
@@ -190,7 +185,11 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
     ].slice(0, 4);
   }
 
-  if (result.status === "no_renal_adjustment" && !fallback.trustSourceEvidence && hasRenalDoseTableEvidence(sourceText)) {
+  if (
+    result.status === "no_renal_adjustment" &&
+    !fallback.trustSourceEvidence &&
+    hasRenalDoseTableEvidence(sourceText)
+  ) {
     result.status = "review_source";
     result.dose = "Review DailyMed source";
     result.frequency = "Renal dose table text was present; verify the source table.";
@@ -224,7 +223,8 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
 
 export function buildAssistGuidance(result, { crcl, egfr, route } = {}) {
   const status = normalizeAssistStatus(result.status);
-  const reviewLevel = status === "dose_found" ? "clean-dose" : status === "no_renal_adjustment" ? "source-summary" : "manual-review";
+  const reviewLevel =
+    status === "dose_found" ? "clean-dose" : status === "no_renal_adjustment" ? "source-summary" : "manual-review";
 
   return {
     status: status === "dose_found" ? "ai_assisted_matched" : "ai_assisted_needs_review",
@@ -232,8 +232,11 @@ export function buildAssistGuidance(result, { crcl, egfr, route } = {}) {
     badge: "AI-assisted DailyMed summary",
     drugName: result.drugName || "Selected drug",
     routeLabel: result.route || routeDisplayName(route),
-    renalBandLabel: result.renalMetricUsed === "egfr" ? "eGFR band" : "CrCl band",
-    crclBand: result.renalBand || `${result.renalMetricUsed === "egfr" ? "eGFR" : "CrCl"} ${formatNumber(result.renalMetricUsed === "egfr" ? egfr : crcl)} mL/min`,
+    renalBandLabel:
+      result.renalMetricUsed === "egfr" ? "eGFR band" : result.renalMetricUsed === "scr" ? "SCr band" : "CrCl band",
+    crclBand:
+      result.renalBand ||
+      `${result.renalMetricUsed === "egfr" ? "eGFR" : "CrCl"} ${formatNumber(result.renalMetricUsed === "egfr" ? egfr : crcl)} mL/min`,
     recommendation: `${result.dose || "Review DailyMed source"} ${result.frequency || ""}`.trim(),
     dose: result.dose || "Review DailyMed source",
     interval: result.frequency || "Source review required",
@@ -284,10 +287,7 @@ function isClearlyUnusableDoseResult(result) {
     DOSE_UNIT.test(result.dose) ||
     DOSE_DEPENDENT_PHRASE.test(result.dose) ||
     RENAL_ACTION_PHRASE.test(`${result.dose} ${result.frequency}`);
-  return (
-    (!hasUsableDoseShape && VAGUE_DOSE.test(result.dose)) ||
-    !hasUsableDoseShape
-  );
+  return (!hasUsableDoseShape && VAGUE_DOSE.test(result.dose)) || !hasUsableDoseShape;
 }
 
 function hasRenalDoseTableEvidence(sourceText) {
@@ -295,14 +295,28 @@ function hasRenalDoseTableEvidence(sourceText) {
   return (
     /\b(?:creatinine clearance|crcl|clcr)\b/i.test(source) &&
     /\b(?:recommended dosage|dosage adjustment|dose adjustment|dosing interval|dose|dosage)\b/i.test(source) &&
-    (
-      (source.match(/\b(?:less than|greater than|more than|above|below|under|at least)\s*\d+(?:\.\d+)?/gi) || []).length >= 2 ||
-      (source.match(/\b\d+(?:\.\d+)?\s*(?:to|-|–|—)\s*\d+(?:\.\d+)?/g) || []).length >= 2
-    )
+    ((source.match(/\b(?:less than|greater than|more than|above|below|under|at least)\s*\d+(?:\.\d+)?/gi) || [])
+      .length >= 2 ||
+      (source.match(/\b\d+(?:\.\d+)?\s*(?:to|-|–|—)\s*\d+(?:\.\d+)?/g) || []).length >= 2)
   );
 }
 
 function renalBandMatchesMetric(renalBand, metric, fallback) {
+  if (metric === "scr") {
+    // Serum-creatinine tables (e.g. tranexamic acid): check the patient's SCr.
+    const text = compactText(renalBand)
+      .toLowerCase()
+      .replace(/mg\/dl/g, "");
+    if (!Number.isFinite(fallback.creatinine) || !text) {
+      return {
+        matches: true,
+        metricLabel: "serum creatinine",
+        warning: "Dose depends on serum creatinine; verify the DailyMed label.",
+      };
+    }
+    const matches = renalBandMatchesNumber(text, fallback.creatinine);
+    return { matches, metricLabel: "serum creatinine" };
+  }
   const metricKey = metric === "egfr" ? "egfr" : "crcl";
   const value = metricKey === "egfr" ? fallback.egfr : fallback.crcl;
   const metricLabel = metricKey === "egfr" ? "eGFR" : "CrCl";
@@ -337,7 +351,9 @@ function renalBandMatchesNumber(text, value) {
     return value >= low && value < high;
   }
 
-  const rangeToGreaterThan = text.match(/(?:>|greater than|more than|above|over)\s*(\d+(?:\.\d+)?)\s*(?:to|-|–|—)\s*(\d+(?:\.\d+)?)/);
+  const rangeToGreaterThan = text.match(
+    /(?:>|greater than|more than|above|over)\s*(\d+(?:\.\d+)?)\s*(?:to|-|–|—)\s*(\d+(?:\.\d+)?)/
+  );
   if (rangeToGreaterThan) {
     const low = Number(rangeToGreaterThan[1]);
     const high = Number(rangeToGreaterThan[2]);
@@ -464,16 +480,32 @@ function parseJsonObject(value) {
 
 function normalizeRenalMetric(value) {
   const metric = compactText(value).toLowerCase();
-  return metric === "egfr" || metric === "crcl" ? metric : "unclear";
+  if (metric === "egfr" || metric === "crcl") {
+    return metric;
+  }
+  if (/\bscr\b|serum creatinine|^creatinine$/.test(metric)) {
+    return "scr";
+  }
+  return "unclear";
 }
 
-function inferRenalMetric(renalBand, requestedMetric) {
+// A dosing table keyed by serum creatinine (mg/dL) rather than clearance.
+const SCR_TABLE = /serum creatinine[^.]{0,80}mg\/dl/i;
+const CLEARANCE_TABLE = /(?:creatinine clearance|crcl|clcr|egfr)[^.]{0,80}ml\/min/i;
+
+function inferRenalMetric(renalBand, requestedMetric, sourceText = "") {
   const text = compactText(renalBand).toLowerCase();
   if (/\begfr\b/.test(text)) {
     return "egfr";
   }
   if (/\b(?:crcl|clcr|creatinine clearance)\b/.test(text)) {
     return "crcl";
+  }
+  if (/\b(?:scr|serum creatinine)\b|mg\/dl/.test(text) || requestedMetric === "scr") {
+    return "scr";
+  }
+  if (text && SCR_TABLE.test(sourceText) && !CLEARANCE_TABLE.test(sourceText)) {
+    return "scr";
   }
   return requestedMetric === "egfr" || requestedMetric === "crcl" ? requestedMetric : "crcl";
 }
