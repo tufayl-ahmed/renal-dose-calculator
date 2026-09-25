@@ -81,7 +81,7 @@ test("share text includes patient, each drug, sources and the disclaimer", () =>
     renal: { egfr: 53.4, crcl: 52.6, stage: { stage: "G3a" } },
     views: [buildDoseView(assist())],
   });
-  assert.match(text, /CrCl \(Cockcroft-Gault\): 52\.6 mL\/min/);
+  assert.match(text, /CrCl \(Cockcroft-Gault, actual weight\): 52\.6 mL\/min/);
   assert.match(text, /Drug \(Oral\) — Adjust dose \[Curated · draft\]/);
   assert.match(text, /DailyMed: https:\/\/dailymed/);
   assert.match(text, /not for prescribing/);

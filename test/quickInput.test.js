@@ -102,3 +102,17 @@ test("quick input keeps multi-word drug names together and splits on +", () => {
   ]);
   assert.equal(parsed.drug, "piperacillin tazobactam gentamicin");
 });
+
+test("quick input converts creatinine given in µmol/L", () => {
+  assert.equal(parseQuickInput("72 M 78 kg SCr 132 meropenem iv").creatinine, 1.49);
+  assert.equal(parseQuickInput("60 F 55kg creat 88 umol/l metformin").creatinine, 1);
+  assert.equal(parseQuickInput("70 m 80 kg 150umol apixaban").creatinine, 1.7);
+  assert.equal(parseQuickInput("doxy 65 age f 1.1 mg/dL 62 kg oral").weight, 62);
+});
+
+test("quick input reads units after their numbers", () => {
+  const parsed = parseQuickInput("72 M 110 kg 175 cm SCr 132");
+  assert.equal(parsed.weight, 110);
+  assert.equal(parsed.height, 175);
+  assert.equal(parsed.creatinine, 1.49);
+});

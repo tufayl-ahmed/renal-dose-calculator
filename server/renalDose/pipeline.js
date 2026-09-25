@@ -8,6 +8,7 @@ import { ASSIST_CACHE_TTL_SECONDS, buildAssistCacheKey, readJsonCache, writeJson
 import { resolveCandidatePayload } from "./candidates.js";
 import { resolveCuratedPayload } from "./curated.js";
 import { formatNumber, routeDisplayName } from "./format.js";
+import { annotateKidneyContext, prepareKidneyContext } from "./kidneyContext.js";
 import { lookupDrugLabel, toPublicLabel, toPublicSections } from "./openfda.js";
 import {
   buildParserFallbackResult,
@@ -27,7 +28,13 @@ import { buildMissingLabelSpecialResult, buildSpecialDrugResult } from "./specia
  *   4. Workers AI summary of the label text (validated against the source)
  *   5. Source review fallback
  */
-export async function resolveDosePayload({ patient, env }) {
+export async function resolveDosePayload({ patient: requestPatient, env }) {
+  const context = prepareKidneyContext(requestPatient);
+  const payload = await resolveForPatient({ patient: context.lookupPatient, env });
+  return annotateKidneyContext(payload, requestPatient, context);
+}
+
+async function resolveForPatient({ patient, env }) {
   const curatedPayload = resolveCuratedPayload(patient);
   if (curatedPayload) {
     return curatedPayload;

@@ -6,6 +6,8 @@ import {
   calculateEgfrCkdEpi2021,
   calculateIdealBodyWeight,
   getCkdStage,
+  selectCrclWeight,
+  UMOL_PER_MG_DL,
 } from "../renal.js";
 import { $, html, setHtml } from "./dom.js";
 
@@ -14,14 +16,26 @@ const GAUGE_STOPS = [0, 15, 30, 45, 60, 90, 120];
 
 export function computeRenal(values) {
   const egfr = calculateEgfrCkdEpi2021(values);
-  const crcl = calculateCockcroftGault(values);
+  const crclWeight = selectCrclWeight({ ...values, basis: values.weightBasis });
+  const crcl = calculateCockcroftGault({ ...values, weight: crclWeight.weight });
+  const ibw = calculateIdealBodyWeight(values);
+  const abw = calculateAdjustedBodyWeight(values);
+  const crclByWeight = ibw
+    ? {
+        actual: calculateCockcroftGault(values),
+        ideal: calculateCockcroftGault({ ...values, weight: Math.min(ibw, values.weight) }),
+        adjusted: abw ? calculateCockcroftGault({ ...values, weight: abw }) : null,
+      }
+    : null;
   return {
     egfr,
     crcl,
+    crclWeight,
+    crclByWeight,
     stage: getCkdStage(egfr),
     bmi: calculateBmi(values),
-    ibw: calculateIdealBodyWeight(values),
-    abw: calculateAdjustedBodyWeight(values),
+    ibw,
+    abw,
     bsa: calculateMostellerBsa(values),
   };
 }
@@ -49,23 +63,60 @@ export function renderKidneyCard(values, renal) {
   $("#abw-value").textContent = renal.abw ? `${renal.abw} kg` : renal.ibw ? "Not needed" : "Add height";
   $("#bsa-value").textContent = renal.bsa ? `${renal.bsa} m²` : "Add height";
 
+  const basisLabel = { actual: "actual", ideal: "ideal", adjusted: "adjusted" }[renal.crclWeight.basis];
   const notes = [
-    `Cockcroft-Gault used actual body weight (${values.weight} kg).`,
+    `Cockcroft-Gault used ${basisLabel} body weight (${renal.crclWeight.weight} kg).`,
     ...buildInterpretation({ ...values, egfr: renal.egfr, crcl: renal.crcl }).filter(
       (note) => !/^CKD G category|^For drug dosing/.test(note)
     ),
   ];
-  if (renal.abw && renal.bmi >= 30) {
+  if (renal.crclByWeight) {
+    const { actual, ideal, adjusted } = renal.crclByWeight;
+    notes.push(
+      `CrCl by weight: actual ${actual.toFixed(1)}, ideal ${ideal.toFixed(1)}${adjusted ? `, adjusted ${adjusted.toFixed(1)}` : ""} mL/min.`
+    );
+  }
+  if (renal.abw && renal.bmi >= 30 && renal.crclWeight.basis === "actual") {
     notes.push(`BMI ≥30: many protocols use adjusted body weight (${renal.abw} kg) for Cockcroft-Gault.`);
   }
-  notes.push("A single creatinine assumes stable kidney function; estimates are unreliable in acute kidney injury.");
+  if (values.creatinineUnit === "umol") {
+    notes.push(`Creatinine ${values.creatinineInput} µmol/L = ${values.creatinine} mg/dL (÷${UMOL_PER_MG_DL}).`);
+  }
+  if (!values.unstable && values.dialysis === "none") {
+    notes.push("A single creatinine assumes stable kidney function; estimates are unreliable in acute kidney injury.");
+  }
   setHtml($("#kidney-notes"), html`${notes.map((note) => html`<li>${note}</li>`)}`);
+
+  const alert = kidneyAlert(values);
+  $("#kidney-card").classList.toggle("is-dialysis", values.dialysis !== "none");
+  $("#kidney-alert").classList.toggle("hidden", !alert);
+  $("#kidney-alert").textContent = alert;
+  $("#weight-basis-note").textContent =
+    renal.crclWeight.note ||
+    (renal.ibw
+      ? `Ideal ${renal.ibw} kg${renal.abw ? ` · adjusted ${renal.abw} kg` : ""}`
+      : "Ideal and adjusted weight need height.");
 
   $("#bar-crcl").textContent = renal.crcl.toFixed(0);
   $("#bar-egfr").textContent = renal.egfr.toFixed(0);
 }
 
+export function kidneyAlert(values) {
+  if (values.dialysis === "hd" || values.dialysis === "pd") {
+    return `On ${values.dialysis === "hd" ? "hemodialysis" : "peritoneal dialysis"}: creatinine-based eGFR and CrCl are not valid. Drug guidance uses dialysis rules where the label has them, otherwise the lowest renal band (CrCl < 10).`;
+  }
+  if (values.dialysis === "crrt") {
+    return "On CRRT: clearance depends on the prescribed effluent rate, not creatinine. Drug guidance needs pharmacy or local CRRT protocol review.";
+  }
+  if (values.unstable) {
+    return "Creatinine not stable: eGFR and CrCl assume steady state and may overestimate kidney function in AKI. Re-check dosing as creatinine changes.";
+  }
+  return "";
+}
+
 export function resetKidneyCard() {
+  $("#kidney-alert").classList.add("hidden");
+  $("#kidney-card").classList.remove("is-dialysis");
   $("#crcl-value").textContent = "—";
   $("#egfr-value").textContent = "—";
   $("#crcl-note").textContent = "Used for most drug labels";

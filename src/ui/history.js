@@ -36,7 +36,12 @@ export function createHistory({ onSelect }) {
             <button type="button" data-index="${index}">
               <span class="recent-patient"
                 >${item.patient.age} ${item.patient.sex === "female" ? "F" : "M"} · ${item.patient.weight} kg · SCr
-                ${item.patient.creatinine}</span
+                ${item.patient.creatinine}
+                mg/dL${
+                  item.patient.dialysis && item.patient.dialysis !== "none"
+                    ? ` · ${item.patient.dialysis.toUpperCase()}`
+                    : ""
+                }</span
               >
               <span class="recent-drugs"
                 >${item.drugs.length ? item.drugs.map((drug) => drug.name).join(", ") : "No drugs"} · CrCl
@@ -58,6 +63,9 @@ export function createHistory({ onSelect }) {
           weight: patient.weight,
           height: patient.height,
           creatinine: patient.creatinine,
+          weightBasis: patient.weightBasis,
+          dialysis: patient.dialysis,
+          unstable: patient.unstable,
         },
         drugs: drugs.map((drug) => ({ name: drug.name, route: drug.route })),
         crcl,

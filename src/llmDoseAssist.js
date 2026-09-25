@@ -68,6 +68,7 @@ export function buildAssistPayload(values) {
     creatinine: values.creatinine,
     height: values.height || null,
     dialysis: values.dialysis || "none",
+    unstable: values.unstable === true,
     indication: values.indication || "any",
     formulation: values.formulation || "any",
   };
@@ -139,6 +140,7 @@ export function normalizeAssistPayload(data, values = {}) {
     modelUsed: data.modelUsed || "",
     freeMode: data.freeMode !== false,
     freeModeRemaining: Number.isFinite(data.freeModeRemaining) ? data.freeModeRemaining : null,
+    kidneyContext: data.kidneyContext || null,
   };
 }
 

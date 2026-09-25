@@ -191,3 +191,48 @@ test("works offline after the first visit", async ({ page, context, api, browser
   await expect(page.locator(".dose-card")).toContainText("offline", { timeout: 20_000 });
   await context.setOffline(false);
 });
+
+test("creatinine unit toggle converts between mg/dL and µmol/L", async ({ page }) => {
+  await fillPatient(page);
+  await page.locator("#scr-unit").click();
+  await expect(page.locator("#scr-unit")).toHaveText("µmol/L");
+  await expect(page.locator("#creatinine")).toHaveValue("124");
+  await expect(page.locator("#crcl-value")).toHaveText("52.6");
+  await page.locator("#scr-unit").click();
+  await expect(page.locator("#creatinine")).toHaveValue("1.4");
+});
+
+test("weight for CrCl can use ideal or adjusted weight", async ({ page }) => {
+  await fillPatient(page, { weight: "110", height: "175" });
+  await expect(page.locator("#crcl-value")).toHaveText("74.2");
+  await page.locator(".segmented input[name=weightBasis][value=ideal] + span").click();
+  await expect(page.locator("#crcl-value")).toHaveText("47.6");
+  await page.locator(".segmented input[name=weightBasis][value=adjusted] + span").click();
+  await expect(page.locator("#crcl-value")).toHaveText("58.2");
+  await expect(page.locator("#kidney-notes")).toContainText("CrCl by weight");
+});
+
+test("dialysis status changes the guidance and is explained", async ({ page, api }) => {
+  await fillPatient(page, { creatinine: "7.5" });
+  await page.selectOption("#dialysis", "hd");
+  await expect(page.locator("#kidney-alert")).toContainText("hemodialysis");
+  await page.locator(".segmented input[name=route][value=IV] + span").click();
+  await addDrug(page, "cefepime");
+  await addDrug(page, "meropenem");
+  await calculate(page);
+
+  const cefepime = page.locator(".dose-card", { hasText: "Cefepime" });
+  await expect(cefepime).toContainText("hemodialysis rule is shown");
+  const meropenem = page.locator(".dose-card", { hasText: "Meropenem" });
+  await expect(meropenem.locator(".decision")).toHaveText("Review for dialysis");
+  expect(api.requests.every((body) => body.dialysis === "hd")).toBe(true);
+});
+
+test("unstable creatinine warns on the kidney card and every drug", async ({ page }) => {
+  await fillPatient(page);
+  await page.locator("#unstable").check();
+  await expect(page.locator("#kidney-alert")).toContainText("Creatinine not stable");
+  await addDrug(page, "sitagliptin");
+  await calculate(page);
+  await expect(page.locator(".dose-card")).toContainText("Consider the next lower band");
+});

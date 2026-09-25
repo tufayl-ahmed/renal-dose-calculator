@@ -13,6 +13,7 @@ export function sanitizePatient(body) {
     sex: compactText(body.sex),
     weight: Number(body.weight),
     creatinine: Number(body.creatinine),
+    unstable: body.unstable === true,
     height: body.height ? Number(body.height) : null,
     dialysis: compactText(body.dialysis) || "none",
     indication: compactText(body.indication) || "any",

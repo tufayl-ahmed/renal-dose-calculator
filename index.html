@@ -182,10 +182,47 @@
                   required
                   aria-describedby="creatinine-error"
                 />
-                <span>mg/dL</span>
+                <button
+                  type="button"
+                  class="unit-toggle"
+                  id="scr-unit"
+                  aria-label="Creatinine unit mg/dL; switch to µmol/L"
+                >
+                  mg/dL
+                </button>
               </div>
+              <input type="hidden" name="creatinineUnit" id="scr-unit-value" value="mg" />
               <p class="field-error" id="creatinine-error" aria-live="polite"></p>
             </div>
+
+            <div class="field field-wide">
+              <span class="field-label" id="weight-basis-label">Weight for CrCl</span>
+              <div class="segmented" role="radiogroup" aria-labelledby="weight-basis-label">
+                <label><input type="radio" name="weightBasis" value="actual" checked /><span>Actual</span></label>
+                <label><input type="radio" name="weightBasis" value="ideal" /><span>Ideal</span></label>
+                <label><input type="radio" name="weightBasis" value="adjusted" /><span>Adjusted</span></label>
+              </div>
+              <p class="hint" id="weight-basis-note">Ideal and adjusted weight need height.</p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="section">
+          <legend class="section-title">Kidney status</legend>
+          <div class="field-grid">
+            <div class="field field-wide">
+              <label for="dialysis">Dialysis</label>
+              <select id="dialysis" name="dialysis">
+                <option value="none">Not on dialysis</option>
+                <option value="hd">Intermittent hemodialysis</option>
+                <option value="pd">Peritoneal dialysis</option>
+                <option value="crrt">CRRT (continuous)</option>
+              </select>
+            </div>
+            <label class="check field-wide">
+              <input type="checkbox" name="unstable" id="unstable" />
+              <span>Creatinine not stable <em>(AKI or rapidly changing)</em></span>
+            </label>
           </div>
         </fieldset>
 
@@ -249,6 +286,8 @@
             <h2 id="kidney-title">Kidney function</h2>
             <span class="tag" id="ckd-tag" data-tone="neutral">Waiting</span>
           </div>
+
+          <p class="kidney-alert hidden" id="kidney-alert" role="alert"></p>
 
           <div class="metrics">
             <div class="metric">

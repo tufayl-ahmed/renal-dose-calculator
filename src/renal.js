@@ -91,9 +91,13 @@ export function buildInterpretation({ age, egfr, crcl, weight, height, sex }) {
 
   const bmi = calculateBmi({ weight, height });
   if (bmi) {
-    notes.push(`BMI is ${bmi} kg/m²; consider whether actual, ideal, or adjusted body weight best fits local dosing policy.`);
+    notes.push(
+      `BMI is ${bmi} kg/m²; consider whether actual, ideal, or adjusted body weight best fits local dosing policy.`
+    );
   } else {
-    notes.push("Height is optional, but adding it helps flag obesity/low body weight considerations for Cockcroft-Gault.");
+    notes.push(
+      "Height is optional, but adding it helps flag obesity/low body weight considerations for Cockcroft-Gault."
+    );
   }
 
   if (age >= 75) {
@@ -171,7 +175,9 @@ function toOptionalNumber(value) {
 }
 
 function normalizeRoute(value) {
-  const route = String(value || "ORAL").trim().toUpperCase();
+  const route = String(value || "ORAL")
+    .trim()
+    .toUpperCase();
   return route || "ORAL";
 }
 
@@ -182,4 +188,46 @@ function roundTo(value, decimals) {
 
 function formatNumber(value) {
   return Number.isFinite(value) ? value.toFixed(1) : "--";
+}
+
+// Serum creatinine: 1 mg/dL = 88.42 µmol/L.
+export const UMOL_PER_MG_DL = 88.42;
+
+export function creatinineToMgDl(value, unit) {
+  if (!Number.isFinite(value)) {
+    return NaN;
+  }
+  return unit === "umol" ? roundTo(value / UMOL_PER_MG_DL, 2) : value;
+}
+
+export function creatinineFromMgDl(value, unit) {
+  if (!Number.isFinite(value)) {
+    return NaN;
+  }
+  return unit === "umol" ? Math.round(value * UMOL_PER_MG_DL) : value;
+}
+
+/**
+ * Chooses the body weight for Cockcroft-Gault.
+ * basis: "actual" | "ideal" | "adjusted". Ideal uses the lower of ideal and
+ * actual weight; adjusted only applies when actual weight exceeds ideal.
+ * Falls back to actual weight (with a reason) when height is missing.
+ */
+export function selectCrclWeight({ basis = "actual", sex, weight, height }) {
+  const ibw = calculateIdealBodyWeight({ sex, height });
+  if (basis === "actual") {
+    return { basis: "actual", weight, note: "" };
+  }
+  if (!ibw) {
+    return { basis: "actual", weight, note: "Height is needed for ideal or adjusted weight; actual weight used." };
+  }
+  if (basis === "ideal") {
+    return weight < ibw
+      ? { basis: "actual", weight, note: `Actual weight is below ideal (${ibw} kg), so actual weight was used.` }
+      : { basis: "ideal", weight: ibw, note: "" };
+  }
+  const abw = calculateAdjustedBodyWeight({ sex, weight, height });
+  return abw
+    ? { basis: "adjusted", weight: abw, note: "" }
+    : { basis: "actual", weight, note: `Actual weight is not above ideal (${ibw} kg), so actual weight was used.` };
 }

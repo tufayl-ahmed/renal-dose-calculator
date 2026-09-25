@@ -88,7 +88,13 @@ export function buildDoseView(assist, values = {}) {
     drugName: guidance.drugName || result.drugName || values.drug || "Selected drug",
     routeLabel: guidance.routeLabel || result.route || "",
     tier,
-    decision: getDecision({ result, dose, frequency, band, tier, reviewOnly }),
+    decision: assist.kidneyContext?.reviewRequired
+      ? {
+          id: "review",
+          label: assist.kidneyContext.dialysis === "crrt" ? "Review for CRRT" : "Review for dialysis",
+          tone: "warn",
+        }
+      : getDecision({ result, dose, frequency, band, tier, reviewOnly }),
     metric,
     band,
     dose: cleanFrequencyLabel(dose),
@@ -174,10 +180,20 @@ function splitCautions(text) {
 export function buildShareText({ patient, renal, views }) {
   const lines = [
     "Renal Dose Calculator",
-    `Patient: ${patient.age} y ${patient.sex}, SCr ${patient.creatinine} mg/dL, weight ${patient.weight} kg${patient.height ? `, height ${patient.height} cm` : ""}`,
+    `Patient: ${patient.age} y ${patient.sex}, SCr ${patient.creatinine} mg/dL${
+      patient.creatinineUnit === "umol" ? ` (${patient.creatinineInput} µmol/L)` : ""
+    }, weight ${patient.weight} kg${patient.height ? `, height ${patient.height} cm` : ""}`,
     `eGFR (CKD-EPI 2021): ${renal.egfr.toFixed(1)} mL/min/1.73 m² (${renal.stage.stage})`,
-    `CrCl (Cockcroft-Gault): ${renal.crcl.toFixed(1)} mL/min`,
+    `CrCl (Cockcroft-Gault, ${renal.crclWeight?.basis || "actual"} weight): ${renal.crcl.toFixed(1)} mL/min`,
   ];
+  if (patient.dialysis && patient.dialysis !== "none") {
+    lines.push(
+      `Dialysis: ${{ hd: "intermittent hemodialysis", pd: "peritoneal dialysis", crrt: "CRRT" }[patient.dialysis]}`
+    );
+  }
+  if (patient.unstable) {
+    lines.push("Creatinine not stable (AKI or changing): estimates may overestimate kidney function.");
+  }
   for (const view of views) {
     lines.push(
       "",

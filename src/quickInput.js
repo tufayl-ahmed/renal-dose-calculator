@@ -69,7 +69,13 @@ function parseDrugSegments(tokens, used) {
   };
 
   tokens.forEach((token, index) => {
-    const route = isIvRoute(token.lower) ? "IV" : isOralRoute(token.lower) ? "ORAL" : isScRoute(token.lower) ? "SC" : "";
+    const route = isIvRoute(token.lower)
+      ? "IV"
+      : isOralRoute(token.lower)
+        ? "ORAL"
+        : isScRoute(token.lower)
+          ? "SC"
+          : "";
     if (route) {
       close();
       const last = drugs.at(-1);
@@ -158,6 +164,23 @@ function parseDirectTokens(tokens, used, result) {
       return;
     }
 
+    const attachedMicromol = token.lower.match(/^(\d+(?:\.\d+)?)(?:umol|µmol|μmol|micromol)(?:\/l)?$/);
+    if (attachedMicromol) {
+      if (assignNumber(result, "creatinine", micromolToMgDl(Number(attachedMicromol[1])))) {
+        used.add(index);
+      }
+      return;
+    }
+    const nextIsMicromol = isMicromolUnit(tokens[index + 1]?.lower);
+    const bareNumber = numberValue(token.clean);
+    if (nextIsMicromol && Number.isFinite(bareNumber)) {
+      if (assignNumber(result, "creatinine", micromolToMgDl(bareNumber))) {
+        used.add(index);
+        used.add(index + 1);
+      }
+      return;
+    }
+
     const attachedUnit = token.lower.match(/^(\d+(?:\.\d+)?)(mg\/?dl|mgdl|kg|kgs|cm|y|yr|yrs|yo)$/);
     if (attachedUnit) {
       const field = fieldForLabel(attachedUnit[2]);
@@ -178,7 +201,32 @@ function parseLabelNeighbors(tokens, used, result) {
       return;
     }
 
+    // Units ("110 kg", "175 cm") follow their number, so look back first.
+    const isUnitLabel = /^(?:mg\/?dl|kgs?|cm|yrs?|y|yo)$/.test(token.lower);
+    if (isUnitLabel) {
+      const previousIndex = findNearestNumber(tokens, used, index, -1);
+      if (previousIndex >= 0 && assignNumber(result, field, numberValue(tokens[previousIndex].clean))) {
+        used.add(index);
+        used.add(previousIndex);
+        return;
+      }
+    }
     const nextIndex = findNearestNumber(tokens, used, index, 1);
+    if (
+      nextIndex >= 0 &&
+      field === "creatinine" &&
+      !isUnitLabel &&
+      looksLikeMicromol(numberValue(tokens[nextIndex].clean))
+    ) {
+      if (assignNumber(result, field, micromolToMgDl(numberValue(tokens[nextIndex].clean)))) {
+        used.add(index);
+        used.add(nextIndex);
+        if (isMicromolUnit(tokens[nextIndex + 1]?.lower)) {
+          used.add(nextIndex + 1);
+        }
+        return;
+      }
+    }
     if (nextIndex >= 0 && assignNumber(result, field, numberValue(tokens[nextIndex].clean))) {
       used.add(index);
       used.add(nextIndex);
@@ -307,6 +355,19 @@ function isValidFieldValue(field, value) {
   return false;
 }
 
+// A labelled creatinine above the mg/dL range (e.g. "SCr 132") is read as µmol/L.
+function looksLikeMicromol(value) {
+  return Number.isFinite(value) && value > 25 && value <= 2210;
+}
+
+function isMicromolUnit(value) {
+  return /^(?:umol|µmol|μmol|micromol)(?:\/l)?$/.test(String(value || ""));
+}
+
+function micromolToMgDl(value) {
+  return Math.round((value / 88.42) * 100) / 100;
+}
+
 function numberValue(value) {
   return /^\d+(?:\.\d+)?$/.test(String(value || "")) ? Number(value) : NaN;
 }
@@ -346,6 +407,7 @@ function isIgnorableToken(value) {
     DRUG_LABELS.has(value) ||
     ROUTE_LABELS.has(value) ||
     FILLER_LABELS.has(value) ||
+    isMicromolUnit(value) ||
     isMale(value) ||
     isFemale(value) ||
     isIvRoute(value) ||

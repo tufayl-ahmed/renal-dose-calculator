@@ -114,7 +114,7 @@ export function createDoseCards({ onResult }) {
       const assist = await requestLlmDoseAssist({
         ...values,
         normalizedDrug,
-        dialysis: entry.context.dialysis || "none",
+        dialysis: entry.context.dialysis || patient.dialysis || "none",
         indication: entry.context.indication || "any",
         formulation: entry.context.formulation || "any",
       });

@@ -5,7 +5,7 @@ import { createDoseCards } from "./ui/doseCards.js";
 import { createDrugInput } from "./ui/drugInput.js";
 import { createHistory } from "./ui/history.js";
 import { computeRenal, renderKidneyCard, resetKidneyCard } from "./ui/kidneyCard.js";
-import { fillPatient, readPatient, setDefaultRoute, showFieldErrors } from "./ui/patientForm.js";
+import { fillPatient, initCreatinineUnit, readPatient, setDefaultRoute, showFieldErrors } from "./ui/patientForm.js";
 import { initPwa } from "./ui/pwa.js";
 import { haptic, initTelegram } from "./ui/telegram.js";
 import { initTheme } from "./ui/theme.js";
@@ -27,6 +27,7 @@ const drugInput = createDrugInput({
 });
 const cards = createDoseCards({});
 const history = createHistory({ onSelect: loadHistoryItem });
+initCreatinineUnit(form, () => form.dispatchEvent(new Event("input")));
 
 form.addEventListener("input", (event) => {
   if (event.target.closest(".quick-entry, .drug-entry")) {
@@ -129,6 +130,9 @@ function patientPayload() {
     creatinine: values.creatinine,
     crcl: renal.crcl,
     egfr: renal.egfr,
+    weightBasis: renal.crclWeight.basis,
+    dialysis: values.dialysis,
+    unstable: values.unstable,
   };
 }
 

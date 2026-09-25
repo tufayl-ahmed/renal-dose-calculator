@@ -1,6 +1,7 @@
 import { test as base, expect } from "@playwright/test";
 import { resolveCandidatePayload } from "../server/renalDose/candidates.js";
 import { resolveCuratedPayload } from "../server/renalDose/curated.js";
+import { annotateKidneyContext, prepareKidneyContext } from "../server/renalDose/kidneyContext.js";
 import { sanitizePatient } from "../server/renalDose/results.js";
 
 /**
@@ -23,8 +24,10 @@ export const test = base.extend({
         return;
       }
       const patient = sanitizePatient(body);
-      const payload = resolveCuratedPayload(patient) ||
-        resolveCandidatePayload(patient) || {
+      const context = prepareKidneyContext(patient);
+      const lookup = context.lookupPatient;
+      const found = resolveCuratedPayload(lookup) ||
+        resolveCandidatePayload(lookup) || {
           result: {
             status: "not_found",
             drugName: body.drug,
@@ -38,6 +41,7 @@ export const test = base.extend({
           },
           sourceMode: "not-found",
         };
+      const payload = annotateKidneyContext(found, patient, context);
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(payload) });
     });
     await use(api);
