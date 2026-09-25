@@ -14,10 +14,18 @@
       property="og:description"
       content="eGFR, CrCl and renal dose guidance for several drugs at once, with the DailyMed source for every answer."
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://renal-dose-calculator-3fl.pages.dev/" />
+    <meta property="og:image" content="https://renal-dose-calculator-3fl.pages.dev/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://renal-dose-calculator-3fl.pages.dev/" />
     <title>Renal Dose Calculator</title>
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/assets/pwa/icon-192.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png" />
+    <link rel="preload" href="/assets/fonts/manrope-latin-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body class="landing">
@@ -43,14 +51,16 @@
             <p class="eyebrow">Adult renal dosing · free · no sign-up</p>
             <h1 id="hero-title">Renal dosing, <span>checked in seconds.</span></h1>
             <p class="hero-lede">
-              Enter age, weight and creatinine once. Get CKD-EPI 2021 eGFR, Cockcroft-Gault CrCl and the renal dose
-              band for every drug you add — each answer linked to its DailyMed label and labelled with how much to
-              trust it.
+              Enter age, weight and creatinine once. Get CKD-EPI 2021 eGFR, Cockcroft-Gault CrCl and the renal dose band
+              for every drug you add — each answer linked to its DailyMed label and labelled with how much to trust it.
             </p>
             <div class="hero-actions">
               <a class="button button-hero" href="/app/">
                 Start a dose check
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
               </a>
               <a class="button button-ghost" href="#how">See how it works</a>
             </div>
@@ -73,7 +83,9 @@
                   <p class="mock-number">53.4<span>G3a</span></p>
                 </div>
               </div>
-              <div class="mock-gauge"><span></span><span></span><span></span><span class="on"></span><span></span><span></span></div>
+              <div class="mock-gauge">
+                <span></span><span></span><span></span><span class="on"></span><span></span><span></span>
+              </div>
             </div>
             <div class="mock mock-dose">
               <div class="mock-dose-head">
@@ -102,45 +114,74 @@
           <div class="feature-grid">
             <article class="feature">
               <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M9 3h6" /><path d="M10 3v5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-10V3" /></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M9 3h6" />
+                  <path d="M10 3v5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-10V3" />
+                </svg>
               </span>
               <h3>Several drugs at once</h3>
-              <p>Add every drug on the chart — oral, IV or subcutaneous — and get one card per drug with its band, dose and cautions.</p>
+              <p>
+                Add every drug on the chart — oral, IV or subcutaneous — and get one card per drug with its band, dose
+                and cautions.
+              </p>
             </article>
             <article class="feature">
               <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-5" /></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                  <path d="m9 12 2 2 4-5" />
+                </svg>
               </span>
               <h3>Honest source badges</h3>
-              <p>Clinician-verified, curated, auto-extracted, label logic or AI summary — you always know where an answer came from.</p>
+              <p>
+                Clinician-verified, curated, auto-extracted, label logic or AI summary — you always know where an answer
+                came from.
+              </p>
             </article>
             <article class="feature">
               <span class="feature-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4" /></svg>
               </span>
               <h3>Dialysis and AKI aware</h3>
-              <p>Hemodialysis, peritoneal dialysis and CRRT change the guidance shown; an unstable creatinine flags every result.</p>
+              <p>
+                Hemodialysis, peritoneal dialysis and CRRT change the guidance shown; an unstable creatinine flags every
+                result.
+              </p>
             </article>
             <article class="feature">
               <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M4 12h10" /><path d="M4 17h7" /><circle cx="18" cy="15" r="3" /></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 7h16" />
+                  <path d="M4 12h10" />
+                  <path d="M4 17h7" />
+                  <circle cx="18" cy="15" r="3" />
+                </svg>
               </span>
               <h3>Your units, your weight</h3>
               <p>Creatinine in mg/dL or µmol/L; Cockcroft-Gault with actual, ideal or adjusted body weight.</p>
             </article>
             <article class="feature">
               <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" /><path d="m16 6-4-4-4 4" /><path d="M12 2v13" /></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+                  <path d="m16 6-4-4-4 4" />
+                  <path d="M12 2v13" />
+                </svg>
               </span>
               <h3>Share, copy, print</h3>
               <p>Send a link that reopens the same check, copy a text summary for notes, or print a one-page sheet.</p>
             </article>
             <article class="feature">
               <span class="feature-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3" /><path d="M11 18h2" /></svg>
+                <svg viewBox="0 0 24 24">
+                  <rect x="6" y="2" width="12" height="20" rx="3" />
+                  <path d="M11 18h2" />
+                </svg>
               </span>
               <h3>Installs like an app</h3>
-              <p>Add it to your home screen. Kidney calculations work offline; light and dark themes follow your device.</p>
+              <p>
+                Add it to your home screen. Kidney calculations work offline; light and dark themes follow your device.
+              </p>
             </article>
           </div>
         </div>
@@ -159,12 +200,17 @@
             <li>
               <span class="step-number">2</span>
               <h3>Add drugs</h3>
-              <p>Type a name, brand or shorthand (<code>piptaz</code>, <code>vanco</code>, <code>doxy</code>). Results appear as you go.</p>
+              <p>
+                Type a name, brand or shorthand (<code>piptaz</code>, <code>vanco</code>, <code>doxy</code>). Results
+                appear as you go.
+              </p>
             </li>
             <li>
               <span class="step-number">3</span>
               <h3>Read band, dose and source</h3>
-              <p>Each card shows the renal band, the label dose, cautions, the full dose table and the DailyMed link.</p>
+              <p>
+                Each card shows the renal band, the label dose, cautions, the full dose table and the DailyMed link.
+              </p>
             </li>
           </ol>
         </div>
@@ -176,17 +222,32 @@
             <p class="eyebrow">Safety first</p>
             <h2 id="safety-title">Built to be honest about uncertainty</h2>
             <p class="section-lede">
-              A label that doesn't mention the kidneys is never shown as "no adjustment". When an indication or
-              product changes the dose, the card says which one it assumed. When nothing reliable is found, it says
-              so and links the label.
+              A label that doesn't mention the kidneys is never shown as "no adjustment". When an indication or product
+              changes the dose, the card says which one it assumed. When nothing reliable is found, it says so and links
+              the label.
             </p>
           </div>
           <dl class="tier-list">
-            <div><dt><span class="badge" data-tone="good">Clinician-verified</span></dt><dd>Reviewed and signed off by a clinician.</dd></div>
-            <div><dt><span class="badge" data-tone="info">Curated · draft</span></dt><dd>Hand-curated from the label, pending review.</dd></div>
-            <div><dt><span class="badge" data-tone="info">Auto-extracted</span></dt><dd>Renal table extracted from the label.</dd></div>
-            <div><dt><span class="badge" data-tone="warn">AI summary</span></dt><dd>May be wrong — always open the source.</dd></div>
-            <div><dt><span class="badge" data-tone="neutral">Review source</span></dt><dd>No reliable automatic answer.</dd></div>
+            <div>
+              <dt><span class="badge" data-tone="good">Clinician-verified</span></dt>
+              <dd>Reviewed and signed off by a clinician.</dd>
+            </div>
+            <div>
+              <dt><span class="badge" data-tone="info">Curated · draft</span></dt>
+              <dd>Hand-curated from the label, pending review.</dd>
+            </div>
+            <div>
+              <dt><span class="badge" data-tone="info">Auto-extracted</span></dt>
+              <dd>Renal table extracted from the label.</dd>
+            </div>
+            <div>
+              <dt><span class="badge" data-tone="warn">AI summary</span></dt>
+              <dd>May be wrong — always open the source.</dd>
+            </div>
+            <div>
+              <dt><span class="badge" data-tone="neutral">Review source</span></dt>
+              <dd>No reliable automatic answer.</dd>
+            </div>
           </dl>
         </div>
       </section>
@@ -196,7 +257,10 @@
           <h2 id="cta-title">Ready for your next patient?</h2>
           <a class="button button-hero" href="/app/">
             Start a dose check
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
           </a>
         </div>
       </section>
@@ -207,7 +271,9 @@
         <strong>Educational purpose only.</strong> Results are estimates and are not for prescribing. Always check the
         official prescribing information, local protocols and a pharmacist.
       </p>
-      <p>Made by Dr. Tufayl (Cortex Labs) · Sources: DailyMed / openFDA, RxNorm · <a href="/review.html">Rule review</a></p>
+      <p>
+        Made by Dr. Tufayl (Cortex Labs) · Sources: DailyMed / openFDA, RxNorm · <a href="/review.html">Rule review</a>
+      </p>
     </footer>
 
     <script type="module" src="/src/landing.js"></script>

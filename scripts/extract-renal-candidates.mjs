@@ -93,6 +93,7 @@ for (const drug of drugs) {
 const sorted = [...records.values()].sort((a, b) => a.drugName.localeCompare(b.drugName) || a.routes[0].localeCompare(b.routes[0]));
 await writeCandidates(sorted);
 await writeReport(sorted);
+await import(`./build-coverage-index.mjs?t=${Date.now()}`);
 console.log(
   `Processed ${drugs.length} drugs with ${requestCount} openFDA requests${rateLimited ? " (stopped: rate limited)" : ""}.`
 );

@@ -2672,3 +2672,23 @@ a.brand {
     width: calc(100% - 32px);
   }
 }
+
+.not-found {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  min-height: 100vh;
+  align-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.not-found h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.not-found p {
+  color: var(--text-muted);
+}
