@@ -1,4 +1,4 @@
-import { normalizeDrugQuery } from "./drugNormalizer.js?v=20260506-8";
+import { normalizeDrugQuery } from "./drugNormalizer.js";
 
 const OPENFDA_LABEL_URL = "https://api.fda.gov/drug/label.json";
 const DAILYMED_DRUG_SEARCH_URL = "https://dailymed.nlm.nih.gov/dailymed/search.cfm";

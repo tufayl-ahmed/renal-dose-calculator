@@ -3,7 +3,7 @@
 ## Secrets
 
 Do not commit real API tokens, webhook secrets, Cloudflare credentials, Meta
-tokens, Telegram bot tokens, WhatsApp access tokens, private keys, or `.env`
+tokens, Telegram bot tokens, private keys, or `.env`
 files.
 
 Use Cloudflare Pages secrets for production values:
@@ -11,10 +11,6 @@ Use Cloudflare Pages secrets for production values:
 ```bash
 npx wrangler pages secret put TELEGRAM_BOT_TOKEN --project-name renal-dose-calculator
 npx wrangler pages secret put TELEGRAM_WEBHOOK_SECRET --project-name renal-dose-calculator
-npx wrangler pages secret put WHATSAPP_VERIFY_TOKEN --project-name renal-dose-calculator
-npx wrangler pages secret put WHATSAPP_PHONE_NUMBER_ID --project-name renal-dose-calculator
-npx wrangler pages secret put WHATSAPP_ACCESS_TOKEN --project-name renal-dose-calculator
-npx wrangler pages secret put WHATSAPP_APP_SECRET --project-name renal-dose-calculator
 ```
 
 ## If A Secret Is Exposed

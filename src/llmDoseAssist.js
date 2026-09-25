@@ -1,11 +1,11 @@
-import { deriveRenalDoseGuidance } from "./doseGuidance.js?v=20260509-4";
-import { buildDailyMedSearchUrl, lookupDrugLabel } from "./drugLookup.js?v=20260510-1";
+import { deriveRenalDoseGuidance } from "./doseGuidance.js";
+import { buildDailyMedSearchUrl, lookupDrugLabel } from "./drugLookup.js";
 import {
   buildAssistGuidance,
   createNoLabelAssistResult,
   parseAndValidateAssistResponse,
   validateAssistResponse,
-} from "./llmDoseAssistCore.js?v=20260509-2";
+} from "./llmDoseAssistCore.js";
 
 export async function requestLlmDoseAssist(values) {
   const payload = buildAssistPayload(values);

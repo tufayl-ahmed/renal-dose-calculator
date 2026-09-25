@@ -409,7 +409,7 @@ test("LLM prompt includes renal values and source text only in user payload", ()
 
   assert.equal(prompt.messages.length, 2);
   assert.match(prompt.messages[0].content, /Do not use memory/i);
-  assert.match(prompt.messages[1].content, /\"crcl\": 44/);
+  assert.match(prompt.messages[1].content, /"crcl": 44/);
   assert.match(prompt.messages[1].content, /1 g every 12 hours/);
 });
 

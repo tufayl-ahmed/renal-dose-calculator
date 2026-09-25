@@ -710,7 +710,7 @@ function scoreLabelMatch(label, drug) {
   const allNames = [...brandNames, ...genericNames, ...substanceNames].filter(Boolean);
   const routeEvidence = getRouteEvidence(label).join(" ").toLowerCase();
   const rawQuery = String(drug || "").toLowerCase();
-  const queryIsCombo = /\b(?:and|with)\b|[\/+,;]/.test(query);
+  const queryIsCombo = /\b(?:and|with)\b|[/+,;]/.test(query);
   let score = 0;
 
   if (genericNames.some((name) => name === query)) {
@@ -740,10 +740,10 @@ function scoreLabelMatch(label, drug) {
   if (allNames.some((name) => name.includes(query))) {
     score += 15;
   }
-  if (!queryIsCombo && genericNames.some((name) => /\b(?:and|with)\b|[\/+,;]/.test(name) && name.includes(query))) {
+  if (!queryIsCombo && genericNames.some((name) => /\b(?:and|with)\b|[/+,;]/.test(name) && name.includes(query))) {
     score -= 160;
   }
-  if (!queryIsCombo && brandNames.some((name) => /\b(?:xr|duo|triple|combination)\b/.test(name)) && genericNames.some((name) => name.includes(query) && /\b(?:and|with)\b|[\/+,;]/.test(name))) {
+  if (!queryIsCombo && brandNames.some((name) => /\b(?:xr|duo|triple|combination)\b/.test(name)) && genericNames.some((name) => name.includes(query) && /\b(?:and|with)\b|[/+,;]/.test(name))) {
     score -= 60;
   }
   if (/\b(?:injection|injectable|intravenous|iv|i\.v\.)\b/.test(rawQuery) && /\b(?:injection|injectable|intravenous|iv|i\.v\.)\b/.test(routeEvidence)) {
@@ -937,7 +937,7 @@ function hasParserFragmentDose(value) {
   const text = compactText(value);
   return /^(?:renal impairment|patients with renal impairment|use in specific populations)\b/i.test(text) ||
     /\b(?:CrCl|CLcr|creatinine clearance)\s*$/i.test(text) ||
-    /[(\[][^)\]]*$/.test(text);
+    /[([][^)\]]*$/.test(text);
 }
 
 function buildParserFallbackResult({ label, patient }) {
@@ -1114,7 +1114,6 @@ export function buildSpecialDrugResult({ label, patient }) {
   ).toLowerCase();
   const correctedRequestedName = correctCommonLookupTypo(requestedName);
   const labelName = compactText(`${label.title || ""} ${label.genericName || ""}`).toLowerCase();
-  const name = `${requestedName} ${labelName}`;
   const matchesRequested = (pattern) =>
     pattern.test(requestedName) ||
     (correctedRequestedName !== requestedName && pattern.test(correctedRequestedName)) ||

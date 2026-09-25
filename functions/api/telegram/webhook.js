@@ -1,4 +1,4 @@
-import { APP_URL, limitText } from "../../../src/botReply.js";
+const APP_URL = "https://renal-dose-calculator.pages.dev";
 
 const MAX_TELEGRAM_TEXT_LENGTH = 3900;
 const MINI_APP_URL = `${APP_URL}/?telegram=1`;
@@ -122,4 +122,12 @@ function jsonResponse(value, status = 200) {
       "Content-Type": "application/json",
     },
   });
+}
+
+export function limitText(value, maxLength) {
+  const text = String(value || "").trim();
+  if (text.length <= maxLength) {
+    return text;
+  }
+  return `${text.slice(0, maxLength - 18).trim()}\n...[truncated]`;
 }

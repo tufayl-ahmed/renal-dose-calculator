@@ -8,11 +8,11 @@ import {
   getCkdStage,
   parseClinicalInput,
 } from "./renal.js";
-import { buildDailyMedSearchUrl } from "./drugLookup.js?v=20260508-1";
-import { requestLlmDoseAssist } from "./llmDoseAssist.js?v=20260510-1";
-import { normalizeDrugQuery } from "./drugNormalizer.js?v=20260508-2";
-import { parseQuickInput } from "./quickInput.js?v=20260510-1";
-import { getDrugAutocompleteSuggestions } from "./drugAutocomplete.js?v=20260509-2";
+import { buildDailyMedSearchUrl } from "./drugLookup.js";
+import { requestLlmDoseAssist } from "./llmDoseAssist.js";
+import { normalizeDrugQuery } from "./drugNormalizer.js";
+import { parseQuickInput } from "./quickInput.js";
+import { getDrugAutocompleteSuggestions } from "./drugAutocomplete.js";
 
 const form = document.querySelector("#renal-form");
 const egfrValue = document.querySelector("#egfr-value");
@@ -70,7 +70,7 @@ const abwValue = document.querySelector("#abw-value");
 const installAppButton = document.querySelector("#install-app");
 const pwaStatus = document.querySelector("#pwa-status");
 const pwaStatusLabel = document.querySelector("#pwa-status-label");
-const telegramWebApp = window.Telegram?.WebApp || null;
+let telegramWebApp = null;
 const isTelegramMiniApp = detectTelegramMiniApp();
 const DEFAULT_ROUTE = "ORAL";
 const fields = {
@@ -1284,10 +1284,10 @@ function initializePwa() {
     updatePwaStatus();
   });
 
-  if ("serviceWorker" in navigator && window.isSecureContext) {
+  if (import.meta.env.PROD && "serviceWorker" in navigator && window.isSecureContext) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("./sw.js")
+        .register("/sw.js", { scope: "/" })
         .then(() => updatePwaStatus())
         .catch(() => {
           // The app remains usable if a browser blocks service workers.
@@ -1344,11 +1344,11 @@ function detectTelegramMiniApp() {
   return (
     params.get("telegram") === "1" ||
     params.has("tgWebAppData") ||
-    Boolean(telegramWebApp?.initData)
+    window.location.hash.includes("tgWebAppData")
   );
 }
 
-function initializeTelegramMiniApp() {
+async function initializeTelegramMiniApp() {
   if (!isTelegramMiniApp) {
     return;
   }
@@ -1357,6 +1357,9 @@ function initializeTelegramMiniApp() {
   document.body.classList.add("is-telegram-mini-app");
   addTelegramMiniAppBadge();
 
+  // The Telegram SDK is only loaded inside Telegram so the regular web app
+  // makes no third-party script requests.
+  telegramWebApp = await loadTelegramSdk();
   if (!telegramWebApp) {
     return;
   }
@@ -1369,6 +1372,16 @@ function initializeTelegramMiniApp() {
   } catch {
     // Telegram WebApp methods are only available inside the Telegram client.
   }
+}
+
+function loadTelegramSdk() {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-web-app.js";
+    script.onload = () => resolve(window.Telegram?.WebApp || null);
+    script.onerror = () => resolve(null);
+    document.head.append(script);
+  });
 }
 
 function addTelegramMiniAppBadge() {
