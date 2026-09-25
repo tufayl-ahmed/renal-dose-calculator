@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "cf:dev": "vite build && node scripts/cf-dev.mjs",
-    "deploy": "vite build && wrangler pages deploy dist --project-name renal-dose-calculator",
+    "deploy": "vite build && wrangler pages deploy dist --project-name renal-dose-calculator --branch main",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
