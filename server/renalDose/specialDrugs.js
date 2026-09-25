@@ -310,7 +310,12 @@ export function buildSpecialDrugResult({ label, patient }) {
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
 
-  if (matchesRequested(/\bcobicistat\b|\btybost\b/)) {
+  // Standalone cobicistat (Tybost) only; fixed-dose combinations such as
+  // darunavir/cobicistat (Prezcobix) have their own labels.
+  if (
+    matchesRequested(/\bcobicistat\b|\btybost\b/) &&
+    !matchesRequested(/\b(?:darunavir|atazanavir|elvitegravir|emtricitabine|tenofovir|prezcobix|evotaz|genvoya|stribild|symtuza)\b/)
+  ) {
     const dose = buildCobicistatDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }

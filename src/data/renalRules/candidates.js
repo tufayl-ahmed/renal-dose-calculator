@@ -4,6 +4,44 @@
 // clinician verifies them (see scripts/export-rules-for-review.mjs).
 export const candidateRenalDoseRules = [
   {
+    "drugName": "Azacitidine",
+    "searchTerm": "azacitidine",
+    "aliases": [
+      "azacitidine for"
+    ],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0e95e33f-8aba-4f19-b332-2416580d358b",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "ONUREG",
+      "labelSetId": "0e95e33f-8aba-4f19-b332-2416580d358b",
+      "labelEffectiveTime": "20260612"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "drugName": "Azithromycin",
     "searchTerm": "azithromycin",
     "aliases": [
@@ -37,6 +75,80 @@ export const candidateRenalDoseRules = [
             "condition": "Adult dosing per DailyMed label",
             "dose": "No renal dose adjustment",
             "interval": "Use usual adult dosing by indication. Use caution in severe renal impairment; verify the selected azithromycin DailyMed label"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Brincidofovir",
+    "searchTerm": "brincidofovir",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0784838e-00bd-4b14-9b7e-653b7fbb7eea",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Tembexa",
+      "labelSetId": "0784838e-00bd-4b14-9b7e-653b7fbb7eea",
+      "labelEffectiveTime": "20250723"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Caspofungin",
+    "searchTerm": "caspofungin",
+    "aliases": [
+      "caspofungin acetate"
+    ],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=08fb61ee-a05a-4ce1-934c-8cd26c5733db",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Caspofungin Acetate",
+      "labelSetId": "08fb61ee-a05a-4ce1-934c-8cd26c5733db",
+      "labelEffectiveTime": "20260729"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
           }
         ]
       }
@@ -82,6 +194,78 @@ export const candidateRenalDoseRules = [
     ]
   },
   {
+    "drugName": "Docetaxel",
+    "searchTerm": "docetaxel",
+    "aliases": [],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal label logic)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0e0f06bd-d190-45da-be8b-062e8de01970",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-special-review",
+      "labelTitle": "Docetaxel",
+      "labelSetId": "0e0f06bd-d190-45da-be8b-062e8de01970",
+      "labelEffectiveTime": "20231121"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult dosing by indication. Docetaxel labeling does not provide a simple CrCl dose adjustment; hepatic function and regimen context drive dosing"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Docetaxel Anhydrous",
+    "searchTerm": "docetaxel anhydrous",
+    "aliases": [],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal label logic)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=9fb533da-a7ba-4c2b-8e4f-8e336ba55d12",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-special-review",
+      "labelTitle": "Docetaxel anhydrous",
+      "labelSetId": "9fb533da-a7ba-4c2b-8e4f-8e336ba55d12",
+      "labelEffectiveTime": "20230710"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult dosing by indication. Docetaxel labeling does not provide a simple CrCl dose adjustment; hepatic function and regimen context drive dosing"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "drugName": "Doxycycline",
     "searchTerm": "doxycycline",
     "aliases": [
@@ -115,6 +299,153 @@ export const candidateRenalDoseRules = [
             "condition": "Adult dosing per DailyMed label",
             "dose": "No renal dose adjustment",
             "interval": "Use usual adult dosing by indication. Doxycycline is commonly used without renal adjustment; verify the selected DailyMed label"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Dutasteride",
+    "searchTerm": "dutasteride",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=170f01fe-5048-413c-b4cd-8311e1a2728a",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Dutasteride",
+      "labelSetId": "170f01fe-5048-413c-b4cd-8311e1a2728a",
+      "labelEffectiveTime": "20260814"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Elbasvir and Grazoprevir",
+    "searchTerm": "elbasvir and grazoprevir",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=164dc02a-9180-426a-b8b5-04ab39d2bbd4",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "ZEPATIER",
+      "labelSetId": "164dc02a-9180-426a-b8b5-04ab39d2bbd4",
+      "labelEffectiveTime": "20260313"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Esmolol",
+    "searchTerm": "esmolol",
+    "aliases": [
+      "esmolol hydrochloride",
+      "esmolol hydrochloride in sodium chloride"
+    ],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=017023a9-00f0-4284-861f-a3634d4fdb17",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Esmolol Hydrochloride",
+      "labelSetId": "017023a9-00f0-4284-861f-a3634d4fdb17",
+      "labelEffectiveTime": "20230623"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Finasteride",
+    "searchTerm": "finasteride",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=01b88593-99d3-4dd6-a7b6-5438c15bd7b7",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Finasteride",
+      "labelSetId": "01b88593-99d3-4dd6-a7b6-5438c15bd7b7",
+      "labelEffectiveTime": "20240419"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
           }
         ]
       }
@@ -169,6 +500,82 @@ export const candidateRenalDoseRules = [
     ]
   },
   {
+    "drugName": "Granisetron",
+    "searchTerm": "granisetron",
+    "aliases": [
+      "granisetron hydrochloride"
+    ],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=2758eb4d-2fe0-4f74-b3f5-b4903009e97c",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Granisol",
+      "labelSetId": "2758eb4d-2fe0-4f74-b3f5-b4903009e97c",
+      "labelEffectiveTime": "20250321"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Icatibant",
+    "searchTerm": "icatibant",
+    "aliases": [
+      "icatibant acetate"
+    ],
+    "routes": [
+      "SC"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=402a20e0-d1e2-4a24-ae1d-f2ff6d8fa7b3",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Icatibant",
+      "labelSetId": "402a20e0-d1e2-4a24-ae1d-f2ff6d8fa7b3",
+      "labelEffectiveTime": "20240215"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "drugName": "Lisinopril and Hydrochlorothiazide",
     "searchTerm": "lisinopril and hydrochlorothiazide",
     "aliases": [
@@ -213,6 +620,587 @@ export const candidateRenalDoseRules = [
             "condition": "Adult dosing per DailyMed label",
             "dose": "Not recommended",
             "interval": "Loop diuretics are preferred to thiazides in severe renal impairment; the combination label does not recommend use"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Loperamide",
+    "searchTerm": "loperamide",
+    "aliases": [
+      "loperamide hydrochloride"
+    ],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=03c907d5-87f8-47a6-9544-5a24f5272739",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Loperamide Hydrochloride",
+      "labelSetId": "03c907d5-87f8-47a6-9544-5a24f5272739",
+      "labelEffectiveTime": "20260105"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Moxifloxacin",
+    "searchTerm": "moxifloxacin",
+    "aliases": [
+      "moxifloxacin hydrochloride",
+      "moxifloxacin hydrochloride monohydrate",
+      "moxifloxacin ophthalmic solution"
+    ],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal label logic)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6067b2ee-2171-49bb-aa07-1d401ebf4f2e",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-special-review",
+      "labelTitle": "Moxifloxacin",
+      "labelSetId": "6067b2ee-2171-49bb-aa07-1d401ebf4f2e",
+      "labelEffectiveTime": "20240717"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult dosing by indication. Moxifloxacin label describes no meaningful renal pharmacokinetic change, including hemodialysis or CAPD; verify selected label"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Nateglinide",
+    "searchTerm": "nateglinide",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0ccf9b07-3c21-482d-abeb-a06ceb482c7b",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Nateglinide",
+      "labelSetId": "0ccf9b07-3c21-482d-abeb-a06ceb482c7b",
+      "labelEffectiveTime": "20250224"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Olmesartan Medoxomil / Amlodipine / Hydrochlorothiazide",
+    "searchTerm": "olmesartan medoxomil / amlodipine / hydrochlorothiazide",
+    "aliases": [
+      "olmesartan medoxomil / amlodipine besylate / hydrochlorothiazide"
+    ],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal label logic)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=204592ba-a68f-452a-9987-1b33b7b6c4d5",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-special-review",
+      "labelTitle": "olmesartan medoxomil / amlodipine besylate / hydrochlorothiazide",
+      "labelSetId": "204592ba-a68f-452a-9987-1b33b7b6c4d5",
+      "labelEffectiveTime": "20240812"
+    },
+    "rules": [
+      {
+        "type": "gt",
+        "min": 30,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Dose once daily; titrate every 2 weeks up to 40/10/25 mg if appropriate. Dose selection should be individualized based on previous therapy"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "min": 0,
+        "max": 30,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "Avoid use",
+            "interval": "Use an alternative antihypertensive plan; hydrochlorothiazide-containing label advises avoiding this renal band"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Ondansetron",
+    "searchTerm": "ondansetron",
+    "aliases": [
+      "ondansetron hydrochloride"
+    ],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a44601b-c31c-4779-a688-28cc4cc75e8b",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "ONDANSETRON",
+      "labelSetId": "1a44601b-c31c-4779-a688-28cc4cc75e8b",
+      "labelEffectiveTime": "20260723"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Plerixafor",
+    "searchTerm": "plerixafor",
+    "aliases": [],
+    "routes": [
+      "SC"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal label logic)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=30e0d15f-46dd-4a25-9936-34db421e4076",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-special-review",
+      "labelTitle": "Plerixafor",
+      "labelSetId": "30e0d15f-46dd-4a25-9936-34db421e4076",
+      "labelEffectiveTime": "20240628"
+    },
+    "rules": [
+      {
+        "type": "gt",
+        "min": 50,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "0.24 mg/kg once daily before apheresis"
+          }
+        ]
+      },
+      {
+        "type": "range",
+        "min": 0,
+        "max": 50,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "0.16 mg/kg",
+            "interval": "once daily before apheresis; do not exceed label maximum"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Prasugrel",
+    "searchTerm": "prasugrel",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=35aa7f3e-bbd8-4eae-b61f-29d1abca2224",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Prasugrel",
+      "labelSetId": "35aa7f3e-bbd8-4eae-b61f-29d1abca2224",
+      "labelEffectiveTime": "20250302"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Praziquantel",
+    "searchTerm": "praziquantel",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=16f2b9c4-a260-4a31-bd52-e5945913246c",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "PRAZIQUANTEL",
+      "labelSetId": "16f2b9c4-a260-4a31-bd52-e5945913246c",
+      "labelEffectiveTime": "20260812"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Regadenoson",
+    "searchTerm": "regadenoson",
+    "aliases": [],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5095ab40-8503-46db-9b08-6a36f05fb5d9",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Regadenoson",
+      "labelSetId": "5095ab40-8503-46db-9b08-6a36f05fb5d9",
+      "labelEffectiveTime": "20251226"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Sertraline",
+    "searchTerm": "sertraline",
+    "aliases": [
+      "sertraline hydrochloride",
+      "sertraline hcl"
+    ],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=03e1f274-fa9a-4461-b7c9-31ba6428c107",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Sertraline",
+      "labelSetId": "03e1f274-fa9a-4461-b7c9-31ba6428c107",
+      "labelEffectiveTime": "20260330"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Sildenafil",
+    "searchTerm": "sildenafil",
+    "aliases": [
+      "sildenafil citrate"
+    ],
+    "routes": [
+      "IV"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=bb92d686-a81e-4b91-8048-693af0534cb3",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Sildenafil",
+      "labelSetId": "bb92d686-a81e-4b91-8048-693af0534cb3",
+      "labelEffectiveTime": "20260701"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Sunitinib",
+    "searchTerm": "sunitinib",
+    "aliases": [
+      "sunitinib malate"
+    ],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=04d34bce-1296-d2b9-e063-6394a90a7018",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Sunitinib Malate",
+      "labelSetId": "04d34bce-1296-d2b9-e063-6394a90a7018",
+      "labelEffectiveTime": "20240910"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Teriflunomide",
+    "searchTerm": "teriflunomide",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1824aae5-58af-43da-8231-435c8f118bc0",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Teriflunomide",
+      "labelSetId": "1824aae5-58af-43da-8231-435c8f118bc0",
+      "labelEffectiveTime": "20220824"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Ticagrelor",
+    "searchTerm": "ticagrelor",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1225fd45-9b56-1671-ee77-cd0c9f2174a5",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Ticagrelor",
+      "labelSetId": "1225fd45-9b56-1671-ee77-cd0c9f2174a5",
+      "labelEffectiveTime": "20260530"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "drugName": "Zafirlukast",
+    "searchTerm": "zafirlukast",
+    "aliases": [],
+    "routes": [
+      "ORAL"
+    ],
+    "adultOnly": true,
+    "renalMetric": "crcl",
+    "indicationNote": "Auto-extracted from the DailyMed label; not clinician reviewed. Check indication-specific dosing in the label.",
+    "sourceLabel": "DailyMed label (renal table)",
+    "sourceUrl": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=5d30ffab-38a1-411d-94ad-0a15c227d882",
+    "reviewedBy": "Auto-extraction",
+    "reviewedOn": "2026-09-26",
+    "confidence": "auto-extracted",
+    "extraction": {
+      "method": "dailymed-table-parser",
+      "labelTitle": "Zafirlukast",
+      "labelSetId": "5d30ffab-38a1-411d-94ad-0a15c227d882",
+      "labelEffectiveTime": "20200914"
+    },
+    "rules": [
+      {
+        "type": "all",
+        "min": 0,
+        "max": Infinity,
+        "variants": [
+          {
+            "condition": "Adult dosing per DailyMed label",
+            "dose": "No renal dose adjustment",
+            "interval": "Use usual adult schedule by indication"
           }
         ]
       }

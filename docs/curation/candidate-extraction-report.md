@@ -5,12 +5,12 @@ snapshots of the app's deterministic DailyMed label pipeline (drug handlers and 
 table parser, no AI). They are served after hand-curated records and labelled
 "Auto-extracted from label" until a clinician verifies them via `npm run rules:export`.
 
-- Candidate records in the database: **5**
-- Extracted or refreshed this run: 5
-- Already hand-curated (skipped): 48
-- Partial extraction (needs manual curation): 61
-- Label found but no renal dosing logic applied: 108
-- No human label for the route: 102
+- Candidate records in the database: **31**
+- Extracted or refreshed this run: 31
+- Already hand-curated (skipped): 170
+- Partial extraction (needs manual curation): 407
+- Label found but no renal dosing logic applied: 683
+- No human label for the route: 2276
 
 ## Needs manual curation
 
@@ -21,16 +21,18 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Ibuprofen (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Diclofenac (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Potassium Chloride (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Potassium Chloride (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Baclofen (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Lidocaine (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Hydrochlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Famotidine (IV): non-specific guidance "Reduce dose or extend interval"
+- Furosemide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Furosemide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Furosemide (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Ketorolac (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Ketorolac (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Ondansetron (IV): cached label predates Precautions parsing; re-fetch to confirm no adjustment
 - Celecoxib (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
-- Sildenafil (ORAL): cached label predates Precautions parsing; re-fetch to confirm no adjustment
-- Sildenafil (IV): cached label predates Precautions parsing; re-fetch to confirm no adjustment
+- Sildenafil (ORAL): rejected on review — Oral labels differ: PAH (no adjustment) vs erectile dysfunction (consider 25 mg start with CrCl < 30); needs product-specific curation.
 - Pravastatin (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Allopurinol (IV): non-specific guidance "Use lower starting dose"
 - Naproxen (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
@@ -41,19 +43,24 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Meloxicam (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Meloxicam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Phentermine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diltiazem (IV): non-specific guidance "Renal caution or dose-reduction language in label"
 - Ciprofloxacin (IV): no clean answer at 4
 - Glipizide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Lorazepam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Lamotrigine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Clonazepam (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Clonazepam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Hydrocortisone (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Tramadol (IV): no clean answer at 4, 8
+- Sodium Chloride (IV): non-specific guidance "Renal caution or dose-reduction language in label"
 - Sulfamethoxazole and Trimethoprim (IV): no clean answer at 4, 8, 12
+- Diazepam (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Diazepam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Tizanidine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Mirtazapine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Indomethacin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Indomethacin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
 - Oxybutynin (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
-- Escitalopram (ORAL): cached label predates Precautions parsing; re-fetch to confirm no adjustment
 - Losartan and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Epinephrine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Vancomycin (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
@@ -66,17 +73,356 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Bumetanide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Warfarin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Mesalamine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Sucralfate (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Phenylephrine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Phenylephrine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
 - Triamterene and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Heparin (ORAL): label "Histamine Balancer" does not match the drug name
 - Lovastatin (ORAL): band CrCl 10-30 mL/min does not contain probe 4
+- Atropine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
 - Acetazolamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Acetazolamide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
 - Penicillin (ORAL): no clean answer at 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
 - Penicillin (IV): no clean answer at 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
 - Tobramycin (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
 - Tobramycin (IV): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Colchicine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Midodrine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Hyoscyamine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Hyoscyamine (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Lithium Carbonate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Nabumetone (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Hydroxychloroquine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Mycophenolate Mofetil (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Bupivacaine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Bupivacaine (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tranexamic Acid (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Irbesartan (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Nitrous (ORAL): label "Pollutox" does not match the drug name
+- Tacrolimus (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tacrolimus (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Telmisartan (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Clarithromycin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Ezetimibe (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Voriconazole (IV): non-specific guidance "Use oral route when possible"
+- Phenazopyridine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Desmopressin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Desmopressin (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Desmopressin (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Methotrexate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Methotrexate (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Methotrexate (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Glyburide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Methylprednisolone (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Methylprednisolone (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Cefadroxil (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Pramipexole Dihydrochloride (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Cyanocobalamin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Dextrose (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Pirfenidone (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Butalbital Acetaminophen and Caffeine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Emtricitabine and Tenofovir Disoproxil (ORAL): non-specific guidance "Dialysis-specific renal dosing"
+- Posaconazole (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Ephedrine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Perphenazine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Zonisamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Gentamicin (IV): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Olmesartan Medoxomil and Hydrochlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ranolazine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Deferasirox (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Timolol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Midazolam (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Potassium (ORAL): label "Potassium Chloride" does not match the drug name
+- Potassium (IV): label "Potassium Chloride" does not match the drug name
+- Amlodipine and Benazepril (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Enoxaparin (IV): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Norepinephrine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Hydromorphone (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Hydromorphone (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Aminocaproic Acid (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Aminocaproic Acid (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Buprenorphine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ciprofolxacin (ORAL): no clean answer at 4
+- Ciprofolxacin (IV): label "Ciprofloxacin in Dextrose" does not match the drug name
+- Liothyronine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Nitrofurantoin Macrocrystals (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Ropivacaine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Azacitidine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Azacitidine (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Calcitriol (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Cyclosporine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Leflunomide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Pyridostigmine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Adenosine (ORAL): label "Prostate" does not match the drug name
+- Leucovorin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Clobazam (IV): rejected on review — No IV clobazam product; matched the oral Onfi label.
+- Diethylpropion (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Drospirenone and Ethinyl Estradiol (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Pemetrexed Disodium (IV): non-specific guidance "Do not administer pemetrexed"
+- Acetaminophen (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Norethindrone and Ethinyl Estradiol and Ferrous Fumarate (ORAL): label "Junel 21 Day" does not match the drug name
+- Calcium Acetate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Calcium Acetate (IV): label "CLINIMIX E" does not match the drug name
+- Calcium Gluconate (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Clindamycin and Benzoyl Peroxide (ORAL): rejected on review — Topical gel, not an oral product.
+- Liraglutide (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Magnesium Sulfate Heptahydrate (ORAL): label "Dexatran" does not match the drug name
+- Magnesium Sulfate Heptahydrate (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Megestrol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Irbesartan and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Irinotecan (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Thiamine (ORAL): label "Vitavera" does not match the drug name
+- Captopril (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Hydroquinone (ORAL): label "Bio Cytotox Phase" does not match the drug name
+- Ibuprofen and Famotidine (ORAL): non-specific guidance "Reduce dose or extend interval"
+- Sodium Polystyrene Sulfonate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Magnesium Sulfate (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Clozapine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Eribulin (IV): non-specific guidance "Dose not established"
+- Piroxicam (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Octreotide (ORAL): rejected on review — Oral octreotide label has ESRD starting-dose guidance; needs curation.
+- Prucalopride (ORAL): no clean answer at 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Rufinamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tenofovir Disoproxil (ORAL): non-specific guidance "Dialysis-specific renal dosing"
+- Tramadol and Acetaminophen (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Brivaracetam (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Brivaracetam (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Calcium Chloride (ORAL): label "Finazol" does not match the drug name
+- Cetirizine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Darunavir (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Droxidopa (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Itraconazole (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Alfuzosin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Carmustine (IV): non-specific guidance "Discontinue / do not administer carmustine"
+- Cytarabine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Cytarabine (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Methylene Blue (ORAL): label "Me NaPhos MB Hyo 1" does not match the drug name
+- Methylene Blue (IV): rejected on review — Renal impairment guidance needs manual review.
+- Methylergonovine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Methylergonovine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Milrinone (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Naproxen and Esomeprazole Magnesium (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Sitagliptin and Metformin (ORAL): unbanded answer at 4 (eGFR < 30 or ESRD)
+- Cisplatin (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Dalfampridine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Deflazacort (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diclofenac and Misoprostol (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Dihydroergotamine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Dihydroergotamine (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Etomidate (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Gemcitabine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Lidocaine 5 (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Lidocaine 5 (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Palonosetron (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Rifampin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Scopolamine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Tizanidne (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Levalbuterol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Methazolamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Methenamine Hippurate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Niacin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Thiotepa (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Amlodipine and Olmesartan Medoxomil (ORAL): non-specific guidance "No CrCl dose table in label"
+- Glyburide and Metformin (ORAL): non-specific guidance "Do not initiate"
+- Nalbuphine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Nalbuphine (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Oxaprozin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Acitretin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Amlodipine and Valsartan (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Butalbital and Acetaminophen (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ethacrynic Acid (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ethacrynic Acid (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ezetimibe and Simvastatin (ORAL): rejected on review — Label limits dose in severe renal impairment; needs curation.
+- Insulin Glargine (ORAL): label "Insulin 1556" does not match the drug name
+- Insulin Glargine (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Lamivudine and Zidovudine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Penicillin G (ORAL): label "Toxic Fungi-Mold Nosode 4018" does not match the drug name
+- Penicillin G (IV): no clean answer at 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Sodium (ORAL): label "SODIUM POLYSTYRENE SULFONATE" does not match the drug name
+- Sodium (IV): label "Sodium Nitroprusside" does not match the drug name
+- Sodium (SC): label "Sodium Chloride" does not match the drug name
+- Spironolactone and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Sulindac (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Rasagiline (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Cefoxitin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Atenolol and Chlorthalidone (ORAL): no clean answer at 4, 8, 12, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Balsalazide Disodium (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Clindamycin Palmitate (ORAL): rejected on review — Pediatric oral solution label; app is adult-only.
+- Clofarabine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Denosumab (SC): rejected on review — Label: no dose change, but severe hypocalcemia risk with CrCl < 30 or dialysis must be shown; needs a curated record with that caution.
+- Etoposide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Fentanyl (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Foscarnet (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Maraviroc (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Norethindrone / Ethinyl Estradiol and Ferrous (ORAL): label "Junel 21 Day" does not match the drug name
+- Oxymorphone (ORAL): no clean answer at 4, 8
+- Polymyxin B (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Telmisartan and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tiopronin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tolvaptan (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Permethrin (ORAL): label "Airline Pesticide Detox 6030" does not match the drug name
+- Micafungin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Sodium and Citric Acid (ORAL): label "Tricitrates" does not match the drug name
+- Alcohol (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Alcohol (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Chlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Chlorothiazide (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Dapagliflozin and Metformin (ORAL): non-specific guidance "Do not initiate"
+- Desipramine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Empagliflozin (ORAL): no clean answer at 4, 8, 12, 17, 22, 27
+- Eslicarbazepine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ethambutol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Gadobutrol (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Levothyroxine Sodium Anhydrous (ORAL): label "Mitochondria Pro" does not match the drug name
+- Ribavirin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Sodium Chloride and Calcium Chloride (ORAL): label "Para Solve" does not match the drug name
+- Sodium Chloride and Calcium Chloride (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Zinc Sulfate (ORAL): label "Se-Tan PLUS" does not match the drug name
+- Dextrose and Sodium Chloride (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Erlotinib (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Acarbose (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Amikacin (IV): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Benazepril and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Cupric (ORAL): label "Prenatal Plus Vitamins" does not match the drug name
+- Dulaglutide (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Efavirenz Emtricitabine and Tenofovir Disoproxil (ORAL): non-specific guidance "Dialysis-specific renal dosing"
+- Folic Acid Vitamin D3 (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Glyburide Metformin (ORAL): non-specific guidance "Do not initiate"
+- Insulin Degludec (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Nintedanib (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Pentoxifylline (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Pomalidomide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Probenecid (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Selenium Sulfide (ORAL): label "911 Adrenal Burnout and Fatigue" does not match the drug name
+- Somatropin (ORAL): label "Vital Immune Booster" does not match the drug name
+- Abacavir and Lamivudine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Candesartan Cilexetil and Hydrochlorothiazide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Deferoxamine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Deferoxamine (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diflunisal (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Efavirenz (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Ethynodiol Diacetate and Ethinyl Estradiol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Fosinopril (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Glipizide and Metformin (ORAL): non-specific guidance "Do not initiate"
+- Hydrocodone and Homatropine Methylbromide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Lidocaine Hydrochloride Anhydrous (ORAL): label "Lidocaine Hydrochloride" does not match the drug name
+- Lidocaine Hydrochloride Anhydrous (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Mefenamic Acid (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Nitrofurantion (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Nitrofurantoin / Macrocrystalline (ORAL): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Oxacillin (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Perampanel (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Potassium Phosphates (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Salsalate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Silver (ORAL): label "Visceral Polarity" does not match the drug name
+- Sodium Sulfate Potassium Sulfate Magnesium (IV): label "Kabiven" does not match the drug name
+- Tolmetin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Trimethobenzamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Trisodium (ORAL): label "Oracit" does not match the drug name
+- Alosetron (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Butorphanol (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ciprofloxacin and Hydrocortisone (ORAL): no clean answer at 4
+- Dactinomycin (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diclofenac Sodium 1 (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Fenoprofen (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Lorlatinib (ORAL): no clean answer at 4, 8, 12
+- Mirvetuximab Soravtansine (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Sodium Chloride and Potassium Chloride (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Sodium Chloride and Potassium Chloride (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Olmesartan Medoxomil Hydrochlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Pentazocine and Naloxone (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ixazomib (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Hydrocodone and Chlorpheniramine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Magnesium Sulfate In Dextrose (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Potassium Phosphate Monobasic (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Potassium Phosphate Monobasic (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Bictegravir Sodium Emtricitabine and Tenofovir Alafenamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Emtricitabine and Tenofovir Alafenamide (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Cefuroxime and Dextrose (IV): no clean answer at 4, 8
+- Iron Folic Acid Vitamin / Mineral Supplement (ORAL): label "M-Natal Plus" does not match the drug name
+- Mecamylamine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tromethamine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tromethamine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Cefaclor (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Oseltamavir (ORAL): no clean answer at 4, 8
+- Idarubicin (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Fosinopirl (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Ivacaftor (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Plazomicin (IV): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Larotrectinib (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Vonoprazan and Amoxicillin (ORAL): unbanded answer at 4 (GFR/CrCl < 10 mL/min)
+- Vonoprazan Fumarate Amoxicillin and Clarithromycin (ORAL): label "VOQUEZNA DUAL PAK" does not match the drug name
+- Vonoprazan (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diclofenac / Misoprostol (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diazoxide Choline (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Captopril and Hydrochlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Ranitidine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Empagliflozin and Metformin (ORAL): no clean answer at 4, 8, 12, 17, 22, 27
+- Brigatinib (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Burosumab (SC): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Alendronate and Cholecalciferol (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Kit For The Preparation Of Technetium Tc 99m Labeled Carbon Aerosol (ORAL): label "Kit for the Preparation of Technetium Tc 99m Sulfur Colloid" does not match the drug name
+- Kit For The Preparation Of Technetium Tc 99m Labeled Carbon Aerosol (IV): label "Kit for the Preparation of Technetium Tc99m Mertiatide" does not match the drug name
+- Kit For The Preparation Of Technetium Tc 99m Labeled Carbon Aerosol (SC): label "Kit for the preparation of Lymphoseek (technetium Tc 99m tilmanocept)" does not match the drug name
+- Azilsartan Kamedoxomil and Chlorthalidone (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Denosumab Bmwo (SC): rejected on review — As denosumab: hypocalcemia risk in severe renal impairment must be shown.
+- Alvimopan (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Aspirin and Extended Release Dipyridamole (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Kit For The Preparation Of Technetium Tc 99m Mebrofenin (ORAL): label "Kit for the Preparation of Technetium Tc 99m Sulfur Colloid" does not match the drug name
+- Kit For The Preparation Of Technetium Tc 99m Mebrofenin (SC): label "Kit for the preparation of Lymphoseek (technetium Tc 99m tilmanocept)" does not match the drug name
+- Histamine (ORAL): label "ER 911" does not match the drug name
+- Phenobarbital Hyoscyamine Sulfate Atropine Sulfate Scopolamine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Doravirine Islatravir (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Flurbiprofen (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Potassium Phosphate Monobasic Potassium Phosphate Dibasic (ORAL): label "K Phos Original" does not match the drug name
+- Potassium Phosphate Monobasic Potassium Phosphate Dibasic (IV): label "Potassium Phosphates" does not match the drug name
+- Hydrocortisone 2 (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Riboflavin 5 (ORAL): label "Cobalefol" does not match the drug name
+- Riboflavin 5 (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Elamipretide (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Lactic Acid L Citric Acid and Potassium (ORAL): label "Category V" does not match the drug name
+- Multiple Vitamins (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Alogliptin and Metformin (ORAL): non-specific guidance "Do not initiate"
+- Bedaquiline (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Butalbital Acetaminophen Caffeine and Codeine (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Telmisartan and Amlodipine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Meperidine (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Meperidine (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Iohexol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Iohexol (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Atazanavir (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Givosiran (SC): non-specific guidance "Renal caution or dose-reduction language in label"
+- Albumin Human (ORAL): label "Proteinuria Drops 2053" does not match the drug name
+- Abrocitinib (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Darunavir Ethanolate and Cobicistat (ORAL): rejected on review — Fixed-dose combination received standalone cobicistat dosing.
+- Meprobamate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Pertuzumab (IV): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Pertuzumab (SC): no clean answer at 4, 8, 12, 17, 22, 27, 33, 38, 43, 48, 53, 58, 65, 75, 85, 100, 130
+- Amlodipine Valsartan and Hydrochlorothiazide (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Gadopiclenol (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Ketoprofen (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Llevofloxacin (ORAL): no clean answer at 4, 8
+- Llevofloxacin (IV): label "Levofloxacin" does not match the drug name
+- Lofexidine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Tradipitant (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Cabozantinib (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Bexagliflozin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Sotagliflozin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Diazepam Intensol (ORAL): non-specific guidance "Renal caution or dose-reduction language in label"
+- Diazepam Intensol (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Desloratadine and Pseudoephedrine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Nalxone (ORAL): label "PENTAZOCINE HYDROCHLORIDE AND NALOXONE HYDROCHLORIDE" does not match the drug name
+- Temsirolimus (IV): non-specific guidance "Renal caution or dose-reduction language in label"
+- Clindamycin Benzoyl Peroxide (ORAL): rejected on review — Topical gel, not an oral product.
+- Butalbital Aspirin Cafeine and Codeine (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Hydrocortisone 2 5 (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Dapagliflozin and Saxagliptin (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Methenamine Mandelate (ORAL): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Denosumab Kyqq (SC): rejected on review — As denosumab: hypocalcemia risk in severe renal impairment must be shown.
+- Gadodiamide (IV): unbanded answer at 4 (CrCl 4.0 mL/min)
+- Kit For The Preparation Of Gallium Ga 68 Gozetotide (ORAL): label "Kit for the Preparation of Technetium Tc 99m Sulfur Colloid" does not match the drug name
+- Kit For The Preparation Of Gallium Ga 68 Gozetotide (SC): label "Kit for the preparation of Lymphoseek (technetium Tc 99m tilmanocept)" does not match the drug name
+- Amlodipine and Olmesartran Medoxomil (ORAL): non-specific guidance "No CrCl dose table in label"
 
 ## Label found, no renal dosing extracted
 
@@ -98,14 +444,12 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Hydrocodone and Acetaminophen (ORAL)
 - Metoprolol (ORAL)
 - Metoprolol (IV)
-- Furosemide (ORAL)
 - Fluoxetine (ORAL)
 - Hydroxyzine (ORAL)
 - Nitrogen (ORAL)
 - Omeprazole (ORAL)
 - Propranolol (ORAL)
 - Propranolol (IV)
-- Sertraline (ORAL)
 - Divalproex (ORAL)
 - Estradiol (ORAL)
 - Rosuvastatin (IV)
@@ -113,7 +457,6 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Zolpidem (IV)
 - Amlodipine (ORAL)
 - Diltiazem (ORAL)
-- Diltiazem (IV)
 - Amitriptyline (ORAL)
 - Aripiprazole (ORAL)
 - Benzonatate (ORAL)
@@ -128,8 +471,6 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Hydralazine (IV)
 - Olanzapine (ORAL)
 - Trazodone (ORAL)
-- Clonazepam (ORAL)
-- Clonazepam (IV)
 - Promethazine (ORAL)
 - Promethazine (IV)
 - Quetiapine (ORAL)
@@ -141,12 +482,10 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Hydrocortisone (ORAL)
 - Pantoprazole (IV)
 - Sodium Chloride (ORAL)
-- Sodium Chloride (IV)
+- Sodium Chloride (SC)
 - Methylphenidate (ORAL)
 - Dexamethasone (ORAL)
 - Dexamethasone (IV)
-- Diazepam (ORAL)
-- Diazepam (IV)
 - Labetalol (ORAL)
 - Labetalol (IV)
 - Nystatin (ORAL)
@@ -154,23 +493,27 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Phenobarbital (IV)
 - Alprazolam (ORAL)
 - Chlorthalidone (ORAL)
+- Escitalopram (ORAL)
 - Epinephrine (ORAL)
+- Epinephrine (SC)
 - Haloperidol (ORAL)
 - Oxycodone and Acetaminophen (ORAL)
 - Minocycline (ORAL)
 - Minocycline (IV)
-- Finasteride (ORAL)
+- Risperidone (SC)
 - Carbidopa and Levodopa (ORAL)
 - Oxycodone (ORAL)
 - Paroxetine (ORAL)
 - Eszopiclone (IV)
-- Sucralfate (ORAL)
 - Folic Acid (ORAL)
 - Folic Acid (IV)
+- Folic Acid (SC)
 - Naloxone (ORAL)
 - Naloxone (IV)
+- Naloxone (SC)
 - Prazosin (ORAL)
 - Heparin (IV)
+- Heparin (SC)
 - Doxazosin (ORAL)
 - Ofloxacin (ORAL)
 - Progesterone (ORAL)
@@ -178,8 +521,8 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Erythromycin (IV)
 - Temazepam (ORAL)
 - Temazepam (IV)
-- Atropine (ORAL)
 - Atropine (IV)
+- Atropine (SC)
 - Metaxalone (ORAL)
 - Nitroglycerin (ORAL)
 - Nitroglycerin (IV)
@@ -188,3 +531,581 @@ The label pipeline could not give a clean answer across the whole CrCl range for
 - Acetaminophen and Codeine (ORAL)
 - Betamethasone Dipropionate (ORAL)
 - Donepezil (ORAL)
+- Citalopram (ORAL)
+- Guanfacine (ORAL)
+- Metoclopramide (IV)
+- Carisoprodol (ORAL)
+- Carisoprodol (IV)
+- Amiodarone (ORAL)
+- Amiodarone (IV)
+- Ketoconazole (ORAL)
+- Sotalol (IV)
+- Tranexamic Acid (ORAL)
+- Valsartan and Hydrochlorothiazide (ORAL)
+- Budesonide (ORAL)
+- Fluocinonide (ORAL)
+- Norgestimate and Ethinyl Estradiol (ORAL)
+- Sumatriptan (ORAL)
+- Sumatriptan (SC)
+- Gemfibrozil (ORAL)
+- Levonorgestrel and Ethinyl Estradiol (ORAL)
+- Dexmethylphenidate (ORAL)
+- Amantadine (ORAL)
+- Clopidogrel Bisulfate (ORAL)
+- Rocuronium (IV)
+- Atomoxetine (ORAL)
+- Fluocinolone Acetonide (ORAL)
+- Meclizine (ORAL)
+- Naltrexone (ORAL)
+- Prochlorperazine (ORAL)
+- Prochlorperazine (IV)
+- Prochlorperazine (SC)
+- Rizatriptan Benzoate (ORAL)
+- Sevelamer (ORAL)
+- Ursodiol (ORAL)
+- Fluorouracil (ORAL)
+- Fluorouracil (IV)
+- Succinylcholine (IV)
+- Carbon Dioxide (ORAL)
+- Chlorpromazine (ORAL)
+- Escitalopram Oxalate (ORAL)
+- Isosorbide (ORAL)
+- Methimazole (ORAL)
+- Methylprednisolone (ORAL)
+- Methadone (ORAL)
+- Methadone (IV)
+- Methadone (SC)
+- Nebivolol (ORAL)
+- Rabeprazole (ORAL)
+- Cyanocobalamin (ORAL)
+- Cyanocobalamin (SC)
+- Dextrose (ORAL)
+- Medroxyprogesterone (ORAL)
+- Medroxyprogesterone (SC)
+- Modafinil (ORAL)
+- Modafinil (IV)
+- Testosterone (ORAL)
+- Testosterone (SC)
+- Dapsone (ORAL)
+- Desoximetasone (ORAL)
+- Sodium Bicarbonate (ORAL)
+- Sodium Bicarbonate (IV)
+- Sterile Water (IV)
+- Sterile Water (SC)
+- Ephedrine (ORAL)
+- Nicardipine (ORAL)
+- Nicardipine (IV)
+- Clopidogrel (ORAL)
+- Felodipine (ORAL)
+- Fluphenazine (ORAL)
+- Fluphenazine (SC)
+- Buprenorphine and Naloxone (ORAL)
+- Chlorhexidine (ORAL)
+- Cyproheptadine (ORAL)
+- Doxorubicin (IV)
+- Neostigmine (IV)
+- Phenytoin (ORAL)
+- Phenytoin (IV)
+- Ampicillin (ORAL)
+- Ampicillin (IV)
+- Benztropine (ORAL)
+- Benztropine (IV)
+- Bisoprolol (ORAL)
+- Bortezomib (IV)
+- Bortezomib (SC)
+- Diphenhydramine (ORAL)
+- Diphenhydramine (IV)
+- Midazolam (ORAL)
+- Phytonadione (ORAL)
+- Phytonadione (IV)
+- Phytonadione (SC)
+- Pioglitazone (ORAL)
+- Terazosin (ORAL)
+- Theophylline (ORAL)
+- Chlorzoxazone (ORAL)
+- Cyclophosphamide (ORAL)
+- Cyclophosphamide (IV)
+- Norepinephrine (ORAL)
+- Dexmedetomidine (IV)
+- Diphenoxylate and Atropine (ORAL)
+- Hydromorphone (ORAL)
+- Norethindrone (ORAL)
+- Propafenone (ORAL)
+- Buprenorphine (ORAL)
+- Buprenorphine (SC)
+- Liothyronine (ORAL)
+- Mexiletine (ORAL)
+- Zolmitriptan (ORAL)
+- Calcitriol (IV)
+- Ergocalciferol (ORAL)
+- Ergocalciferol (IV)
+- Icosapent Ethyl (ORAL)
+- Lisdexamfetamine Dimesylate (ORAL)
+- Primidone (ORAL)
+- Cyclosporine (IV)
+- Dextroamphetamine (ORAL)
+- Fulvestrant (IV)
+- Isoniazid (ORAL)
+- Lubiprostone (ORAL)
+- Minoxidil (ORAL)
+- Pyridostigmine (ORAL)
+- Urea (ORAL)
+- Vigabatrin (ORAL)
+- Adenosine (IV)
+- Lactulose (ORAL)
+- Leucovorin (ORAL)
+- Norethindrone and Ethinyl Estradiol (ORAL)
+- Omega 3 Acid Ethyl Esters (ORAL)
+- Cholestyramine (ORAL)
+- Clobazam (ORAL)
+- Fluvoxamine (ORAL)
+- Leuprolide (SC)
+- Paclitaxel (IV)
+- Acetaminophen (ORAL)
+- Atovaquone (ORAL)
+- Colesevelam (ORAL)
+- Mitomycin (IV)
+- Valproic Acid (ORAL)
+- Arsenic Trioxide (ORAL)
+- Arsenic Trioxide (IV)
+- Bisoprolol and Hydrochlorothiazide (ORAL)
+- Calcium Gluconate (ORAL)
+- Decitabine (ORAL)
+- Decitabine (IV)
+- Isosorbide Dinitrate (ORAL)
+- Isotretinoin (ORAL)
+- Prednisolone (ORAL)
+- Vasopressin (IV)
+- Acetylcysteine (ORAL)
+- Acetylcysteine (IV)
+- Amphetamine (ORAL)
+- Azathioprine (ORAL)
+- Azathioprine (IV)
+- Misoprostol (ORAL)
+- Mycophenolic Acid (ORAL)
+- Orphenadrine (ORAL)
+- Orphenadrine (IV)
+- Raloxifene (ORAL)
+- Ziprasidone (ORAL)
+- Cisatracurium (IV)
+- Clotrimazole and Betamethasone Dipropionate (ORAL)
+- Dantrolene (ORAL)
+- Dantrolene (IV)
+- Imipramine (ORAL)
+- Ivermectin (ORAL)
+- Ivermectin (IV)
+- Thiamine (IV)
+- Clomipramine (ORAL)
+- Desogestrel and Ethinyl Estradiol (ORAL)
+- Propofol (IV)
+- Magnesium Sulfate (ORAL)
+- Cevimeline (ORAL)
+- Chlordiazepoxide (ORAL)
+- Chlordiazepoxide (IV)
+- Dimethyl (ORAL)
+- Fludrocortisone (ORAL)
+- Flumazenil (IV)
+- Halobetasol Propionate (ORAL)
+- Levothyroxine Liothyronine (ORAL)
+- Phendimetrazine (ORAL)
+- Rivastigmine (ORAL)
+- Armodafinil (ORAL)
+- Fingolimod (ORAL)
+- Helium (ORAL)
+- Ketamine (IV)
+- Multivitamin (ORAL)
+- Octreotide (IV)
+- Octreotide (SC)
+- Paricalcitol (ORAL)
+- Paricalcitol (IV)
+- Pilocarpine (ORAL)
+- Sapropterin Dihydrochloride (ORAL)
+- Sodium Nitroprusside (IV)
+- Tazarotene (ORAL)
+- Ammonia N 13 (IV)
+- Adapalene and Benzoyl Peroxide (ORAL)
+- Caffeine (ORAL)
+- Caffeine (IV)
+- Calcium Chloride (IV)
+- Calcium Chloride (SC)
+- Cetirizine (ORAL)
+- Chlordiazepoxide and Clidinium (ORAL)
+- Dasatinib (ORAL)
+- Felbamate (ORAL)
+- Fludeoxyglucose F 18 (IV)
+- Insulin Aspart (IV)
+- Insulin Aspart (SC)
+- Nelarabine (IV)
+- Neomycin Sulfate Polymyxin B and Hydrocortisone (ORAL)
+- Vardenafil (ORAL)
+- Nafcillin (IV)
+- Fosaprepitant (IV)
+- Ambrisentan (ORAL)
+- Amlodipine and Atorvastatin (ORAL)
+- Calcitonin Salmon (IV)
+- Calcitonin Salmon (SC)
+- Entacapone (ORAL)
+- Isoproterenol (IV)
+- Isoproterenol (SC)
+- Loxapine (ORAL)
+- Melphalan (IV)
+- Selegiline (ORAL)
+- Sulfasalazine (ORAL)
+- Tamoxifen (ORAL)
+- Barium (ORAL)
+- Carboplatin (IV)
+- Cromolyn (ORAL)
+- Dopamine (ORAL)
+- Dopamine (IV)
+- Ferrous Fumarate Folic Acid (ORAL)
+- Fosaprepitant Dimeglumine (IV)
+- Gemcitabine (ORAL)
+- Indapamide (ORAL)
+- Lidocaine 5 (ORAL)
+- Lidocaine Hci (IV)
+- Palonosetron (IV)
+- Vecuronium (IV)
+- Vilazodone (ORAL)
+- Adapalene (ORAL)
+- Ammonium (ORAL)
+- Busulfan (ORAL)
+- Busulfan (IV)
+- Cabergoline (ORAL)
+- Colestipol (ORAL)
+- Econazole (ORAL)
+- Eletriptan (ORAL)
+- Esterified Estrogens and Methyltestosterone (ORAL)
+- Glucagon (ORAL)
+- Glucagon (IV)
+- Glucagon (SC)
+- Levocarnitine (ORAL)
+- Levocarnitine (IV)
+- Mepivacaine (SC)
+- Penicillamine (ORAL)
+- Promethazine and Dextromethorphan (ORAL)
+- Terbutaline (ORAL)
+- Terbutaline (SC)
+- Tetrabenazine (ORAL)
+- Tetracycline (ORAL)
+- Trihexyphenidyl (ORAL)
+- Tuberculin Purified Protein Derivative (ORAL)
+- Albendazole (ORAL)
+- Calcipotriene (ORAL)
+- Cilostazol (ORAL)
+- Clotrimazole (ORAL)
+- Dronabinol (ORAL)
+- Glatiramer (SC)
+- Ibandronate (IV)
+- Imiquimod (ORAL)
+- Insulin Lispro (IV)
+- Insulin Lispro (SC)
+- Mesna (ORAL)
+- Mesna (IV)
+- Procainamide (IV)
+- Salicylic Acid (ORAL)
+- Triazolam (ORAL)
+- Trifluoperazine (ORAL)
+- Abacavir (ORAL)
+- Anticoagulant Citrate Phosphate Dextrose Adenine (IV)
+- Bexarotene (ORAL)
+- Clorazepate Dipotassium (ORAL)
+- Ethosuximide (ORAL)
+- Flucytosine (ORAL)
+- Fosphenytoin (IV)
+- Ganirelix (SC)
+- Nilotinib (ORAL)
+- Nitisinone (ORAL)
+- Omeprazole and Sodium Bicarbonate (ORAL)
+- Oxytocin (ORAL)
+- Oxytocin (IV)
+- Repaglinide (ORAL)
+- Sodium Phenylacetate and Sodium Benzoate (IV)
+- Sodium Fluoride F 18 (ORAL)
+- Sodium Fluoride F 18 (IV)
+- Carbinoxamine (ORAL)
+- Eltrombopag (ORAL)
+- Eltrombopag (IV)
+- Fluphenazine Decanoate (SC)
+- I V Fat Emulsion (IV)
+- Ketoconazole 2 (ORAL)
+- Mannitol (IV)
+- Nevirapine (ORAL)
+- Pindolol (ORAL)
+- Polymyxin B (ORAL)
+- Riluzole (ORAL)
+- Temozolomide (ORAL)
+- Temozolomide (IV)
+- Tigecycline (IV)
+- Treprostinil (ORAL)
+- Treprostinil (IV)
+- Treprostinil (SC)
+- Fludeoxyglucose F18 (IV)
+- Sodium and Citric Acid (IV)
+- Acetic Acid (ORAL)
+- Alcohol (ORAL)
+- Aprepitant (IV)
+- Azelaic Acid (ORAL)
+- Bosentan (ORAL)
+- Bromocriptine (ORAL)
+- Carbidopa (ORAL)
+- Cladribine (ORAL)
+- Cladribine (IV)
+- Dicloxacillin (ORAL)
+- Dipyridamole (ORAL)
+- Dipyridamole (IV)
+- Doxercalciferol (ORAL)
+- Doxercalciferol (IV)
+- Fosfomycin (ORAL)
+- Gadoterate Meglumine (IV)
+- Granisetron (IV)
+- Griseofulvin (ORAL)
+- Levorphanol (ORAL)
+- Levothyroxine Sodium Anhydrous (IV)
+- Norgestrel and Ethinyl Estradiol (ORAL)
+- Propylthiouracil (ORAL)
+- Ritonavir (ORAL)
+- Sorafenib (ORAL)
+- Teriparatide (SC)
+- Zinc Sulfate (IV)
+- 1 1 Sodium Fluoride Toothpaste (ORAL)
+- Aminophylline (IV)
+- Bethanechol (ORAL)
+- Chloroquine (ORAL)
+- Clomiphene (ORAL)
+- Cupric (IV)
+- Esterified Estrogens Methyltestosterone (ORAL)
+- Etravirine (ORAL)
+- Fluvastatin (ORAL)
+- Folic Acid Vitamin D3 (ORAL)
+- Fomepizole (IV)
+- Lanthanum (ORAL)
+- Levonorgestrel and Ethinyl Estradiol and Ethinyl Estradiol (ORAL)
+- Lidocaine and Hydrocortisone (ORAL)
+- Meclizine Hydrocloride (ORAL)
+- Mercaptopurine (ORAL)
+- Methscopolamine (ORAL)
+- Miglustat (ORAL)
+- Neomycin Sulfate Polymyxin B Sulfate Hydrocortisone (ORAL)
+- Norethindrone / Ethinyl Estradiol (ORAL)
+- Pentamidine Isethionate (IV)
+- Pyrimethamine (ORAL)
+- Somatropin (SC)
+- Streptococcus Pyogenes (ORAL)
+- Tavaborole (ORAL)
+- Thyroid Porcine (ORAL)
+- Trientine (ORAL)
+- Acebutolol (ORAL)
+- Alprostadil (IV)
+- Aluminum (ORAL)
+- Amphotericin B (IV)
+- Betamethasone and Betamethasone (ORAL)
+- Calcipotriene and Betamethasone Dipropionate (ORAL)
+- Deferiprone (ORAL)
+- Dobutamine (IV)
+- Doxylamine and Pyridoxine (ORAL)
+- Estradiol and Norethindrone (ORAL)
+- Estrogens Conjugated (ORAL)
+- Estrogens Conjugated (IV)
+- Glycerol Phenylbutyrate (ORAL)
+- Iron Sucrose (IV)
+- Isosulfan Blue (SC)
+- Lidocaine Hydrochloride Epinephrine (IV)
+- Lincomycin (IV)
+- Pazopanib (ORAL)
+- Sodium Oxybate (ORAL)
+- Sodium Phenylbutyrate (ORAL)
+- Sodium Sulfate Potassium Sulfate Magnesium (ORAL)
+- Trisodium (IV)
+- Zidovudine (ORAL)
+- Zidovudine (IV)
+- Zileuton (ORAL)
+- Adalimumab (SC)
+- Benzphetamine (ORAL)
+- Bufo Bufo Cutaneous Gland (ORAL)
+- Butalbital Aspirin and Caffeine (ORAL)
+- Cetrorelix (SC)
+- Colistimethate (IV)
+- Cosyntropin (IV)
+- Desogestrel and Ethinyl Estradiol and Ethinyl Estradiol (ORAL)
+- Digitalis (ORAL)
+- Disopyramide (ORAL)
+- Disulfiram (ORAL)
+- Dutasteride and Tamsulosin (ORAL)
+- Edaravone (IV)
+- Eltrombopag Olamine (ORAL)
+- Eltrombopag Olamine (IV)
+- Trametinib (ORAL)
+- Eculizumab (IV)
+- Ascorbic Acid Sodium Fluoride Vitamin A and Vitamin D (ORAL)
+- Tocilizumab (IV)
+- Tocilizumab (SC)
+- Cholestyramine Light (ORAL)
+- Serdexmethylphenidate and Dexmethylphenidate (ORAL)
+- Gaunfacine (ORAL)
+- Codeine (ORAL)
+- Tividenofusp Alfa Eknm (IV)
+- Chenodiol (ORAL)
+- Lidocaine Menthol (ORAL)
+- Sodium Chloride and Potassium Chloride (ORAL)
+- Olipudase Alfa Rpcp (IV)
+- Ferrous Fumarate and Polysacchride Iron Complex and Folic Acid (ORAL)
+- Metyrosine (ORAL)
+- Sonidegib (ORAL)
+- Estradiol Valerate and Estradiol Valerate / Dienogest (ORAL)
+- Dextrose and Potassium Chloride (IV)
+- Dextrose and Potassium Chloride (SC)
+- Oxazepam (ORAL)
+- Brompheniramine Pseudoephedrine Dextromethorphan (ORAL)
+- Rilpivirine (ORAL)
+- Frovatriptan (ORAL)
+- Romidepsin (IV)
+- Oxiconazole (ORAL)
+- Fluorescein (IV)
+- Theophylline Anhydrous (ORAL)
+- Tavaborole 5 (ORAL)
+- Ustekinumab Aekn (IV)
+- Ustekinumab Aekn (SC)
+- Atoltivimab Maftivimab and Odesivimab Ebgn (IV)
+- Reslizumab (IV)
+- Secnidazole (ORAL)
+- Technescan Tc 99m Mertiatide (IV)
+- Nicotinamide (ORAL)
+- Vitavera (ORAL)
+- Benzhydrocodone and Acetaminophen (ORAL)
+- Levoleucovorin (IV)
+- Somatrogon Ghla (SC)
+- Pancrelipase (ORAL)
+- Eletriptan Hbr (ORAL)
+- Relugolix (ORAL)
+- Garadacimab (SC)
+- Technetium Tc 99m Sestamibi (IV)
+- Abatacept (IV)
+- Abatacept (SC)
+- Clomiphene Citrtae (ORAL)
+- Tislelizumab Jsgr (IV)
+- Peginterferon Beta 1a (SC)
+- Dopamine Hydrochloride In Dextrose (ORAL)
+- Dopamine Hydrochloride In Dextrose (IV)
+- Odevixibat (ORAL)
+- Primaquine (ORAL)
+- Dostarlimab (IV)
+- Mefloquine (ORAL)
+- Linaclotide (ORAL)
+- Anticoagulant Citrate Phosphate Dextrose With As 1 (IV)
+- Folate Multivitamin (ORAL)
+- Sutimlimab Jome (IV)
+- Bevacizumab (IV)
+- Flutamide (ORAL)
+- Norixa Mini (ORAL)
+- Rasburicase (IV)
+- Gefitinib (ORAL)
+- Omeprazole Sodium Bicarbonate (ORAL)
+- Adagrasib (ORAL)
+- Folate Vitamin D3 (ORAL)
+- Nefazodone (ORAL)
+- Pemivibart (IV)
+- Iron Folic Acid Cyanocobalamin Ascorbic Acid and Docusate (ORAL)
+- Phenoxybenzamine (ORAL)
+- Ponesimod (ORAL)
+- Cortrosyn (IV)
+- Erythropoietin (IV)
+- Erythropoietin (SC)
+- Gepirone (ORAL)
+- Difelikefalin (IV)
+- Elosulfase Alfa (IV)
+- Ibutilide (IV)
+- Loratadine (ORAL)
+- Dacarbazine (IV)
+- Ibrutinib (ORAL)
+- Levonorgestrel / Ethinyl Estradiol and Ethinyl Estradiol (ORAL)
+- Coagulation Factor Ix Recombinant Glycopegylated (IV)
+- Levothyroxine and Liothyronine (ORAL)
+- Olezarsen (SC)
+- Adrenalinum Cholesterinum Folliculinum Hypothalamus Oophorinum Pulsatilla (ORAL)
+- Extended Phenytoin (ORAL)
+- Darbepoetin Alfa (IV)
+- Darbepoetin Alfa (SC)
+- Iodixanol (IV)
+- Carglumic Acid (ORAL)
+- L Ascorbic Acid (ORAL)
+- L Ascorbic Acid (IV)
+- Belumosudil (ORAL)
+- Zopapogene Imadenovec (SC)
+- Vinorelbine (IV)
+- Multivitamin Fluoride (ORAL)
+- Kit For The Preparation Of Technetium Tc 99m Mebrofenin (IV)
+- Lopinavir and Ritonavir (ORAL)
+- Ndac and Ee and Ferrous Fumarate (ORAL)
+- Lanreotide (SC)
+- Rydapt (ORAL)
+- Molindone (ORAL)
+- Ustekinumab (IV)
+- Ustekinumab (SC)
+- Hydrocortisone 2 (ORAL)
+- Belzutifan (ORAL)
+- Sincalide (IV)
+- Iron Folate (ORAL)
+- Amivantamab Vmjw (IV)
+- Dasiglucagon (SC)
+- Droperidol (IV)
+- Ambrosia Artemisiifolia (ORAL)
+- Ambrosia Artemisiifolia (SC)
+- Anticoagulant (IV)
+- Concizumab (SC)
+- Meperidine (ORAL)
+- Paclitaxel Protein Bound Particles (IV)
+- 2 7 Sodium Fluoride (ORAL)
+- 2 7 Sodium Fluoride (IV)
+- Mitoxantrone (IV)
+- Multivitamin Folate (ORAL)
+- Albumin Human (IV)
+- Physicians Ez Use B 12 Compliance (SC)
+- Lumasiran (SC)
+- Milnacipran (ORAL)
+- Ponatinib (ORAL)
+- Asenapine (ORAL)
+- Pralsetinib (ORAL)
+- Vericiguat (ORAL)
+- Calcipotriene Betamethasone Dipropionate (ORAL)
+- Platelet Additive 3 (IV)
+- Estradiol and Levonorgestrel (ORAL)
+- Fruquintinib (ORAL)
+- Xylocaine Mpf (IV)
+- Ritlecitinib (ORAL)
+- Anas Barbarie Hepatis Et Cordis Extractum (ORAL)
+- Amiloride (ORAL)
+- Donanemab Azbt (IV)
+- Bacitracin and Polymyxin B (ORAL)
+- Givinostat (ORAL)
+- Estradiol 0 1 (ORAL)
+- Brodalumab (SC)
+- Vortioxetine (ORAL)
+- Procarbazine (ORAL)
+- Basiliximab (IV)
+- Chlorhexidine Gluconate Oral Rinse (ORAL)
+- Tafamidis Meglumine (ORAL)
+- Tafamidis (ORAL)
+- Prenatal With Ferrous and Folic Acid (ORAL)
+- Dextrose Anhydrous and Sodium Chloride (IV)
+- Selenious Acid (IV)
+- Nalxone (IV)
+- Nalxone (SC)
+- Lidocaine and Dextrose (IV)
+- Lenacapavir (ORAL)
+- Lenacapavir (SC)
+- Hydrocortisone 2 5 (ORAL)
+- Avanafil (ORAL)
+- Sebetralstat (ORAL)
+- Mitapivat (ORAL)
+- Calcium Magnesium and Sodium Oxybates (ORAL)
+- Ensartinib (ORAL)
+- Pegflilgrastim Fpgk (SC)
+- Macitentan (ORAL)
+- Pimavanserin (ORAL)
+- Guselkumab (IV)
+- Guselkumab (SC)
+- Papaverine (IV)
+- Tarlatamab Dlle (IV)
+- Choriogonadotropin Alfa (SC)
+- Kit For The Preparation Of Gallium Ga 68 Gozetotide (IV)
+- Metavex (ORAL)
