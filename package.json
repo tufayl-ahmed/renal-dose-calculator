@@ -26,7 +26,8 @@
     "validation:dailymed:routes": "node scripts/validate-dailymed-route-dosing.mjs",
     "rules:export": "node scripts/export-rules-for-review.mjs",
     "rules:import": "node scripts/import-rule-verifications.mjs",
-    "fixtures:record": "node scripts/record-api-fixtures.mjs"
+    "fixtures:record": "node scripts/record-api-fixtures.mjs",
+    "candidates:extract": "node scripts/extract-renal-candidates.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

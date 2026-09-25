@@ -184,6 +184,11 @@ export function buildSpecialDrugResult({ label, patient }) {
     return buildCrclSpecialResult({ base, route: "Oral", dose });
   }
 
+  if (matchesRequested(/\blisinopril\b.*\bhydrochlorothiazide\b|\bhydrochlorothiazide\b.*\blisinopril\b|\bzestoretic\b|\bprinzide\b/)) {
+    const dose = buildLisinoprilHctzDose(patient.crcl);
+    return buildCrclSpecialResult({ base, route: "Oral", dose });
+  }
+
   if (matchesRequested(/\blisinopril\b|\bprinivil\b|\bzestril\b/)) {
     const dose = buildLisinoprilDose(patient.crcl);
     return buildCrclSpecialResult({ base, route: "Oral", dose });
@@ -1579,6 +1584,27 @@ function buildLisinoprilDose(crcl) {
     dose: "2.5 mg",
     frequency: "once daily initially; titrate to response.",
     cautions: ["Includes hemodialysis initial-dose guidance from the label."],
+  };
+}
+
+function buildLisinoprilHctzDose(crcl) {
+  if (!Number.isFinite(crcl)) {
+    return buildMissingCrclReview("Calculate CrCl before lisinopril/hydrochlorothiazide use.");
+  }
+  if (crcl > 30) {
+    return {
+      status: "no_renal_adjustment",
+      band: "CrCl > 30 mL/min",
+      dose: "No renal dose adjustment",
+      frequency: "Use the usual regimen.",
+      cautions: ["Monitor renal function and potassium as described in label warnings."],
+    };
+  }
+  return {
+    status: "dose_found",
+    band: "CrCl <= 30 mL/min",
+    dose: "Not recommended",
+    frequency: "Loop diuretics are preferred to thiazides in severe renal impairment; the combination label does not recommend use.",
   };
 }
 

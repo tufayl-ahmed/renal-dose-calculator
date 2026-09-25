@@ -37,6 +37,10 @@ export function resolveCuratedPayload(patient) {
   cautions.push(...describeDefaultedContext(guidance, { ...patient, indication: apixaban?.indication || patient.indication }));
 
   const verified = guidance.verification.status === "verified";
+  return toCuratedPayload(guidance, patient, cautions, verified ? "curated-verified" : "curated-draft");
+}
+
+export function toCuratedPayload(guidance, patient, cautions, sourceMode) {
   return {
     result: toAssistResult(guidance, patient, cautions),
     curated: guidance,
@@ -44,7 +48,7 @@ export function resolveCuratedPayload(patient) {
     sourceSections: [],
     sourceText: "",
     sourceUrl: guidance.sourceUrl,
-    sourceMode: verified ? "curated-verified" : "curated-draft",
+    sourceMode,
     modelUsed: "",
     freeMode: true,
     freeModeRemaining: null,

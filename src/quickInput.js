@@ -48,8 +48,56 @@ export function parseQuickInput(value) {
     .map((token) => token.clean)
     .join(" ")
     .trim();
+  result.drugs = parseDrugSegments(tokens, used);
 
   return result;
+}
+
+/**
+ * Splits leftover words into separate drugs. A drug ends at a comma,
+ * semicolon, "+" or any recognised clinical token; a route word straight
+ * after a drug applies to that drug ("meropenem IV, doxy oral").
+ */
+function parseDrugSegments(tokens, used) {
+  const drugs = [];
+  let current = [];
+  const close = () => {
+    if (current.length) {
+      drugs.push({ name: current.join(" "), route: "" });
+      current = [];
+    }
+  };
+
+  tokens.forEach((token, index) => {
+    const route = isIvRoute(token.lower) ? "IV" : isOralRoute(token.lower) ? "ORAL" : "";
+    if (route) {
+      close();
+      const last = drugs.at(-1);
+      if (last && !last.route) {
+        last.route = route;
+      }
+      return;
+    }
+    if (/^[+&]$/.test(token.clean) || used.has(index) || isIgnorableToken(token.lower)) {
+      close();
+      return;
+    }
+    current.push(token.clean);
+    if (/[,;+]$/.test(token.raw)) {
+      close();
+    }
+  });
+  close();
+
+  // One route for the whole line ("piptaz + gentamicin IV") applies to every drug.
+  const routes = new Set(drugs.map((drug) => drug.route).filter(Boolean));
+  if (routes.size === 1) {
+    const [route] = routes;
+    drugs.forEach((drug) => {
+      drug.route ||= route;
+    });
+  }
+  return drugs;
 }
 
 function tokenize(value) {
@@ -57,13 +105,14 @@ function tokenize(value) {
     .trim()
     .split(/\s+/)
     .map((raw) => {
-      const clean = raw.replace(/^[,;:()]+|[,;:()]+$/g, "");
+      const clean = raw.replace(/^[,;:()+]+|[,;:()+]+$/g, "");
       return {
         raw,
         clean,
         lower: clean.toLowerCase(),
       };
     })
+    .map((token) => (/^[+&]$/.test(token.raw) ? { ...token, clean: token.raw, lower: token.raw } : token))
     .filter((token) => token.clean.length > 0);
 }
 
@@ -283,6 +332,7 @@ function isAllRoute(value) {
 
 function isIgnorableToken(value) {
   return (
+    /^[+&]$/.test(value) ||
     AGE_LABELS.has(value) ||
     SEX_LABELS.has(value) ||
     WEIGHT_LABELS.has(value) ||

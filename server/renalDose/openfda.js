@@ -15,6 +15,8 @@ const LABEL_FIELDS = [
   "warnings",
   "warnings_and_cautions",
   "contraindications",
+  // Older (non-PLR) labels put renal warnings under Precautions.
+  "precautions",
 ];
 
 const RENAL_KEYWORDS = [

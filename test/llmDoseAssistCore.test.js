@@ -1302,3 +1302,25 @@ test("app runtime does not import or call curated guidance", async () => {
   assert.doesNotMatch(appSource, /findCuratedRenalDoseGuidance/);
   assert.doesNotMatch(appSource, /getCuratedDrugOptions/);
 });
+
+test("lisinopril/hydrochlorothiazide combination is not recommended at CrCl <= 30", () => {
+  const label = { title: "Lisinopril and Hydrochlorothiazide", genericName: "LISINOPRIL AND HYDROCHLOROTHIAZIDE", sections: [] };
+  const low = buildSpecialDrugResult({
+    label,
+    patient: { drug: "lisinopril and hydrochlorothiazide", route: "ORAL", crcl: 8 },
+  });
+  assert.equal(low.dose, "Not recommended");
+  assert.equal(low.renalBand, "CrCl <= 30 mL/min");
+
+  const mild = buildSpecialDrugResult({
+    label,
+    patient: { drug: "lisinopril and hydrochlorothiazide", route: "ORAL", crcl: 55 },
+  });
+  assert.equal(mild.status, "no_renal_adjustment");
+
+  const mono = buildSpecialDrugResult({
+    label: { title: "Lisinopril", genericName: "LISINOPRIL", sections: [] },
+    patient: { drug: "lisinopril", route: "ORAL", crcl: 8 },
+  });
+  assert.equal(mono.dose, "2.5 mg");
+});

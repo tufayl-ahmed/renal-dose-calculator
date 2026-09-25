@@ -181,18 +181,36 @@ export function buildParserFallbackResult({ label, patient }) {
     };
   }
 
-  if (guidance.status === "label_text" || guidance.status === "not_available") {
+  if (guidance.status === "label_text") {
+    // The label mentions kidney function but no rule could be parsed. This is
+    // not evidence that no adjustment is needed, so ask for source review.
+    return {
+      status: "review_source",
+      drugName: label.title || patient.drug || "Selected drug",
+      route: routeDisplayName(patient.route),
+      renalMetricUsed: "crcl",
+      renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
+      dose: "Review renal text in label",
+      frequency: `The label mentions kidney function${guidance.sourceHeading ? ` (${guidance.sourceHeading})` : ""} but no renal dose rule could be extracted.`,
+      dialysisNote: "",
+      importantCautions: [],
+      sourceSetId: label.setId || "",
+      sourceUrl: label.sourceUrl || "",
+    };
+  }
+
+  if (guidance.status === "not_available") {
     return {
       status: "no_renal_adjustment",
       drugName: label.title || patient.drug || "Selected drug",
       route: routeDisplayName(patient.route),
       renalMetricUsed: "crcl",
       renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
-      dose: "No renal-specific dose adjustment found",
+      dose: "No renal dose adjustment described in label",
       frequency: "Use usual adult schedule by indication if otherwise appropriate.",
       dialysisNote: "",
       importantCautions: [
-        "DailyMed/openFDA sections returned to the app did not include renal-specific dose adjustment text.",
+        "The label sections checked do not mention kidney function; this is not proof that renal adjustment is unnecessary.",
       ],
       sourceSetId: label.setId || "",
       sourceUrl: label.sourceUrl || "",

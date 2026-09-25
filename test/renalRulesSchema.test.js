@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { curatedRecordId, findCuratedRenalDoseGuidance, listCuratedRecords } from "../src/curatedDoseRules.js";
 import { RULE_VERIFICATIONS } from "../src/data/renalRules/verifications.js";
+import { candidateRenalDoseRules } from "../src/data/renalRules/candidates.js";
 
 const RULE_DIR = join(process.cwd(), "src/data/renalRules");
 const VALID_TYPES = new Set(["all", "gt", "gte", "lt", "range"]);
@@ -32,7 +33,7 @@ async function listRuleFiles() {
   try {
     const entries = await readdir(RULE_DIR, { withFileTypes: true });
     return entries
-      .filter((entry) => entry.isFile() && entry.name.endsWith(".js") && entry.name !== "verifications.js")
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".js") && !["verifications.js", "candidates.js"].includes(entry.name))
       .map((entry) => entry.name)
       .sort();
   } catch {
@@ -133,4 +134,23 @@ test("fractional CrCl between whole-number label bands matches the rounded band"
   assert.equal(lookup(59.4).crclBand, "CrCl 40-59 mL/min");
   assert.equal(lookup(59.5).crclBand, "CrCl >= 60 mL/min");
   assert.equal(lookup(24.6).crclBand, "CrCl 25-39 mL/min");
+});
+
+test("auto-extracted candidates follow the schema and stay unreviewed", () => {
+  for (const [index, record] of candidateRenalDoseRules.entries()) {
+    const label = `candidates[${index}] ${record.drugName}`;
+    assert.equal(record.confidence, "auto-extracted", `${label} confidence`);
+    assert.equal(record.reviewedBy, "Auto-extraction", `${label} reviewedBy`);
+    assert.equal(record.routes.length, 1, `${label} has one route`);
+    record.routes.forEach((route) => assert.ok(VALID_ROUTES.has(route), `${label} route`));
+    assert.match(record.sourceUrl, /^https:\/\/dailymed\.nlm\.nih\.gov\//, `${label} DailyMed source`);
+    assert.ok(["crcl", "egfr"].includes(record.renalMetric), `${label} renalMetric`);
+    assert.ok(record.extraction?.method, `${label} extraction method`);
+    assert.ok(record.rules.length > 0, `${label} rules`);
+    record.rules.forEach((rule, ruleIndex) => validateRule({ rule, label: `${label}.rules[${ruleIndex}]` }));
+    assert.ok(
+      !record.rules.some((rule) => rule.variants.some((variant) => /review|not found/i.test(variant.dose))),
+      `${label} must not store review/absence answers as dose rules`
+    );
+  }
 });

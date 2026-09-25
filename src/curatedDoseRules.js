@@ -1,6 +1,7 @@
 import { normalizeDrugKey } from "./drugNormalizer.js";
 import { draftRenalDoseRules } from "./data/renalRules/index.js";
 import { RULE_VERIFICATIONS } from "./data/renalRules/verifications.js";
+import { candidateRenalDoseRules } from "./data/renalRules/candidates.js";
 
 const STARTER_RENAL_RULES = [
   {
@@ -706,9 +707,27 @@ const STRUCTURED_RENAL_RULES = [
 ];
 
 const CURATED_RENAL_RULES = buildCuratedRuleSet();
+const CANDIDATE_RENAL_RULES = buildCandidateRuleSet();
 
 export function findCuratedRenalDoseGuidance(input) {
-  const record = findCuratedRecord(input.drugQuery, input.normalizedDrug, input.route);
+  return findGuidanceInRecords(CURATED_RENAL_RULES, input);
+}
+
+/**
+ * Same matching as curated rules, over auto-extracted label candidates
+ * (src/data/renalRules/candidates.js). Candidates are unreviewed snapshots of
+ * the deterministic label pipeline until a clinician verifies them.
+ */
+export function findCandidateRenalDoseGuidance(input) {
+  return findGuidanceInRecords(CANDIDATE_RENAL_RULES, input);
+}
+
+export function listCandidateRecords() {
+  return CANDIDATE_RENAL_RULES;
+}
+
+function findGuidanceInRecords(records, input) {
+  const record = findCuratedRecord(records, input.drugQuery, input.normalizedDrug, input.route);
   if (!record || getRecordVerification(record).status === "retired") {
     return null;
   }
@@ -736,6 +755,9 @@ export function getRecordVerification(record) {
   }
   if (record.confidence === "starter-verified") {
     return { status: "verified", verifiedBy: record.reviewedBy, verifiedOn: record.reviewedOn };
+  }
+  if (record.confidence === "auto-extracted") {
+    return { status: "unreviewed", verifiedBy: "", verifiedOn: "" };
   }
   return { status: "draft", verifiedBy: "", verifiedOn: "" };
 }
@@ -823,7 +845,7 @@ function buildRecordGuidance(record, { crcl, egfr, route, dialysis, indication, 
 }
 
 export function getCuratedDrugOptions({ drugQuery, normalizedDrug, route }) {
-  const record = findCuratedRecord(drugQuery, normalizedDrug, route);
+  const record = findCuratedRecord(CURATED_RENAL_RULES, drugQuery, normalizedDrug, route);
   if (!record?.structured) {
     return null;
   }
@@ -840,7 +862,7 @@ export function getCuratedRuleCount() {
   return CURATED_RENAL_RULES.length;
 }
 
-function findCuratedRecord(drugQuery, normalizedDrug, route) {
+function findCuratedRecord(records, drugQuery, normalizedDrug, route) {
   const keys = [
     drugQuery,
     normalizedDrug?.searchTerm,
@@ -859,7 +881,7 @@ function findCuratedRecord(drugQuery, normalizedDrug, route) {
     .filter(Boolean)
     .map(literalDrugKey);
 
-  const candidates = CURATED_RENAL_RULES.map((record) => {
+  const candidates = records.map((record) => {
     const recordKeys = [record.drugName, record.searchTerm, ...record.aliases].map(normalizeDrugKey);
     const recordLiteralKeys = [record.drugName, record.searchTerm, ...record.aliases].map(literalDrugKey);
     const normalizedMatch = keys.some((key) => recordKeys.includes(key));
@@ -886,6 +908,16 @@ function buildCuratedRuleSet() {
   });
 
   return [...STARTER_RENAL_RULES, ...draftRecords].map(addStructuredOverlay);
+}
+
+function buildCandidateRuleSet() {
+  const curatedKeys = new Set(
+    CURATED_RENAL_RULES.flatMap((record) => record.routes.map((route) => `${normalizeDrugKey(record.searchTerm)}|${route}`))
+  );
+  // A hand-curated record always wins over an auto-extracted one.
+  return candidateRenalDoseRules.filter(
+    (record) => !record.routes.some((route) => curatedKeys.has(`${normalizeDrugKey(record.searchTerm)}|${route}`))
+  );
 }
 
 function routeMatches(record, route) {
@@ -1225,6 +1257,9 @@ const RENAL_METRICS = {
 };
 
 function inferRuleMetric(record, rule) {
+  if (RENAL_METRICS[record.renalMetric]) {
+    return RENAL_METRICS[record.renalMetric];
+  }
   const ruleText = [
     rule.variants?.map((variant) => variant.condition).join(" "),
     rule.variants?.map((variant) => `${variant.dose} ${variant.interval}`).join(" "),
@@ -1234,6 +1269,9 @@ function inferRuleMetric(record, rule) {
 }
 
 function inferRecordMetric(record) {
+  if (RENAL_METRICS[record.renalMetric]) {
+    return RENAL_METRICS[record.renalMetric];
+  }
   const recordText = [
     record.indicationNote,
     record.sourceLabel,
@@ -1261,6 +1299,9 @@ function inferMetricFromText(text) {
 function buildBadge(record) {
   if (record.confidence === "starter-verified") {
     return "Starter verified";
+  }
+  if (record.confidence === "auto-extracted") {
+    return "Auto-extracted from label";
   }
   return `Curated draft ${CURATED_RENAL_RULES.length} drugs`;
 }
