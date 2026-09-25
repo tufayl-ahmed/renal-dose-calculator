@@ -11,7 +11,7 @@ export default [
     languageOptions: { globals: { ...globals.browser } },
   },
   {
-    files: ["functions/**/*.js"],
+    files: ["functions/**/*.js", "server/**/*.js"],
     languageOptions: { globals: { ...globals.serviceworker } },
   },
   {

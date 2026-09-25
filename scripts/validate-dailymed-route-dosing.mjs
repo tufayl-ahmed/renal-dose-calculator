@@ -4,7 +4,7 @@ import { DRUG_AUTOCOMPLETE_ITEMS } from "../src/drugAutocompleteData.js";
 import { deriveRenalDoseGuidance } from "../src/doseGuidance.js";
 import { normalizeAssistPayload } from "../src/llmDoseAssist.js";
 import { validateAssistResponse } from "../src/llmDoseAssistCore.js";
-import { buildOpenFdaSearches, lookupDrugLabel } from "../functions/api/renal-dose/assist.js";
+import { buildOpenFdaSearches, lookupDrugLabel } from "../server/renalDose/openfda.js";
 
 const DEFAULT_BASE_URL = "https://renal-dose-calculator.pages.dev";
 const REPORT_DIR = new URL("../docs/testing/generated/", import.meta.url);

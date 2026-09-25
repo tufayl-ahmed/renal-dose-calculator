@@ -9,12 +9,8 @@ import {
   validateAssistResponse,
 } from "../src/llmDoseAssistCore.js";
 import { buildAssistPayload as buildClientAssistPayload, normalizeAssistPayload } from "../src/llmDoseAssist.js";
-import {
-  buildOpenFdaSearches,
-  buildMissingLabelSpecialResult,
-  buildSpecialDrugResult,
-  lookupDrugLabel,
-} from "../functions/api/renal-dose/assist.js";
+import { buildOpenFdaSearches, lookupDrugLabel } from "../server/renalDose/openfda.js";
+import { buildMissingLabelSpecialResult, buildSpecialDrugResult } from "../server/renalDose/specialDrugs.js";
 import { extractDoseRows } from "../src/doseGuidance.js";
 
 const sourceText =
