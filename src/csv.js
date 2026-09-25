@@ -53,5 +53,7 @@ export function parseCsv(text) {
 
 export function rowsToObjects(rows) {
   const [header, ...body] = rows;
-  return body.map((cells) => Object.fromEntries(header.map((name, index) => [name.trim(), (cells[index] || "").trim()])));
+  return body.map((cells) =>
+    Object.fromEntries(header.map((name, index) => [name.trim(), (cells[index] || "").trim()]))
+  );
 }

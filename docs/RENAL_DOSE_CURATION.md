@@ -43,6 +43,14 @@ meropenem) count as verified.
 
 ## Reviewing records
 
+**In the browser:** open `/review.html` (linked as "Rule review" in the app
+footer). Enter your name, search or filter records, open each DailyMed label,
+then press **Verify** or **Retire** (with optional notes). Decisions are kept
+in that browser until you press **Export decisions (CSV)**; import the file
+with `npm run rules:import` as below.
+
+**As a spreadsheet:**
+
 ```bash
 npm run rules:export
 ```

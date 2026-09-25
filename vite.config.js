@@ -5,7 +5,12 @@ export default defineConfig({
   server: { port: 5173 },
   preview: { port: 4173 },
   build: {
+    rollupOptions: {
+      input: { main: "index.html", review: "review.html" },
+    },
     outDir: "dist",
+    // Hashed bundles live in /static (cached forever); /assets holds public files.
+    assetsDir: "static",
     target: "es2022",
     sourcemap: true,
   },

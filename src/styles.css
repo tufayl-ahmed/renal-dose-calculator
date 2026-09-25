@@ -1846,3 +1846,103 @@ input[type="number"]::-webkit-outer-spin-button {
     color: #000;
   }
 }
+
+/* ---------- Review page ---------- */
+.review-layout {
+  display: grid;
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px var(--gutter) 48px;
+}
+
+.review-intro {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  font-size: 14px;
+}
+
+.review-intro code,
+.review-card code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.review-toolbar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.review-counts {
+  flex: 1 1 260px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.review-list {
+  display: grid;
+  gap: 12px;
+}
+
+.review-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.review-card[data-decision="verified"] {
+  border-color: var(--good);
+}
+
+.review-card[data-decision="retired"] {
+  border-color: var(--danger);
+  opacity: 0.8;
+}
+
+.review-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.review-card h2 {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.review-note {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.review-notes textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.review-more {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.app-footer a {
+  color: inherit;
+}

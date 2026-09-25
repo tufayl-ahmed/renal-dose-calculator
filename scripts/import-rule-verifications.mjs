@@ -7,9 +7,9 @@
 // review_date are imported. Existing verifications are kept unless the CSV
 // has a new decision for the same record.
 import { readFile, writeFile } from "node:fs/promises";
-import { curatedRecordId, listCuratedRecords } from "../src/curatedDoseRules.js";
+import { curatedRecordId, listCandidateRecords, listCuratedRecords } from "../src/curatedDoseRules.js";
 import { RULE_VERIFICATIONS } from "../src/data/renalRules/verifications.js";
-import { parseCsv, rowsToObjects } from "./lib/csv.mjs";
+import { parseCsv, rowsToObjects } from "../src/csv.js";
 
 const input = process.argv[2];
 if (!input) {
@@ -17,7 +17,7 @@ if (!input) {
   process.exit(1);
 }
 
-const knownIds = new Set(listCuratedRecords().map(curatedRecordId));
+const knownIds = new Set([...listCuratedRecords(), ...listCandidateRecords()].map(curatedRecordId));
 const rows = rowsToObjects(parseCsv(await readFile(input, "utf8")));
 const next = { ...RULE_VERIFICATIONS };
 const problems = [];

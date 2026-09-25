@@ -24,7 +24,15 @@ Adult kidney-function calculator and renal-dose guidance app built by
 - Checks **several drugs at once**, each with its own route (oral, IV,
   subcutaneous), and shows one card per drug with the renal band, dose,
   cautions, the full dose table and the DailyMed source.
-- Quick entry in one line, e.g. `72 M 78 kg SCr 1.4 meropenem IV, doxy oral`.
+- Quick entry in one line, e.g. `72 M 78 kg SCr 1.4 meropenem IV, doxy oral`
+  (creatinine in mg/dL or µmol/L, e.g. `SCr 124`).
+- Creatinine unit toggle (mg/dL ⇄ µmol/L) and choice of actual, ideal or
+  adjusted body weight for Cockcroft-Gault.
+- Dialysis status (hemodialysis, peritoneal, CRRT) and an "unstable
+  creatinine / AKI" flag that change and annotate the guidance.
+- Share link (the check is stored in the URL fragment, never sent to the
+  server) and print / save as PDF.
+- Clinician review page (`/review.html`) to verify or retire records.
 - Every answer carries a source badge so you know how much to trust it:
   **Clinician-verified**, **Curated · draft**, **Auto-extracted**,
   **Label logic/table**, **AI summary** or **Review source**.
@@ -34,9 +42,11 @@ Adult kidney-function calculator and renal-dose guidance app built by
 
 ## Clinical scope
 
-Adults (≥18 years), serum creatinine in mg/dL, weight required for
-Cockcroft-Gault (actual body weight; the app flags when adjusted weight may be
-more appropriate).
+Adults (≥18 years), serum creatinine in mg/dL or µmol/L, weight required for
+Cockcroft-Gault (actual by default; ideal or adjusted weight selectable when
+height is given). On intermittent dialysis the app uses the label's dialysis
+rule where one exists, otherwise the lowest renal band, and asks for review;
+on CRRT it always asks for review.
 
 **Educational purpose only. Results are estimates and are not for prescribing.**
 The app does not replace clinician judgment, pharmacist review, local
@@ -72,6 +82,7 @@ workflow (spreadsheet export/import) and how to grow the database.
 
 ```text
 index.html, src/app.js          App shell and bootstrap
+review.html, src/review.js      Clinician rule review page
 src/ui/                         UI modules (form, drug chips, dose cards, theme…)
 src/doseView.js                 View model for dose results
 src/renal.js                    eGFR / CrCl / body-size equations
