@@ -6,7 +6,7 @@ export default defineConfig({
   preview: { port: 4173 },
   build: {
     rollupOptions: {
-      input: { main: "index.html", review: "review.html" },
+      input: { landing: "index.html", app: "app/index.html", review: "review.html" },
     },
     outDir: "dist",
     // Hashed bundles live in /static (cached forever); /assets holds public files.
@@ -22,7 +22,7 @@ export default defineConfig({
       manifest: false,
       workbox: {
         globPatterns: ["**/*.{js,css,html,woff2,png,webmanifest}"],
-        navigateFallback: "/index.html",
+        navigateFallback: "/app/index.html",
         navigateFallbackDenylist: [/^\/api\//],
         cleanupOutdatedCaches: true,
         runtimeCaching: [

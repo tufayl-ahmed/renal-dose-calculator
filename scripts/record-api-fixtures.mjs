@@ -1,8 +1,8 @@
 // Records openFDA/RxNav responses and API output for a fixed smoke-case panel.
-// Usage: node scripts/record-api-fixtures.mjs [--handler=path/to/assist.js] [--out=file]
+// Usage: node scripts/record-api-fixtures.mjs [--handler=path/to/assist.js] [--out=file] [--replay]
 // The fixtures let tests replay the dose API without network access.
-import { writeFile } from "node:fs/promises";
-import { gzipSync } from "node:zlib";
+import { readFile, writeFile } from "node:fs/promises";
+import { gunzipSync, gzipSync } from "node:zlib";
 import { pathToFileURL } from "node:url";
 import path from "node:path";
 import { calculateCockcroftGault, calculateEgfrCkdEpi2021 } from "../src/renal.js";
@@ -14,9 +14,21 @@ const handlerPath = path.resolve(args.handler || "functions/api/renal-dose/assis
 const outputPath = args.out || "test/fixtures/api-smoke.json.gz";
 const { onRequestPost } = await import(pathToFileURL(handlerPath).href);
 
-const recorded = {};
+// --replay re-runs the cases against the recorded responses (no network),
+// refreshing only the expected outputs after an intentional change.
+const replay = args.replay === "true" || args.replay === "";
+const previous = replay ? JSON.parse(gunzipSync(await readFile(outputPath)).toString("utf8")) : null;
+const recorded = replay ? previous.fetches : {};
 const realFetch = globalThis.fetch;
 globalThis.fetch = async (input, init) => {
+  if (replay) {
+    const url = String(input.url || input);
+    const hit = recorded[url];
+    if (!hit) {
+      throw new Error(`No recorded response for ${url}`);
+    }
+    return new Response(hit.body, { status: hit.status });
+  }
   const url = String(input.url || input);
   const response = await realFetch(input, init);
   const body = await response.text();
@@ -26,7 +38,7 @@ globalThis.fetch = async (input, init) => {
 
 const outputs = [];
 for (const smokeCase of SMOKE_CASES) {
-  const payload = await buildPayload(smokeCase);
+  const payload = replay ? previous.outputs.find((output) => output.id === smokeCase.id).payload : await buildPayload(smokeCase);
   const request = new Request("https://local/api/renal-dose/assist", {
     method: "POST",
     body: JSON.stringify(payload),

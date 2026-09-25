@@ -27,9 +27,11 @@
     "rules:export": "node scripts/export-rules-for-review.mjs",
     "rules:import": "node scripts/import-rule-verifications.mjs",
     "fixtures:record": "node scripts/record-api-fixtures.mjs",
-    "candidates:extract": "node scripts/extract-renal-candidates.mjs"
+    "candidates:extract": "node scripts/extract-renal-candidates.mjs",
+    "coverage:index": "node scripts/build-coverage-index.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.63.0",
     "eslint": "^10.11.0",

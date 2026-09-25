@@ -1,7 +1,7 @@
 import { addDrug, calculate, expect, fillPatient, test } from "./fixtures.js";
 
 test.beforeEach(async ({ page, api: _api }) => {
-  await page.goto("/");
+  await page.goto("/app/");
 });
 
 test("kidney function updates as you type", async ({ page }) => {

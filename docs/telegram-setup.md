@@ -9,7 +9,7 @@ button that opens the calculator inside Telegram.
 ## Mini App URL
 
 ```text
-https://renal-dose-calculator-3fl.pages.dev/?telegram=1
+https://renal-dose-calculator-3fl.pages.dev/app/?telegram=1
 ```
 
 ## Webhook URL
@@ -54,7 +54,7 @@ curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setChatMenuButton"
       "type": "web_app",
       "text": "Open Calculator",
       "web_app": {
-        "url": "https://renal-dose-calculator-3fl.pages.dev/?telegram=1"
+        "url": "https://renal-dose-calculator-3fl.pages.dev/app/?telegram=1"
       }
     }
   }'
