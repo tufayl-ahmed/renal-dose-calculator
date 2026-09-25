@@ -29,7 +29,7 @@ export function buildLlmDosePrompt({ label, patient }) {
       {
         role: "system",
         content:
-          "You extract renal dose guidance only from supplied DailyMed/openFDA label text. Do not use memory. If the text does not clearly support a dose for the renal function, return review_source. Return JSON only.",
+          "You extract renal dose guidance only from supplied DailyMed/openFDA label text. Do not use memory. Match the label's own renal criterion: CrCl, eGFR, or serum creatinine (use serumCreatinineMgDl when the label's table is by serum creatinine). If the text does not clearly support a dose for this patient, return review_source. Return JSON only.",
       },
       {
         role: "user",
