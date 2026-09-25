@@ -9,11 +9,14 @@ export function routeDisplayName(route) {
   if (route === "ORAL") {
     return "Oral";
   }
+  if (route === "SC") {
+    return "Subcutaneous";
+  }
   return "All routes";
 }
 
 export function selectedRouteDisplayName(route, fallbackRoute) {
-  if (route === "IV" || route === "ORAL") {
+  if (route === "IV" || route === "ORAL" || route === "SC") {
     return routeDisplayName(route);
   }
   return fallbackRoute || routeDisplayName(route);

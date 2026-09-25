@@ -56,7 +56,7 @@ export function parseQuickInput(value) {
 /**
  * Splits leftover words into separate drugs. A drug ends at a comma,
  * semicolon, "+" or any recognised clinical token; a route word straight
- * after a drug applies to that drug ("meropenem IV, doxy oral").
+ * after a drug applies to that drug only ("meropenem IV, doxy oral").
  */
 function parseDrugSegments(tokens, used) {
   const drugs = [];
@@ -69,7 +69,7 @@ function parseDrugSegments(tokens, used) {
   };
 
   tokens.forEach((token, index) => {
-    const route = isIvRoute(token.lower) ? "IV" : isOralRoute(token.lower) ? "ORAL" : "";
+    const route = isIvRoute(token.lower) ? "IV" : isOralRoute(token.lower) ? "ORAL" : isScRoute(token.lower) ? "SC" : "";
     if (route) {
       close();
       const last = drugs.at(-1);
@@ -88,15 +88,6 @@ function parseDrugSegments(tokens, used) {
     }
   });
   close();
-
-  // One route for the whole line ("piptaz + gentamicin IV") applies to every drug.
-  const routes = new Set(drugs.map((drug) => drug.route).filter(Boolean));
-  if (routes.size === 1) {
-    const [route] = routes;
-    drugs.forEach((drug) => {
-      drug.route ||= route;
-    });
-  }
   return drugs;
 }
 
@@ -135,6 +126,11 @@ function parseDirectTokens(tokens, used, result) {
     }
     if (isOralRoute(token.lower)) {
       result.route = "ORAL";
+      used.add(index);
+      return;
+    }
+    if (isScRoute(token.lower)) {
+      result.route = "SC";
       used.add(index);
       return;
     }
@@ -204,7 +200,12 @@ function parseFallbackNumbers(tokens, used, result) {
 
   const unlabelled = remaining.map((item) => item.value);
   const hasAnyExplicitClinicalValue = Boolean(result.age || result.creatinine || result.weight || result.height);
-  if (!hasAnyExplicitClinicalValue && unlabelled.length >= 3) {
+  const orderedFits =
+    isValidFieldValue("age", unlabelled[0]) &&
+    isValidFieldValue("creatinine", unlabelled[1]) &&
+    isValidFieldValue("weight", unlabelled[2]);
+  // "age creatinine weight" order; otherwise fall through to plausibility matching.
+  if (!hasAnyExplicitClinicalValue && unlabelled.length >= 3 && orderedFits) {
     assignNumber(result, "age", unlabelled[0]);
     assignNumber(result, "creatinine", unlabelled[1]);
     assignNumber(result, "weight", unlabelled[2]);
@@ -326,6 +327,10 @@ function isOralRoute(value) {
   return /^(?:po|oral|tablet|tab|capsule|cap)\d*$/i.test(value);
 }
 
+function isScRoute(value) {
+  return /^(?:sc|s\.c\.|subcut|subq|sq|subcutaneous)$/i.test(value);
+}
+
 function isAllRoute(value) {
   return /^(?:all|any)$/i.test(value);
 }
@@ -345,6 +350,7 @@ function isIgnorableToken(value) {
     isFemale(value) ||
     isIvRoute(value) ||
     isOralRoute(value) ||
+    isScRoute(value) ||
     isAllRoute(value)
   );
 }

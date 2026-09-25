@@ -181,6 +181,9 @@ function buildOpenFdaRouteClause(route) {
   if (route === "ORAL") {
     return 'openfda.route:"ORAL"';
   }
+  if (route === "SC") {
+    return 'openfda.route:"SUBCUTANEOUS"';
+  }
   return "";
 }
 
@@ -379,6 +382,9 @@ function filterByRoute(labels, route) {
     }
     if (route === "ORAL") {
       return routes.some(hasOralRouteEvidence);
+    }
+    if (route === "SC") {
+      return routes.some((value) => /subcutaneous/i.test(value));
     }
     return true;
   });

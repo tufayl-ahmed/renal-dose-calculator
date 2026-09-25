@@ -80,3 +80,25 @@ test("quick input does not infer an unsupported all-routes mode", () => {
   assert.equal(parsed.drug, "metformin");
   assert.equal(parsed.route, "");
 });
+
+test("quick input splits several drugs and attaches routes to the drug before them", () => {
+  const parsed = parseQuickInput("72 M 78 1.4 meropenem IV, vanco IV, doxy oral, apixaban");
+  assert.deepEqual(parsed.drugs, [
+    { name: "meropenem", route: "IV" },
+    { name: "vanco", route: "IV" },
+    { name: "doxy", route: "ORAL" },
+    { name: "apixaban", route: "" },
+  ]);
+  assert.equal(parsed.age, 72);
+  assert.equal(parsed.weight, 78);
+  assert.equal(parsed.creatinine, 1.4);
+});
+
+test("quick input keeps multi-word drug names together and splits on +", () => {
+  const parsed = parseQuickInput("65 f 1.2 60 piperacillin tazobactam + gentamicin iv");
+  assert.deepEqual(parsed.drugs, [
+    { name: "piperacillin tazobactam", route: "" },
+    { name: "gentamicin", route: "IV" },
+  ]);
+  assert.equal(parsed.drug, "piperacillin tazobactam gentamicin");
+});
