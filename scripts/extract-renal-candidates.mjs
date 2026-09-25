@@ -32,7 +32,7 @@ const args = Object.fromEntries(
   })
 );
 const LIMIT = Number(args.limit || 150);
-const ROUTES = (args.routes || "ORAL,IV").split(",");
+const ROUTES = (args.routes || "ORAL,IV,SC").split(",");
 const CACHE_DIR = path.join(root, ".cache", "labels");
 const OUTPUT = path.join(root, "src", "data", "renalRules", "candidates.js");
 const REPORT = path.join(root, "docs", "curation", "candidate-extraction-report.md");
@@ -131,7 +131,11 @@ async function cachedLabelLookup(name, route) {
   await mkdir(CACHE_DIR, { recursive: true });
   const file = path.join(CACHE_DIR, `${slug(name)}.${route}.json`);
   try {
-    return JSON.parse(await readFile(file, "utf8"));
+    const cached = JSON.parse(await readFile(file, "utf8"));
+    // Re-fetch labels cached before the current label fields, unless offline.
+    if (args.offline === "true" || (cached.labelFieldsVersion || 1) >= LABEL_FIELDS_VERSION) {
+      return cached;
+    }
   } catch {
     // Not cached yet.
   }
@@ -397,7 +401,13 @@ function installFetchGuard() {
       if (process.env.OPENFDA_API_KEY) {
         url += `${url.includes("?") ? "&" : "?"}api_key=${encodeURIComponent(process.env.OPENFDA_API_KEY)}`;
       }
-      const response = await realFetch(url, init);
+      let response = await realFetch(url, init);
+      // With a key the limit is per minute: wait it out instead of stopping.
+      for (let attempt = 0; response.status === 429 && process.env.OPENFDA_API_KEY && attempt < 3; attempt += 1) {
+        console.warn("openFDA per-minute limit reached; waiting 60 s.");
+        await new Promise((resolve) => setTimeout(resolve, 60_000));
+        response = await realFetch(url, init);
+      }
       if (response.status === 429) {
         rateLimited = true;
         console.warn("openFDA rate limit reached; stopping. Re-run later or set OPENFDA_API_KEY.");
