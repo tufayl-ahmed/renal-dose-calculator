@@ -7,7 +7,7 @@ export default [
   },
   js.configs.recommended,
   {
-    files: ["src/**/*.js"],
+    files: ["src/**/*.js", "public/**/*.js"],
     languageOptions: { globals: { ...globals.browser } },
   },
   {

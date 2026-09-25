@@ -23,3 +23,18 @@ test("example patients in the empty state run a check", async ({ page, api: _api
   await expect(page.locator(".dose-card")).toHaveCount(2);
   await expect(page.locator(".dose-card .badge").first()).toBeVisible();
 });
+
+test("reduced motion shows everything at once with a static demo", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator(".lp-demo-card")).toHaveCount(2);
+  await expect(page.locator("#demo-crcl")).toHaveText("40.9");
+  await expect(page.locator("#features [data-reveal]").first()).toHaveCSS("opacity", "1");
+  await expect(page.locator(".lp-hero h1")).toHaveCSS("opacity", "1");
+});
+
+test("hero demo types a patient and shows results", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#demo-typed")).toContainText("meropenem", { timeout: 8000 });
+  await expect(page.locator(".lp-demo-card").first()).toContainText("Meropenem", { timeout: 8000 });
+});
