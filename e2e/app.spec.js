@@ -236,3 +236,25 @@ test("unstable creatinine warns on the kidney card and every drug", async ({ pag
   await calculate(page);
   await expect(page.locator(".dose-card")).toContainText("Consider the next lower band");
 });
+
+test("share link reopens the same check", async ({ page, context, browserName }) => {
+  test.skip(browserName !== "chromium");
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await fillPatient(page, { weight: "110", height: "175" });
+  await page.locator(".segmented input[name=weightBasis][value=adjusted] + span").click();
+  await addDrug(page, "sitagliptin");
+  await calculate(page);
+  await expect(page.locator(".dose-card .dose-value strong")).toHaveText("100 mg once daily");
+
+  await page.locator("#share").click();
+  await expect(page.locator("#toast")).toHaveText("Link copied");
+  const link = await page.evaluate(() => navigator.clipboard.readText());
+  expect(link).toMatch(/#c=[A-Za-z0-9_-]+$/);
+
+  const other = await context.newPage();
+  await other.goto(link);
+  await expect(other.locator("#weight")).toHaveValue("110");
+  await expect(other.locator("#crcl-value")).toHaveText("58.2");
+  await expect(other.locator(".chip")).toHaveCount(1);
+  expect(other.url()).not.toContain("#c=");
+});

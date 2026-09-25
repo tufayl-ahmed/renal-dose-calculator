@@ -1,5 +1,6 @@
 import { buildShareText } from "./doseView.js";
 import { parseQuickInput } from "./quickInput.js";
+import { decodeCheck, encodeCheck } from "./shareLink.js";
 import { $, copyText, toast } from "./ui/dom.js";
 import { createDoseCards } from "./ui/doseCards.js";
 import { createDrugInput } from "./ui/drugInput.js";
@@ -26,7 +27,7 @@ const drugInput = createDrugInput({
   onChange: () => cards.sync(drugInput.drugs, calculated ? patientPayload() : null),
 });
 const cards = createDoseCards({});
-const history = createHistory({ onSelect: loadHistoryItem });
+const recentChecks = createHistory({ onSelect: loadHistoryItem });
 initCreatinineUnit(form, () => form.dispatchEvent(new Event("input")));
 
 form.addEventListener("input", (event) => {
@@ -57,6 +58,7 @@ form.addEventListener("reset", () => {
   window.setTimeout(() => {
     current = null;
     calculated = false;
+    $("#share").disabled = true;
     drugInput.clear();
     cards.reset();
     resetKidneyCard();
@@ -81,6 +83,9 @@ $("#copy-all").addEventListener("click", async () => {
   toast((await copyText(text)) ? "Copied summary" : "Copy failed");
 });
 $("#print").addEventListener("click", () => window.print());
+$("#share").addEventListener("click", shareCheck);
+
+openSharedCheck();
 
 function updateKidney() {
   const { values, errors } = readPatient(form);
@@ -108,10 +113,11 @@ function calculate() {
   }
   updateKidney();
   calculated = true;
+  $("#share").disabled = false;
   haptic("light");
   const drugs = drugInput.drugs;
   cards.sync(drugs, patientPayload());
-  history.add({ patient: current.values, drugs, crcl: current.renal.crcl });
+  recentChecks.add({ patient: current.values, drugs, crcl: current.renal.crcl });
   if (window.matchMedia("(max-width: 959px)").matches) {
     $("#results").scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
   }
@@ -156,6 +162,42 @@ function applyQuickInput() {
 function loadHistoryItem(item) {
   fillPatient(form, item.patient);
   drugInput.set(item.drugs);
+  calculate();
+}
+
+async function shareCheck() {
+  if (!current) {
+    return;
+  }
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = encodeCheck({
+    patient: { ...current.values, weightBasis: current.renal.crclWeight.basis },
+    drugs: drugInput.drugs,
+    defaultRoute: new FormData(form).get("route"),
+  });
+  const link = url.toString();
+  if (navigator.share && window.matchMedia("(pointer: coarse)").matches) {
+    try {
+      await navigator.share({ title: "Renal dose check", url: link });
+      return;
+    } catch {
+      // Cancelled or unsupported: fall back to copying.
+    }
+  }
+  toast((await copyText(link)) ? "Link copied" : "Copy failed");
+}
+
+/** Opens a check shared as a #c=... link, then removes it from the address bar. */
+function openSharedCheck() {
+  const shared = decodeCheck(window.location.hash);
+  if (!shared) {
+    return;
+  }
+  history.replaceState(null, "", window.location.pathname);
+  fillPatient(form, shared.patient);
+  setDefaultRoute(form, shared.defaultRoute);
+  drugInput.set(shared.drugs);
   calculate();
 }
 
