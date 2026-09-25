@@ -90,6 +90,7 @@ export function normalizeAssistPayload(data, values = {}) {
         renalBand: `CrCl ${formatNumber(values.crcl)} mL/min`,
         crcl: values.crcl,
         egfr: values.egfr,
+        creatinine: values.creatinine,
         sourceUrl: data.sourceUrl || buildDailyMedSearchUrl(values.drug || ""),
         trustSourceEvidence: isParserResult || isSpecialResult,
       });
