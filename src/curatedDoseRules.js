@@ -1,3 +1,4 @@
+import { joinDoseText } from "./doseText.js";
 import { normalizeDrugKey } from "./drugNormalizer.js";
 import { draftRenalDoseRules } from "./data/renalRules/index.js";
 import { RULE_VERIFICATIONS } from "./data/renalRules/verifications.js";
@@ -1171,7 +1172,7 @@ function structuredBadge(record, reviewLevel, fallbackBadge) {
 }
 
 function formatStructuredRuleRecommendation(rule) {
-  return `${rule.dose} ${formatInterval(rule.interval)}`;
+  return joinDoseText(rule.dose, formatInterval(rule.interval));
 }
 
 function buildStructuredNote(record, rule, controls) {
@@ -1230,11 +1231,11 @@ function isJustBelow(value) {
 
 function formatVariants(variants) {
   if (variants.length === 1) {
-    return `${variants[0].dose} ${formatInterval(variants[0].interval)}`;
+    return joinDoseText(variants[0].dose, formatInterval(variants[0].interval));
   }
 
   return variants
-    .map((variant) => `${variant.condition}: ${variant.dose} ${formatInterval(variant.interval)}`)
+    .map((variant) => `${variant.condition}: ${joinDoseText(variant.dose, formatInterval(variant.interval))}`)
     .join("; ");
 }
 
