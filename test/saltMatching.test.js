@@ -34,3 +34,19 @@ test("prodrugs that are dosed differently stay distinct", () => {
   assert.equal(lookup("tenofovir disoproxil fumarate")?.drugName, "Tenofovir disoproxil fumarate");
   assert.equal(lookup("tenofovir"), null);
 });
+
+test("a label-curated note about another band does not force review", () => {
+  const guidance = findCuratedRenalDoseGuidance({
+    drugQuery: "nebivolol",
+    normalizedDrug: "nebivolol",
+    route: "ORAL",
+    crcl: 60,
+    egfr: 60,
+    age: 60,
+    weight: 70,
+    sex: "male",
+    creatinine: 1.2,
+  });
+  assert.equal(guidance.status, "curated_draft_matched");
+  assert.match(guidance.recommendation, /5 mg/);
+});
