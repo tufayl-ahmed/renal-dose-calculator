@@ -1,4 +1,4 @@
-import { normalizeDrugKey } from "./drugNormalizer.js";
+import { baseDrugKey, normalizeDrugKey } from "./drugNormalizer.js";
 import { DRUG_AUTOCOMPLETE_ITEMS } from "./drugAutocompleteData.js";
 import { COVERAGE_INDEX } from "./data/coverageIndex.js";
 
@@ -85,7 +85,7 @@ export function isSystemicAutocompleteCandidate(item) {
  * | "extracted", routes } or null when only the live label lookup covers it.
  */
 export function getDrugCoverage(name) {
-  const entry = COVERAGE_INDEX[normalizeDrugKey(name)];
+  const entry = COVERAGE_INDEX[normalizeDrugKey(name)] || COVERAGE_INDEX[baseDrugKey(name)];
   if (!entry) {
     return null;
   }
