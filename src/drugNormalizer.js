@@ -141,6 +141,42 @@ export function normalizeDrugKey(value) {
     .join("");
 }
 
+// Salt, ester and hydrate words that do not change renal dosing, so
+// "olmesartan" finds "Olmesartan Medoxomil". Tenofovir disoproxil vs
+// alafenamide (and similar prodrug pairs) are dosed differently and are
+// deliberately not listed.
+const SALT_WORDS = new Set([
+  "acetate", "axetil", "besylate", "bitartrate", "bromide", "calcium", "citrate", "dihydrate",
+  "dipropionate", "disodium", "fumarate", "gluconate", "hcl", "hydrobromide", "hydrochloride",
+  "hyclate", "kamedoxomil", "lactate", "magnesium", "maleate", "medoxomil", "mesylate",
+  "monohydrate", "phosphate", "potassium", "sodium", "succinate", "sulfate", "tartrate",
+  "trihydrate",
+]);
+
+const INORGANIC_ANIONS = new Set([
+  "bicarbonate", "carbonate", "chloride", "fluoride", "hydroxide", "iodide", "nitrate", "oxide",
+]);
+
+/**
+ * normalizeDrugKey without salt words; used only as a fallback match.
+ * Returns "" when stripping would leave nothing (e.g. "potassium chloride").
+ */
+export function baseDrugKey(value) {
+  const parts = compactDrugName(value)
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(/\s+/)
+    .filter((part) => part && part !== "and" && !FORM_WORDS.has(part));
+  const base = parts.filter((part) => !SALT_WORDS.has(part));
+  // Electrolytes: the metal is the drug ("sodium chloride" ≠ "potassium chloride").
+  if (base.every((part) => INORGANIC_ANIONS.has(part))) {
+    return parts.join("");
+  }
+  return base.length < parts.length ? base.join("") : parts.join("");
+}
+
 function buildNormalizationResult({ original, searchTerm, displayName, source, rxcui = "" }) {
   const changed = normalizeDrugKey(original) !== normalizeDrugKey(searchTerm);
 

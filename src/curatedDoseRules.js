@@ -1,5 +1,5 @@
 import { joinDoseText } from "./doseText.js";
-import { normalizeDrugKey } from "./drugNormalizer.js";
+import { baseDrugKey, normalizeDrugKey } from "./drugNormalizer.js";
 import { draftRenalDoseRules } from "./data/renalRules/index.js";
 import { RULE_VERIFICATIONS } from "./data/renalRules/verifications.js";
 import { candidateRenalDoseRules } from "./data/renalRules/candidates.js";
@@ -889,6 +889,15 @@ function findCuratedRecord(records, drugQuery, normalizedDrug, route) {
     .filter(Boolean)
     .map(normalizeDrugKey);
 
+  const baseKeys = [
+    drugQuery,
+    normalizedDrug?.searchTerm,
+    normalizedDrug?.displayName,
+    normalizedDrug?.original,
+  ]
+    .filter(Boolean)
+    .map(baseDrugKey);
+
   const queryLiteralKeys = [
     drugQuery,
     normalizedDrug?.searchTerm,
@@ -902,9 +911,13 @@ function findCuratedRecord(records, drugQuery, normalizedDrug, route) {
     const recordKeys = [record.drugName, record.searchTerm, ...record.aliases].map(normalizeDrugKey);
     const recordLiteralKeys = [record.drugName, record.searchTerm, ...record.aliases].map(literalDrugKey);
     const normalizedMatch = keys.some((key) => recordKeys.includes(key));
+    const recordBaseKeys = [record.drugName, record.searchTerm, ...record.aliases].map(baseDrugKey);
+    const baseMatch = !normalizedMatch && baseKeys.some((key) => recordBaseKeys.includes(key));
     const literalScore = queryLiteralKeys.some((key) => recordLiteralKeys.includes(key)) ? 10 : 0;
     const routeHintScore = scoreRouteHint(queryLiteralKeys, record);
-    return normalizedMatch ? { record, score: literalScore + routeHintScore } : null;
+    // Exact name matches always outrank salt-stripped ones.
+    const exactScore = normalizedMatch ? 20 : 0;
+    return normalizedMatch || baseMatch ? { record, score: exactScore + literalScore + routeHintScore } : null;
   })
     .filter(Boolean)
     .sort((a, b) => b.score - a.score)
