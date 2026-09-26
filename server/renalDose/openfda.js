@@ -1,5 +1,6 @@
 import { LABEL_CACHE_TTL_SECONDS, readJsonCache, writeJsonCache } from "./cache.js";
 import { compactText, escapeRegExp, routeDisplayName, routeSentenceName, truncate } from "./format.js";
+import { baseDrugKey } from "../../src/drugNormalizer.js";
 
 const OPENFDA_LABEL_URL = "https://api.fda.gov/drug/label.json";
 
@@ -49,9 +50,16 @@ export async function lookupDrugLabel({ drug, route }) {
     };
   }
 
-  const label =
+  let label =
     chooseBestLabel(hasRouteFilter ? routeMatches : humanPrescriptionMatches, drug) ||
     (!hasRouteFilter ? chooseBestLabel(matches, drug) : null);
+
+  // The first page of results can be all combinations (e.g. "hydrocodone"
+  // returns 25 hydrocodone/acetaminophen labels); look past it for the
+  // single-ingredient product before settling for a combination.
+  if (label && data.search && !COMBO_SEPARATOR.test(String(drug).toLowerCase()) && isCombinationLabel(label)) {
+    label = (await findSingleIngredientLabel(drug, route, data.search)) || label;
+  }
 
   if (!label) {
     return {
@@ -75,10 +83,10 @@ async function fetchOpenFdaLabels(drug, route) {
     const cached = await readJsonCache(url);
     if (cached && Array.isArray(cached.results) && cached.results.length) {
       if (!firstDataWithResults) {
-        firstDataWithResults = cached;
+        firstDataWithResults = { ...cached, search };
       }
       if (!hasRouteFilter || filterByRoute(cached.results.filter(isHumanDrugLabel), route).length) {
-        return cached;
+        return { ...cached, search };
       }
       continue;
     }
@@ -93,14 +101,61 @@ async function fetchOpenFdaLabels(drug, route) {
     if (Array.isArray(data.results) && data.results.length) {
       await writeJsonCache(url, data, LABEL_CACHE_TTL_SECONDS);
       if (!firstDataWithResults) {
-        firstDataWithResults = data;
+        firstDataWithResults = { ...data, search };
       }
       if (!hasRouteFilter || filterByRoute(data.results.filter(isHumanDrugLabel), route).length) {
-        return data;
+        return { ...data, search };
       }
     }
   }
   return firstDataWithResults || { results: [] };
+}
+
+/**
+ * Finds the most common single-ingredient generic name for the queried drug
+ * among all matches of `search` (via openFDA's count endpoint), then returns
+ * the best label for exactly that product, or null.
+ */
+async function findSingleIngredientLabel(drug, route, search) {
+  const queryBase = baseDrugKey(drug);
+  if (!queryBase) {
+    return null;
+  }
+  const counts = await fetchOpenFdaJson({ search, count: "openfda.generic_name.exact" });
+  const term = (counts?.results || [])
+    .map((row) => String(row.term || ""))
+    .find((name) => name && !COMBO_SEPARATOR.test(name.toLowerCase()) && baseDrugKey(name) === queryBase);
+  if (!term) {
+    return null;
+  }
+  const exactSearch = [`openfda.generic_name.exact:"${term.replaceAll('"', "")}"`, buildOpenFdaRouteClause(route)]
+    .filter(Boolean)
+    .join(" AND ");
+  const data = await fetchOpenFdaJson({ search: exactSearch, limit: "25" });
+  const labels = (data?.results || []).filter(isHumanDrugLabel).filter((item) => !isCombinationLabel(item));
+  return chooseBestLabel(route && route !== "ALL" ? filterByRoute(labels, route) : labels, drug);
+}
+
+/** Cached openFDA GET; returns null on 404 or failure (callers fall back). */
+async function fetchOpenFdaJson(params) {
+  const url = `${OPENFDA_LABEL_URL}?${new URLSearchParams(params).toString()}`;
+  const cached = await readJsonCache(url);
+  if (cached && Array.isArray(cached.results)) {
+    return cached;
+  }
+  try {
+    const response = await fetchWithRetry(url);
+    if (!response.ok) {
+      return null;
+    }
+    const data = await response.json();
+    if (Array.isArray(data.results) && data.results.length) {
+      await writeJsonCache(url, data, LABEL_CACHE_TTL_SECONDS);
+    }
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 async function fetchWithRetry(url, options = {}, retryOptions = {}) {
@@ -426,7 +481,10 @@ function scoreLabelMatch(label, drug) {
   const allNames = [...brandNames, ...genericNames, ...substanceNames].filter(Boolean);
   const routeEvidence = getRouteEvidence(label).join(" ").toLowerCase();
   const rawQuery = String(drug || "").toLowerCase();
-  const queryIsCombo = /\b(?:and|with)\b|[/+,;]/.test(query);
+  // Test the raw query and names: normalizing strips the "," and "/" that mark
+  // combinations ("LEVOTHYROXINE, LIOTHYRONINE").
+  const queryIsCombo = COMBO_SEPARATOR.test(rawQuery);
+  const labelIsCombo = isCombinationLabel(label);
   let score = 0;
 
   if (genericNames.some((name) => name === query)) {
@@ -435,16 +493,31 @@ function scoreLabelMatch(label, drug) {
   if (brandNames.some((name) => name === query)) {
     score += 160;
   }
-  if (!queryIsCombo && substanceNames.some((name) => name === query)) {
+  // A substance match only counts when it is the label's only substance.
+  if (!queryIsCombo && !labelIsCombo && substanceNames.some((name) => name === query)) {
     score += 45;
   }
-  if (allNames.some((name) => name === `${query} hydrochloride` || name === `${query} hcl`)) {
+  const hydrochlorideMatch = allNames.some((name) => name === `${query} hydrochloride` || name === `${query} hcl`);
+  const sulfateMatch = genericNames.some((name) => name === `${query} sulfate` || name === `${query} sulphate`);
+  if (hydrochlorideMatch) {
     score += 90;
   }
-  if (genericNames.some((name) => name === `${query} sulfate` || name === `${query} sulphate`)) {
+  if (sulfateMatch) {
     score += 140;
   }
-  if (substanceNames.some((name) => name === query)) {
+  // Any other salt of the same single ingredient ("levothyroxine sodium",
+  // "amlodipine besylate") is the same drug.
+  const queryBase = baseDrugKey(drug);
+  if (
+    !hydrochlorideMatch &&
+    !sulfateMatch &&
+    !labelIsCombo &&
+    queryBase &&
+    genericNames.some((name) => name !== query && baseDrugKey(name) === queryBase)
+  ) {
+    score += 140;
+  }
+  if (!labelIsCombo && substanceNames.some((name) => name === query)) {
     score += 80;
   }
   if (genericNames.some((name) => name.startsWith(`${query} `))) {
@@ -456,13 +529,14 @@ function scoreLabelMatch(label, drug) {
   if (allNames.some((name) => name.includes(query))) {
     score += 15;
   }
-  if (!queryIsCombo && genericNames.some((name) => /\b(?:and|with)\b|[/+,;]/.test(name) && name.includes(query))) {
+  if (!queryIsCombo && labelIsCombo && allNames.some((name) => name.includes(query))) {
     score -= 160;
   }
   if (
     !queryIsCombo &&
+    labelIsCombo &&
     brandNames.some((name) => /\b(?:xr|duo|triple|combination)\b/.test(name)) &&
-    genericNames.some((name) => name.includes(query) && /\b(?:and|with)\b|[/+,;]/.test(name))
+    genericNames.some((name) => name.includes(query))
   ) {
     score -= 60;
   }
@@ -485,6 +559,21 @@ function scoreLabelMatch(label, drug) {
     score += 80;
   }
   return score;
+}
+
+const COMBO_SEPARATOR = /\b(?:and|with)\b|[/+,;]/;
+
+/**
+ * More than one distinct substance, or a generic name joined with "and",
+ * "/", "," etc. Hyphens are not separators: biosimilar names use them
+ * ("insulin glargine-yfgn").
+ */
+function isCombinationLabel(label) {
+  const substances = new Set(readOpenFdaArray(label, "substance_name").map(normalizeNameForScore).filter(Boolean));
+  if (substances.size > 1) {
+    return true;
+  }
+  return readOpenFdaArray(label, "generic_name").some((name) => COMBO_SEPARATOR.test(String(name).toLowerCase()));
 }
 
 function normalizeNameForScore(value) {
