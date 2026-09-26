@@ -167,7 +167,7 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
     sourceUrl: fallback.sourceUrl || compactText(value.sourceUrl) || "",
   };
 
-  if (result.status === "dose_found" && !isRenalBand(result.renalBand)) {
+  if ((result.status === "dose_found" || result.status === "no_renal_adjustment") && !isRenalBand(result.renalBand)) {
     return buildReviewSourceResult(
       { ...fallback, ...result, renalBand: fallback.renalBand || "" },
       "The AI answer was not tied to a kidney-function band."
@@ -476,7 +476,7 @@ function buildReviewSourceResult(fallback, reason) {
     route: fallback.route || "All routes",
     renalMetricUsed: normalizeRenalMetric(fallback.renalMetricUsed),
     renalBand: fallback.renalBand || "",
-    dose: shouldUseReason ? "DailyMed source guidance" : fallbackDose || "DailyMed source guidance",
+    dose: shouldUseReason ? "Review DailyMed source" : fallbackDose || "Review DailyMed source",
     frequency: shouldUseReason ? reason : fallbackFrequency || "Use linked label details for full context",
     dialysisNote: fallback.dialysisNote || "",
     importantCautions: [
@@ -491,7 +491,9 @@ function buildReviewSourceResult(fallback, reason) {
 function isRenalBand(value) {
   const band = compactText(value);
   return (
-    !band || RENAL_BAND_TERM.test(band) || (/\d/.test(band) && BARE_NUMERIC_BAND.test(band.replace(BAND_COMPARISON_WORDS, " ")))
+    !band ||
+    RENAL_BAND_TERM.test(band) ||
+    (/\d/.test(band) && BARE_NUMERIC_BAND.test(band.replace(BAND_COMPARISON_WORDS, " ")))
   );
 }
 
@@ -505,7 +507,12 @@ function isInformativeReviewText(value, drugName) {
   if (name && text.toLowerCase() === name) {
     return false;
   }
-  return DOSE_UNIT.test(text) || RENAL_ACTION_PHRASE.test(text) || RENAL_CAUTION_TERM.test(text) || text.split(" ").length >= 3;
+  return (
+    DOSE_UNIT.test(text) ||
+    RENAL_ACTION_PHRASE.test(text) ||
+    RENAL_CAUTION_TERM.test(text) ||
+    text.split(" ").length >= 3
+  );
 }
 
 function usableDrugName(value) {
