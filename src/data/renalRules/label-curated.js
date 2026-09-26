@@ -697,6 +697,450 @@ export const labelCuratedRules = [
       band("lt", 0, 90, "Increased risk of adverse reactions: follow elimination-promoting measures", "monitor methotrexate levels and renal function", "CrCl < 90 mL/min", "caution"),
     ],
   }),
+  // ---- Batch 4 ----
+  record({
+    name: "Methotrexate", route: "SC", setId: "0d63ba29-b692-41b4-87e8-351265c8273f", hint: "caution",
+    section: "Dosage and Administration; 8.6 Renal Impairment",
+    note: "Monitor serum creatinine; hydrate and alkalinize urine with intermediate or high doses.",
+    rules: all("Renal impairment: increased risk of adverse reactions", "monitor renal function; label gives no specific dose reduction"),
+  }),
+  record({
+    name: "Glyburide", route: "ORAL", setId: "05341afe-5b7a-462a-a196-689cb09f83fc", hint: "caution",
+    section: "Dosage and Administration",
+    note: "To avoid hypoglycemia; the label gives no specific dose.",
+    rules: all("Impaired renal function: conservative initial and maintenance dosing", "titrate carefully to avoid hypoglycemia"),
+  }),
+  record({
+    name: "Methylprednisolone", route: "IV", setId: "77a8d96c-37df-4f3a-9757-b2d4131ff82b", hint: "caution",
+    section: "Precautions: Cardio-renal",
+    note: "Sodium retention, edema and potassium loss may occur.",
+    rules: all("Renal insufficiency: use with caution", "no dose adjustment in the label"),
+  }),
+  record({
+    name: "Cefadroxil", route: "ORAL", setId: "02566385-46f3-255a-e063-6294a90a1d1c",
+    section: "Dosage and Administration: Renal Impairment",
+    note: "Adults: initial dose 1000 mg, then 500 mg maintenance at the interval for CrCl (mL/min/1.73 m²).",
+    rules: [
+      band("gt", 50, Infinity, "Usual dose", "no renal adjustment"),
+      band("range", 25, 50, "1000 mg first dose, then 500 mg", "every 12 hours", "CrCl 25–50"),
+      band("range", 10, 24.99, "1000 mg first dose, then 500 mg", "every 24 hours", "CrCl 10–25"),
+      band("lt", 0, 10, "1000 mg first dose, then 500 mg", "every 36 hours", "CrCl 0–10"),
+    ],
+  }),
+  record({
+    name: "Pirfenidone", route: "ORAL", setId: "07ff87b3-0a88-15b4-e063-6294a90a72ab", hint: "caution",
+    section: "8.7 Renal Impairment",
+    note: "Label bands: mild CrCl 50–80, moderate 30–50, severe < 30.",
+    rules: [
+      {
+        type: "all", min: 0, max: Infinity,
+        variants: [
+          { condition: "Mild, moderate or severe renal impairment", dose: "Use with caution", interval: "monitor for adverse reactions; consider dose modification or discontinuation" },
+          { condition: "End-stage renal disease on dialysis", dose: "Not recommended", interval: "not studied" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Butalbital Acetaminophen and Caffeine", route: "ORAL", setId: "03475828-eae2-49ed-a1c0-8074f35c712d", hint: "caution",
+    section: "Precautions",
+    note: "Monitor renal function with serial tests in severe renal disease.",
+    rules: all("Severe renal impairment: prescribe with caution", "monitor effects with serial renal function tests"),
+  }),
+  record({
+    name: "Emtricitabine and Tenofovir Disoproxil", route: "ORAL", setId: "1289b02c-50f7-4adc-80d1-24afc1bad01b",
+    section: "2.6 Dosage in Patients with Renal Impairment",
+    note: "Treatment of HIV-1 and HIV-1 PrEP have different renal limits.",
+    rules: [
+      band("gte", 60, Infinity, "Usual dose: 1 tablet once daily", "treatment and PrEP"),
+      {
+        type: "range", min: 50, max: 59.99,
+        variants: [
+          { condition: "HIV-1 treatment", dose: "1 tablet", interval: "once daily" },
+          { condition: "HIV-1 PrEP", dose: "Not recommended", interval: "CrCl below 60 mL/min" },
+        ],
+      },
+      {
+        type: "range", min: 30, max: 49.99,
+        variants: [
+          { condition: "HIV-1 treatment", dose: "1 tablet", interval: "every 48 hours" },
+          { condition: "HIV-1 PrEP", dose: "Not recommended", interval: "CrCl below 60 mL/min" },
+        ],
+      },
+      band("lt", 0, 30, "Not recommended", "CrCl below 30 mL/min or hemodialysis", "Treatment and PrEP"),
+    ],
+  }),
+  record({
+    name: "Posaconazole", route: "IV", setId: "1ebbd88b-547b-4b49-ab73-98094a2d5a79", metric: "egfr",
+    section: "2.11 Dosage Modifications in Patients with Renal Impairment",
+    note: "The IV vehicle accumulates with reduced eGFR.",
+    rules: [
+      band("gte", 50, Infinity, "Usual IV dose", "no renal adjustment"),
+      band("lt", 0, 50, "Avoid IV posaconazole unless benefit justifies the risk", "if used, closely monitor serum creatinine", "eGFR < 50 mL/min/1.73 m²"),
+    ],
+  }),
+  record({
+    name: "Ephedrine", route: "IV", setId: "08f5ec19-7b53-681b-e063-6294a90acc86", hint: "caution",
+    section: "Use in Specific Populations: Renal Impairment",
+    note: "Slower elimination may prolong the effect and adverse reactions.",
+    rules: all("Renal impairment: monitor carefully after the initial bolus", "label gives no specific dose change"),
+  }),
+  record({
+    name: "Perphenazine", route: "ORAL", setId: "003fe32c-a55d-4191-99fa-1013522b1b2e", hint: "caution",
+    section: "Precautions",
+    note: "Monitor renal function on long-term therapy.",
+    rules: all("Diminished renal function: use with caution", "stop if BUN becomes abnormal"),
+  }),
+  record({
+    name: "Zonisamide", route: "ORAL", setId: "061fdccc-d08e-4e42-8a32-54afb6c89701", hint: "caution",
+    section: "Dosage and Administration: Patients with Renal or Hepatic Disease",
+    note: "Renal disease predisposes to metabolic acidosis with zonisamide.",
+    rules: all("Renal disease: treat with caution; may need slower titration", "monitor more frequently"),
+  }),
+  record({
+    name: "Gentamicin", route: "IV", setId: "09cf88af-59da-f147-e063-6294a90aac99", hint: "caution",
+    section: "Dosage and Administration: Patients with Impaired Renal Function",
+    note: "Dose must be adjusted to avoid excessive blood levels.",
+    rules: all("Impaired renal function: adjust dose (e.g. usual doses at longer intervals)", "monitor serum gentamicin concentrations"),
+  }),
+  record({
+    name: "Olmesartan Medoxomil and Hydrochlorothiazide", route: "ORAL", setId: "0360db3a-17cf-4d24-97ba-e0a6fcc94351",
+    section: "8.6 Renal Impairment",
+    note: "Monitor renal function and potassium in susceptible patients.",
+    rules: [
+      band("gt", 30, Infinity, "No dose adjustment", "mild (CrCl 60–90) or moderate (CrCl 30–60) impairment"),
+      band("range", 0, 30, "Safety and effectiveness not established", "CrCl ≤ 30 mL/min", "Severe renal impairment", "not-studied"),
+    ],
+  }),
+  record({
+    name: "Ranolazine", route: "ORAL", setId: "00979fb3-d70f-493d-94ca-2914cbadaa9d",
+    section: "8.7 Use in Patients with Renal Impairment; 5.2",
+    note: "In a study with CrCl < 30, 2 of 4 subjects developed acute renal failure.",
+    rules: [
+      band("gte", 60, Infinity, "Usual dose", "no renal adjustment stated"),
+      band("range", 30, 59.99, "Monitor renal function periodically", "discontinue if acute renal failure develops", "Moderate renal impairment", "caution"),
+      band("lt", 0, 30, "Acute renal failure reported: monitor renal function closely", "discontinue if acute renal failure develops", "Severe renal impairment", "caution"),
+    ],
+  }),
+  record({
+    name: "Deferasirox", route: "ORAL", setId: "0354cbc7-9b32-4513-976a-2ef2da39b6b3", metric: "egfr",
+    section: "2.5 Patients with Baseline Renal Impairment",
+    note: "Usual initial dose: 14 mg/kg/day (transfusional iron overload) or 7 mg/kg/day (NTDT).",
+    rules: [
+      band("gt", 60, Infinity, "Usual initial dose", "once daily"),
+      band("range", 40, 60, "Reduce the starting dose by 50%", "monitor renal function", "eGFR 40–60 mL/min/1.73 m²"),
+      band("lt", 0, 40, "Do not use", "eGFR < 40 mL/min/1.73 m²", "Renal impairment"),
+    ],
+  }),
+  record({
+    name: "Timolol", route: "ORAL", setId: "0bc40b2c-65eb-4095-87e6-4752d5b19a3a", hint: "caution",
+    section: "Precautions: Impaired Hepatic or Renal Function",
+    note: "Excreted mainly by the kidneys.",
+    rules: all("Renal insufficiency: dosage reductions may be necessary", "label gives no specific amount"),
+  }),
+  record({
+    name: "Midazolam", route: "IV", setId: "3c2fd6ee-4ede-4ee4-8c05-34c93598f381", hint: "caution",
+    section: "Warnings",
+    note: "Patients with chronic renal failure eliminate midazolam more slowly.",
+    rules: all("Chronic renal failure: slower elimination", "titrate carefully; label gives no specific dose"),
+  }),
+  record({
+    name: "Amlodipine and Benazepril", route: "ORAL", setId: "02e233c4-48d1-456d-8fc8-f99a06ef854a",
+    section: "2.2; 5.5 Impaired Renal Function; 8.6",
+    note: "Monitor renal function periodically.",
+    rules: [
+      band("gte", 30, Infinity, "No dose adjustment", "mild or moderate renal impairment"),
+      band("lt", 0, 30, "Not recommended", "severe renal impairment", "Severe renal impairment"),
+    ],
+  }),
+  record({
+    name: "Enoxaparin", route: "IV", setId: "066f27ec-352c-4051-ba29-248e292690db",
+    section: "2.3 Dose Reduction for Patients with Severe Renal Impairment (Table 1)",
+    note: "IV use is limited to the STEMI bolus; maintenance and prophylaxis doses are subcutaneous.",
+    rules: [
+      band("gte", 30, Infinity, "Usual dose", "no renal adjustment for CrCl ≥ 30 mL/min"),
+      {
+        type: "lt", min: 0, max: 30,
+        variants: [
+          { condition: "Prophylaxis (surgery or acute medical illness)", dose: "30 mg SC", interval: "once daily" },
+          { condition: "DVT treatment, UA/NSTEMI", dose: "1 mg/kg SC", interval: "once daily" },
+          { condition: "STEMI, age < 75", dose: "30 mg IV bolus plus 1 mg/kg SC, then 1 mg/kg SC", interval: "once daily" },
+          { condition: "STEMI, age ≥ 75", dose: "1 mg/kg SC (no bolus)", interval: "once daily" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Norepinephrine", route: "IV", setId: "759807dd-61a8-4f6f-8bf5-f6ee773c81bc", hint: "caution",
+    section: "5.1 Tissue Ischemia",
+    note: "The label gives no renal dose adjustment.",
+    rules: all("Hypovolemia: correct first (renal perfusion and urine output can fall)", "no renal dose adjustment in the label"),
+  }),
+  record({
+    name: "Hydromorphone", route: "IV", setId: "31d5a37a-0e90-4e88-be14-75c877be9de2",
+    section: "2.4 Dosage Modifications in Patients with Renal Impairment",
+    note: "Titrate to effect from the reduced starting dose.",
+    rules: all("Renal impairment: start at one-quarter to one-half the usual starting dose", "depending on the degree of impairment"),
+  }),
+  record({
+    name: "Hydromorphone", route: "SC", setId: "31d5a37a-0e90-4e88-be14-75c877be9de2",
+    section: "2.4 Dosage Modifications in Patients with Renal Impairment",
+    note: "Titrate to effect from the reduced starting dose.",
+    rules: all("Renal impairment: start at one-quarter to one-half the usual starting dose", "depending on the degree of impairment"),
+  }),
+  record({
+    name: "Buprenorphine", route: "IV", setId: "23aa1bb3-cecf-4e62-29bb-48488bb66fc3", hint: "caution",
+    section: "Precautions",
+    note: "The label gives no specific dose change.",
+    rules: all("Severe renal impairment: administer with caution", "label gives no specific dose change"),
+  }),
+  record({
+    name: "Nitrofurantoin Macrocrystals", route: "ORAL", setId: "075fe819-fc4f-2dce-e063-6294a90ad823",
+    section: "Contraindications",
+    note: "Monitor renal function periodically on long-term therapy.",
+    rules: [
+      band("gte", 60, Infinity, "Usual dose", "no renal adjustment"),
+      band("lt", 0, 60, "Contraindicated", "CrCl under 60 mL/min, anuria or oliguria", "Significant renal impairment"),
+    ],
+  }),
+  // ---- Batch 5 ----
+  record({
+    name: "Azacitidine", route: "IV", setId: "060d56e7-1a24-87c1-7f40-149ecf424f7c", hint: "caution",
+    section: "2.6 Dosage Adjustment Based on Serum Electrolytes and Renal Toxicity",
+    note: "Also reduce by 50% if serum bicarbonate falls below 20 mEq/L without explanation.",
+    rules: all("Unexplained rise in BUN or creatinine: delay the next cycle until normal or baseline, then reduce the dose by 50%", "monitor renal function each cycle"),
+  }),
+  record({
+    name: "Azacitidine", route: "SC", setId: "060d56e7-1a24-87c1-7f40-149ecf424f7c", hint: "caution",
+    section: "2.6 Dosage Adjustment Based on Serum Electrolytes and Renal Toxicity",
+    note: "Also reduce by 50% if serum bicarbonate falls below 20 mEq/L without explanation.",
+    rules: all("Unexplained rise in BUN or creatinine: delay the next cycle until normal or baseline, then reduce the dose by 50%", "monitor renal function each cycle"),
+  }),
+  record({
+    name: "Calcitriol", route: "ORAL", setId: "1bd717a4-5fdf-4697-a6b2-9df55c6517bb", hint: "caution",
+    section: "Precautions",
+    note: "Risk of ectopic calcification in renal failure.",
+    rules: all("Renal failure: use with caution", "on chronic dialysis, avoid magnesium-containing antacids (hypermagnesemia)"),
+  }),
+  record({
+    name: "Cyclosporine", route: "ORAL", setId: "1952d4c7-a40e-4924-b669-c41400774cb9", hint: "caution",
+    section: "Dosage and Administration; Contraindications",
+    note: "Nephrotoxic; monitor renal function and blood concentrations.",
+    rules: [
+      {
+        type: "all", min: 0, max: Infinity,
+        variants: [
+          { condition: "Rheumatoid arthritis or psoriasis", dose: "Impaired renal function: must not receive cyclosporine", interval: "contraindicated" },
+          { condition: "Transplant", dose: "Monitor renal function; reduce dose if indicated", interval: "guide by blood concentrations" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Leflunomide", route: "ORAL", setId: "006b5bf4-97c0-48dc-8e5e-3c6f64d7bdc1", hint: "caution",
+    section: "Use in Specific Populations: Renal Insufficiency",
+    note: "The label gives no specific dose change.",
+    rules: all("Renal insufficiency: use with caution", "label gives no specific dose change"),
+  }),
+  record({
+    name: "Pyridostigmine", route: "IV", setId: "208af931-a44e-43bf-a265-8e08534dc55f", hint: "caution",
+    section: "Precautions",
+    note: "Titrate to effect.",
+    rules: all("Renal disease: lower doses may be required", "titrate dosage to effect"),
+  }),
+  record({
+    name: "Drospirenone and Ethinyl Estradiol", route: "ORAL", setId: "0f8f8a21-cee8-462f-98b3-6c06f2f33e0d", hint: "caution",
+    section: "8.6 Patients with Renal Impairment; Contraindications",
+    note: "Drospirenone raises potassium; exposure increases with CrCl 30–49 mL/min.",
+    rules: all("Renal impairment: contraindicated", "hyperkalemia risk"),
+  }),
+  record({
+    name: "Pemetrexed Disodium", search: "pemetrexed disodium", route: "IV", setId: "1d8bcf03-e055-a274-7844-ae9a523e3c4c",
+    section: "2 Dosage and Administration: Renal Impairment",
+    note: "CrCl by Cockcroft-Gault.",
+    rules: [
+      band("gte", 45, Infinity, "500 mg/m² IV", "day 1 of each 21-day cycle"),
+      band("lt", 0, 45, "Not recommended: no recommended dose", "CrCl < 45 mL/min", "Renal impairment"),
+    ],
+  }),
+  record({
+    name: "Acetaminophen", route: "IV", setId: "0f67c1bd-915b-4681-88dd-22f5154a80b3",
+    section: "8.7 Patients with Renal Impairment",
+    note: "The label gives no specific interval or maximum.",
+    rules: [
+      band("gt", 30, Infinity, "Usual dose", "no renal adjustment"),
+      band("range", 0, 30, "Longer dosing intervals and a reduced total daily dose may be warranted", "CrCl ≤ 30 mL/min", "Severe renal impairment", "caution"),
+    ],
+  }),
+  record({
+    name: "Calcium Gluconate", route: "IV", setId: "13d7cfc9-ff7a-437e-8c21-d9709ac07d48",
+    section: "2.4 Dosage in Renal Impairment",
+    note: "Applies to all age groups.",
+    rules: all("Renal impairment: start at the lowest dose of the recommended range", "monitor serum calcium every 4 hours"),
+  }),
+  record({
+    name: "Liraglutide", route: "SC", setId: "0450d8a2-a88e-4849-9788-ed4f5246f223",
+    section: "8.6 Renal Impairment",
+    note: "Studied in moderate renal impairment (eGFR 30–60); watch for dehydration from GI adverse reactions.",
+    rules: all("No dose adjustment", "usual dose"),
+  }),
+  record({
+    name: "Magnesium Sulfate", route: "IV", setId: "5176ed24-015e-43fe-9eb4-85098debf5f1", hint: "caution",
+    section: "Dosage and Administration; Precautions",
+    note: "Magnesium is removed from the body solely by the kidneys.",
+    rules: all("Severe renal insufficiency: maximum 20 g per 48 hours", "check serum magnesium frequently"),
+  }),
+  record({
+    name: "Magnesium Sulfate Heptahydrate", route: "IV", setId: "27a581a3-2342-4cc3-b90f-6c739bdf7120", hint: "caution",
+    section: "Dosage and Administration; Precautions",
+    note: "Magnesium is removed from the body solely by the kidneys.",
+    rules: all("Severe renal insufficiency: maximum 20 g per 48 hours", "check serum magnesium frequently"),
+  }),
+  record({
+    name: "Irbesartan and Hydrochlorothiazide", route: "ORAL", setId: "17561aae-f0bc-4ffc-a007-985b17e9baf0",
+    section: "2.1 Dosage: Renal Impairment",
+    note: "Loop diuretics are preferred to thiazides in severe renal impairment.",
+    rules: [
+      band("gte", 30, Infinity, "Usual regimen", "CrCl > 30 mL/min"),
+      band("lt", 0, 30, "Not recommended", "CrCl < 30 mL/min", "Severe renal impairment"),
+    ],
+  }),
+  record({
+    name: "Irinotecan", route: "IV", setId: "4f98e9ed-f7b1-5346-af72-fccb0abf3f4b", hint: "caution",
+    section: "8.5 Patients with Renal Impairment; 5.4",
+    note: "Rare renal impairment and acute renal failure have been reported.",
+    rules: [
+      {
+        type: "all", min: 0, max: Infinity,
+        variants: [
+          { condition: "Impaired renal function", dose: "Use with caution", interval: "label gives no specific dose" },
+          { condition: "On dialysis", dose: "Not recommended", interval: "per label" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Captopril", route: "ORAL", setId: "1395ba5b-2fc9-41ff-9c43-e0740d781dee", hint: "caution",
+    section: "Dosage Adjustment in Renal Impairment",
+    note: "Captopril is excreted mainly by the kidneys.",
+    rules: all("Significant renal impairment: reduce the initial daily dose", "titrate slowly in small steps (1–2 week intervals)"),
+  }),
+  record({
+    name: "Ibuprofen and Famotidine", route: "ORAL", setId: "03733e49-7db4-4d98-b363-d0d23686ec72",
+    section: "8.6 Renal Insufficiency; 5.3 Renal Toxicity",
+    note: "The famotidine dose in the combination is fixed.",
+    rules: [
+      band("gte", 50, Infinity, "Use with caution; avoid in advanced renal disease", "monitor renal function", "CrCl ≥ 50 mL/min", "caution"),
+      band("lt", 0, 50, "Not recommended", "CrCl < 50 mL/min (fixed famotidine dose)", "Renal insufficiency"),
+    ],
+  }),
+  record({
+    name: "Clozapine", route: "ORAL", setId: "09231d80-6343-4a34-bd5b-100c547fd3c9", hint: "caution",
+    section: "2.8 Dosage Recommendations in Patients with Renal or Hepatic Impairment",
+    note: "The label gives no specific amount.",
+    rules: all("Significant renal impairment: dose reduction may be necessary", "label gives no specific amount"),
+  }),
+  record({
+    name: "Eribulin", route: "IV", setId: "1038e984-3bf7-5bbf-f1ec-ce15ae330efc",
+    section: "2.1 Recommended Dose; 8.7 Renal Impairment",
+    note: "Usual dose 1.4 mg/m² on days 1 and 8 of a 21-day cycle.",
+    rules: [
+      band("gte", 50, Infinity, "1.4 mg/m² IV", "days 1 and 8 of a 21-day cycle"),
+      band("range", 15, 49, "1.1 mg/m² IV", "days 1 and 8 of a 21-day cycle", "Moderate or severe renal impairment (CrCl 15–49)"),
+      band("lt", 0, 15, "Not studied", "CrCl < 15 mL/min", "End-stage renal disease", "not-studied"),
+    ],
+  }),
+  record({
+    name: "Piroxicam", route: "ORAL", setId: "0373da3a-7779-4e26-87f1-cd346018282c", hint: "caution",
+    section: "Warnings and Precautions: Renal Toxicity",
+    note: "The label gives no CrCl threshold for advanced renal disease.",
+    rules: all("Advanced renal disease: avoid unless benefits outweigh the risk of worsening renal function", "monitor renal function"),
+  }),
+  record({
+    name: "Prucalopride", route: "ORAL", setId: "70fced73-c25b-46cb-ad30-19328e6130c3",
+    section: "Table 1: Recommended Dosage Regimen and Dosage Adjustments",
+    note: "Adults with chronic idiopathic constipation.",
+    rules: [
+      band("gte", 30, Infinity, "2 mg", "once daily"),
+      {
+        type: "lt", min: 0, max: 30,
+        variants: [
+          { condition: "Severe renal impairment (CrCl < 30)", dose: "1 mg", interval: "once daily" },
+          { condition: "End-stage renal disease on dialysis", dose: "Avoid", interval: "per label" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Rufinamide", route: "ORAL", setId: "12fc41f9-b6a9-4bbd-afbe-5d269f5a42f6",
+    section: "2.3 Dosing in Patients Undergoing Hemodialysis; 8.6 Renal Impairment",
+    note: "Pharmacokinetics with CrCl < 30 were similar to healthy subjects.",
+    rules: [
+      {
+        type: "all", min: 0, max: Infinity,
+        variants: [
+          { condition: "Renal impairment", dose: "No dose adjustment", interval: "usual dose" },
+          { condition: "Hemodialysis", dose: "Consider adjusting the dose during dialysis", interval: "dialysis lowers exposure by about 30%" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Tenofovir Disoproxil", route: "ORAL", setId: "08a30772-02fc-4f63-e063-6394a90afd43",
+    section: "2.3 Dose Adjustment for Renal Impairment in Adults",
+    note: "Tenofovir disoproxil fumarate 300 mg tablets.",
+    rules: [
+      band("gte", 50, Infinity, "300 mg", "once daily"),
+      band("range", 30, 49, "300 mg", "every 48 hours", "CrCl 30–49 mL/min"),
+      band("range", 10, 29, "300 mg", "every 72–96 hours", "CrCl 10–29 mL/min"),
+      {
+        type: "lt", min: 0, max: 10,
+        variants: [
+          { condition: "Hemodialysis", dose: "300 mg", interval: "every 7 days or after about 12 hours of dialysis" },
+          { condition: "CrCl < 10, not on dialysis", dose: "No dosing recommendation", interval: "label gives none" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Tramadol and Acetaminophen", route: "ORAL", setId: "12f113b3-d6b1-a7b0-e063-6294a90a999d",
+    section: "2.4 Dosage Modification in Patients with Renal Impairment",
+    note: "Tramadol 37.5 mg / acetaminophen 325 mg tablets.",
+    rules: [
+      band("gte", 30, Infinity, "Usual dose", "no renal adjustment"),
+      band("lt", 0, 30, "Do not exceed 2 tablets", "every 12 hours", "CrCl < 30 mL/min"),
+    ],
+  }),
+  record({
+    name: "Brivaracetam", route: "ORAL", setId: "11ca0e1d-1c0d-4357-9ebd-ee1e87185dde",
+    section: "8.6 Renal Impairment",
+    note: "No data in end-stage renal disease on dialysis.",
+    rules: [
+      band("gte", 15, Infinity, "No dose adjustment", "usual dose"),
+      {
+        type: "lt", min: 0, max: 15,
+        variants: [
+          { condition: "End-stage renal disease on dialysis", dose: "Not recommended", interval: "no data" },
+          { condition: "Not on dialysis", dose: "No dose adjustment", interval: "usual dose" },
+        ],
+      },
+    ],
+  }),
+  record({
+    name: "Brivaracetam", route: "IV", setId: "2c6af271-3222-4602-98a6-14754f0a29ba",
+    section: "8.6 Renal Impairment",
+    note: "No data in end-stage renal disease on dialysis.",
+    rules: [
+      band("gte", 15, Infinity, "No dose adjustment", "usual dose"),
+      {
+        type: "lt", min: 0, max: 15,
+        variants: [
+          { condition: "End-stage renal disease on dialysis", dose: "Not recommended", interval: "no data" },
+          { condition: "Not on dialysis", dose: "No dose adjustment", interval: "usual dose" },
+        ],
+      },
+    ],
+  }),
 ];
 
 // Exported for tests of the helpers.
