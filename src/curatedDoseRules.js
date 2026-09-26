@@ -1058,10 +1058,16 @@ function findStructuredGuidance({ record, crcl, egfr, route, dialysis, indicatio
   };
 }
 
+// Label-curated records (src/data/renalRules/label-curated.js) are
+// self-contained: each band's text and hint carry its decision.
+function isLabelCurated(record) {
+  return record.reviewedBy === "Claude label curation (draft)";
+}
+
 function addStructuredOverlay(record) {
-  // Label-curated records are self-contained; overlays were written for the
-  // original draft records and some have no route restriction.
-  if (record.reviewedBy === "Claude label curation (draft)") {
+  // Overlays were written for the original draft records and some have no
+  // route restriction.
+  if (isLabelCurated(record)) {
     return record;
   }
   const recordKeys = [record.drugName, record.searchTerm, ...record.aliases].map(normalizeDrugKey);
@@ -1362,7 +1368,10 @@ function buildBadge(record) {
 }
 
 function getMatchedStatus(record, rule) {
-  const text = `${record.sourceNote || ""} ${record.indicationNote || ""} ${formatVariants(rule.variants)}`;
+  // A label-curated note often describes another band ("Not studied in
+  // dialysis"), so only the selected band's own text decides review there.
+  const note = isLabelCurated(record) ? "" : record.indicationNote || "";
+  const text = `${record.sourceNote || ""} ${note} ${formatVariants(rule.variants)}`;
   if (/review|not studied|not established|not recommended|contraindicated|avoid|specialist/i.test(text)) {
     return "curated_needs_review";
   }
