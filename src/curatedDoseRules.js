@@ -846,6 +846,7 @@ function buildRecordGuidance(record, { crcl, egfr, route, dialysis, indication, 
     renalBandLabel: `${selectedMetric.label} band`,
     crclBand: formatBand(selectedRule, selectedMetric),
     recommendation: formatVariants(selectedRule.variants),
+    variants: listVariants(selectedRule.variants),
     sourceHeading: record.sourceLabel,
     sourceUrl: record.sourceUrl,
     sourceLabel: record.sourceLabel,
@@ -1246,6 +1247,17 @@ function isJustAbove(value) {
 function isJustBelow(value) {
   const fraction = Math.ceil(value) - value;
   return fraction > 0 && fraction < 0.05;
+}
+
+/** Separate regimens ("Heart failure", "Dialysis, prophylaxis") for display as a list. */
+function listVariants(variants) {
+  if (!Array.isArray(variants) || variants.length < 2) {
+    return null;
+  }
+  return variants.map((variant) => ({
+    condition: variant.condition,
+    text: joinDoseText(variant.dose, formatInterval(variant.interval)),
+  }));
 }
 
 function formatVariants(variants) {

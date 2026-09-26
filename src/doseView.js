@@ -81,8 +81,10 @@ export function buildDoseView(assist, values = {}) {
   const dose = reviewOnly ? result.dose || "Review DailyMed source" : guidance.dose || result.dose || "";
   const frequency = reviewOnly ? result.frequency || "" : guidance.interval || result.frequency || "";
 
+  const variants = Array.isArray(guidance.variants) && guidance.variants.length > 1 ? guidance.variants : null;
+
   return {
-    drugName: guidance.drugName || result.drugName || values.drug || "Selected drug",
+    drugName: displayDrugName(guidance.drugName, result.drugName, values.drug),
     routeLabel: guidance.routeLabel || result.route || "",
     tier,
     decision: assist.kidneyContext?.reviewRequired
@@ -91,7 +93,9 @@ export function buildDoseView(assist, values = {}) {
           label: assist.kidneyContext.dialysis === "crrt" ? "Review for CRRT" : "Review for dialysis",
           tone: "warn",
         }
-      : getDecision({ result, dose, frequency, band, tier, reviewOnly }),
+      : variants
+        ? getVariantsDecision({ result, variants, band, tier, reviewOnly })
+        : getDecision({ result, dose, frequency, band, tier, reviewOnly }),
     metric,
     band,
     dose: cleanFrequencyLabel(dose),
@@ -106,6 +110,7 @@ export function buildDoseView(assist, values = {}) {
         caution.startsWith(`${key === "indication" ? "Indication" : "Product/formulation"} not selected`)
       )
     ),
+    variants,
     rows: guidance.rows || [],
     options: guidance.options || null,
     selectedControls: guidance.selectedControls || null,
@@ -118,6 +123,26 @@ export function buildDoseView(assist, values = {}) {
     },
     sourceMode: assist.sourceMode || "",
   };
+}
+
+/**
+ * Several regimens in one band (by indication or dialysis): one decision when
+ * they agree, otherwise "Depends on situation" rather than the first match.
+ */
+function getVariantsDecision({ result, variants, band, tier, reviewOnly }) {
+  const decisions = variants.map((variant) =>
+    getDecision({ result, dose: variant.text, frequency: "", band, tier, reviewOnly })
+  );
+  const ids = new Set(decisions.map((decision) => decision.id));
+  return ids.size === 1 ? decisions[0] : { id: "varies", label: "Depends on situation", tone: "warn" };
+}
+
+function displayDrugName(...names) {
+  const name = names.map((value) => String(value || "").trim()).find((value) => value && !/^selected drug$/i.test(value));
+  if (!name) {
+    return "Selected drug";
+  }
+  return name === name.toLowerCase() ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 }
 
 function getDecision({ result, dose, frequency, band, tier, reviewOnly }) {
@@ -206,8 +231,11 @@ export function buildShareText({ patient, renal, views }) {
     lines.push(
       "",
       `${view.drugName}${view.routeLabel ? ` (${view.routeLabel})` : ""} — ${view.decision.label} [${view.tier.label}]`,
-      `${view.band ? `${view.metric} ${view.band}: ` : ""}${[view.dose, view.frequency].filter(Boolean).join(", ")}`
+      view.variants
+        ? `${view.band ? `${view.metric} ${view.band}:` : "Regimens:"}`
+        : `${view.band ? `${view.metric} ${view.band}: ` : ""}${[view.dose, view.frequency].filter(Boolean).join(", ")}`
     );
+    view.variants?.forEach((variant) => lines.push(`  • ${variant.condition}: ${variant.text}`));
     view.cautions.slice(0, 2).forEach((caution) => lines.push(`Note: ${caution}`));
     if (view.sourceUrl) {
       lines.push(`DailyMed: ${view.sourceUrl}`);
