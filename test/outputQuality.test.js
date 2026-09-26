@@ -43,6 +43,11 @@ test("a no-adjustment answer with a hepatic band is sent to review", () => {
   assert.equal(result.renalBand, "CrCl 25.0 mL/min");
 });
 
+test("an AI dose without its own band is not given the patient's CrCl as one", () => {
+  const result = ai({ renalBand: "", dose: "200 mg", frequency: "daily" });
+  assert.equal(result.status, "review_source");
+});
+
 test("renal and bare numeric AI bands still pass the band check", () => {
   assert.equal(ai({ renalBand: "CrCl 10-30 mL/min", dose: "200 mg", frequency: "daily" }).status, "dose_found");
   assert.equal(ai({ renalBand: "< 30", dose: "200 mg", frequency: "daily" }).status, "dose_found");
