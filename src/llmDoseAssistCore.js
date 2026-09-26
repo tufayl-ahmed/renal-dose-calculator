@@ -167,7 +167,15 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
     sourceUrl: fallback.sourceUrl || compactText(value.sourceUrl) || "",
   };
 
-  if ((result.status === "dose_found" || result.status === "no_renal_adjustment") && !isRenalBand(result.renalBand)) {
+  // An AI dose must name its own kidney band: an empty band would otherwise be
+  // filled with the patient's CrCl and look renal-specific when it is not
+  // (prednisone "200 mg daily").
+  const modelBand = cleanModelText(value.renalBand);
+  const missingOwnBand = result.status === "dose_found" && !modelBand && !fallback.trustSourceEvidence;
+  if (
+    missingOwnBand ||
+    ((result.status === "dose_found" || result.status === "no_renal_adjustment") && !isRenalBand(modelBand))
+  ) {
     return buildReviewSourceResult(
       { ...fallback, ...result, renalBand: fallback.renalBand || "" },
       "The AI answer was not tied to a kidney-function band."
