@@ -125,6 +125,13 @@ function getDecision({ result, dose, frequency, band, tier, reviewOnly }) {
   if (result.status === "not_found") {
     return { id: "unavailable", label: "Not found", tone: "neutral" };
   }
+  // Curated records from labels that give cautions rather than doses.
+  if (result.decisionHint === "caution") {
+    return { id: "caution", label: "Use with caution", tone: "warn" };
+  }
+  if (result.decisionHint === "not-studied") {
+    return { id: "not-studied", label: "Not studied", tone: "neutral" };
+  }
   if (AVOID.test(text)) {
     return { id: "avoid", label: "Avoid / restrict", tone: "danger" };
   }

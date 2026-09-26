@@ -732,11 +732,25 @@ function findGuidanceInRecords(records, input) {
     return null;
   }
 
+  const guidance = buildRecordGuidance(record, input);
   return {
-    ...buildRecordGuidance(record, input),
+    ...guidance,
     recordId: curatedRecordId(record),
     verification: getRecordVerification(record),
+    decisionHint: decisionHintFor(record, guidance),
   };
+}
+
+/**
+ * Records can carry a hint for the whole drug, or per rule (e.g. caution only
+ * below GFR 90). When any rule has its own hint, only the matched rule's hint
+ * applies.
+ */
+function decisionHintFor(record, guidance) {
+  if (record.rules.some((rule) => rule.hint)) {
+    return guidance.ruleDecisionHint || "";
+  }
+  return record.decisionHint || "";
 }
 
 /** Stable id used to attach clinician verifications to a record. */
@@ -822,6 +836,8 @@ function buildRecordGuidance(record, { crcl, egfr, route, dialysis, indication, 
   const selectedMetric = inferRuleMetric(record, selectedRule);
   return {
     status,
+    // A rule-level hint (e.g. caution only below GFR 90) beats the record's.
+    ruleDecisionHint: selectedRule.hint || "",
     title: "Curated renal dose rule",
     badge,
     drugName: record.drugName,
@@ -1029,6 +1045,11 @@ function findStructuredGuidance({ record, crcl, egfr, route, dialysis, indicatio
 }
 
 function addStructuredOverlay(record) {
+  // Label-curated records are self-contained; overlays were written for the
+  // original draft records and some have no route restriction.
+  if (record.reviewedBy === "Claude label curation (draft)") {
+    return record;
+  }
   const recordKeys = [record.drugName, record.searchTerm, ...record.aliases].map(normalizeDrugKey);
   const structured = STRUCTURED_RENAL_RULES.find((entry) => {
     const matchesSearchTerm = recordKeys.includes(normalizeDrugKey(entry.searchTerm));

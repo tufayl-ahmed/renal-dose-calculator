@@ -374,6 +374,8 @@ const DECISION_ICONS = {
   review:
     '<circle cx="12" cy="12" r="8" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.1" /><path d="M12 17h.01" />',
   unavailable: '<circle cx="12" cy="12" r="8" /><path d="M8 12h8" />',
+  caution: '<path d="M12 4 3 20h18L12 4Z" /><path d="M12 10v4" /><path d="M12 17h.01" />',
+  "not-studied": '<circle cx="12" cy="12" r="8" /><path d="M12 8v5" /><path d="M12 16h.01" />',
 };
 
 function decisionIcon(id) {

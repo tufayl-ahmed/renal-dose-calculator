@@ -127,6 +127,7 @@ function toAssistResult(guidance, patient, extraCautions = []) {
     importantCautions: [...extraCautions, guidance.indicationNote].filter(Boolean),
     sourceSetId: extractSetId(guidance.sourceUrl),
     sourceUrl: guidance.sourceUrl,
+    ...(guidance.decisionHint ? { decisionHint: guidance.decisionHint } : {}),
   };
 }
 

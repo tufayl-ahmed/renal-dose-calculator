@@ -5,6 +5,7 @@ import { antiviralImmunologyRules } from "./antivirals-immunology.js";
 import { cardioAnticoagRules } from "./cardio-anticoag.js";
 import { endocrineNeuroGeneralRules } from "./endocrine-neuro-general.js";
 import { oncologyRheumSpecialtyRules } from "./oncology-rheum-specialty.js";
+import { labelCuratedRules } from "./label-curated.js";
 
 export const draftRenalDoseRules = [
   ...antiinfectiveBetaLactamRules,
@@ -14,4 +15,5 @@ export const draftRenalDoseRules = [
   ...endocrineNeuroGeneralRules,
   ...oncologyRheumSpecialtyRules,
   ...additionalCommonMedRules,
+  ...labelCuratedRules,
 ];

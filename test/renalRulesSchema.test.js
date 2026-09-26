@@ -10,6 +10,7 @@ import { candidateRenalDoseRules } from "../src/data/renalRules/candidates.js";
 const RULE_DIR = join(process.cwd(), "src/data/renalRules");
 const VALID_TYPES = new Set(["all", "gt", "gte", "lt", "range"]);
 const VALID_ROUTES = new Set(["IV", "IM", "ORAL", "SC", "SUBQ", "INHALATION"]);
+const DRAFT_REVIEWERS = new Set(["Codex curation draft", "Claude label curation (draft)"]);
 const VALID_CONFIDENCE = new Set(["draft-source-extracted", "starter-verified", "verified"]);
 
 test("curated renal rule files follow the draft schema", async () => {
@@ -66,7 +67,10 @@ function validateRecord({ record, file, exportName, index }) {
     /^https:\/\/(?:www\.)?dailymed\.nlm\.nih\.gov\//,
     `${label} must use DailyMed source URL`
   );
-  assert.equal(record.reviewedBy, "Codex curation draft", `${label} reviewedBy must stay draft`);
+  assert.ok(DRAFT_REVIEWERS.has(record.reviewedBy), `${label} reviewedBy must be a draft curator`);
+  if (record.decisionHint !== undefined) {
+    assert.ok(["caution", "not-studied"].includes(record.decisionHint), `${label} invalid decisionHint`);
+  }
   assert.match(record.reviewedOn, /^\d{4}-\d{2}-\d{2}$/, `${label} reviewedOn must be ISO date`);
   assert.ok(VALID_CONFIDENCE.has(record.confidence), `${label} invalid confidence`);
   assert.notEqual(record.confidence, "verified", `${label} should not be verified by draft workers`);
@@ -78,6 +82,9 @@ function validateRecord({ record, file, exportName, index }) {
 
 function validateRule({ rule, label }) {
   assert.ok(VALID_TYPES.has(rule.type), `${label} invalid type`);
+  if (rule.hint !== undefined) {
+    assert.ok(["caution", "not-studied"].includes(rule.hint), `${label} invalid rule hint`);
+  }
   assert.equal(typeof rule.min, "number", `${label} min must be numeric`);
   assert.equal(typeof rule.max, "number", `${label} max must be numeric`);
   assert.ok(Array.isArray(rule.variants), `${label} variants must be an array`);

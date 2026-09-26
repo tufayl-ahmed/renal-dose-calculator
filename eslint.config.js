@@ -3,7 +3,7 @@ import globals from "globals";
 
 export default [
   {
-    ignores: ["dist/", "node_modules/", ".wrangler/", "coverage/", "test-results/", "playwright-report/", "dev-dist/"],
+    ignores: [".cache/", "dist/", "node_modules/", ".wrangler/", "coverage/", "test-results/", "playwright-report/", "dev-dist/"],
   },
   js.configs.recommended,
   {

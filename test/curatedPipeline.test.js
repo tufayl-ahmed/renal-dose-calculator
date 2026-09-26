@@ -75,3 +75,18 @@ test("apixaban NVAF dose uses the label's age/weight/creatinine criteria", () =>
   const dvt = resolveCuratedPayload(patient({ drug: "apixaban", age: 82, weight: 55, indication: "dvt-pe" }));
   assert.ok(!dvt.result.importantCautions.some((caution) => /NVAF dose-reduction/.test(caution)));
 });
+
+test("label-curated records keep their own route-specific rules", () => {
+  const iv = resolveCuratedPayload(patient({ drug: "famotidine", route: "IV", crcl: 30, egfr: 30 }));
+  assert.match(iv.result.dose, /Half the usual dose/);
+  const oral = resolveCuratedPayload(patient({ drug: "famotidine", route: "ORAL", crcl: 30, egfr: 30 }));
+  assert.doesNotMatch(oral.result.dose, /Half the usual dose/);
+});
+
+test("caution-only labels are shown as cautions, per band where the label sets a threshold", () => {
+  const low = resolveCuratedPayload(patient({ drug: "bupropion", crcl: 50, egfr: 50 }));
+  assert.equal(low.result.decisionHint, "caution");
+  const normal = resolveCuratedPayload(patient({ drug: "bupropion", crcl: 95, egfr: 95 }));
+  assert.equal(normal.result.decisionHint, undefined);
+  assert.equal(resolveCuratedPayload(patient({ drug: "dicyclomine" })).result.decisionHint, "not-studied");
+});
