@@ -1,4 +1,5 @@
 import { toCsv } from "./csv.js";
+import { joinDoseText } from "./doseText.js";
 import {
   curatedRecordId,
   getRecordVerification,
@@ -173,7 +174,7 @@ function renderRecord(entry) {
                       html`<tr>
                         <td>${formatRuleBand(rule)}</td>
                         <td>${contextLabel(rule)}</td>
-                        <td>${rule.dose} ${rule.interval}</td>
+                        <td>${joinDoseText(rule.dose, rule.interval)}</td>
                       </tr>`
                   )}
                 </tbody>

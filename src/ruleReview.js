@@ -1,3 +1,5 @@
+import { joinDoseText } from "./doseText.js";
+
 // Shared by scripts/export-rules-for-review.mjs and the in-app review page:
 // turns a curated/candidate record into one row of the clinician review CSV.
 
@@ -24,7 +26,7 @@ export function recordToReviewRow(record, { id, verification }, decision = {}) {
     record.routes.join(", "),
     record.rules.map((rule) => `${formatRuleBand(rule)}: ${formatVariants(rule.variants)}`).join("\n"),
     (record.structured?.rules || [])
-      .map((rule) => `${formatRuleBand(rule)} [${contextLabel(rule)}]: ${rule.dose} ${rule.interval}`)
+      .map((rule) => `${formatRuleBand(rule)} [${contextLabel(rule)}]: ${joinDoseText(rule.dose, rule.interval)}`)
       .join("\n"),
     record.indicationNote,
     record.sourceUrl,
@@ -47,7 +49,7 @@ export function formatRuleBand(rule) {
 
 export function formatVariants(variants) {
   return variants
-    .map((variant) => [variant.condition, `${variant.dose} ${variant.interval}`.trim()].filter(Boolean).join(": "))
+    .map((variant) => [variant.condition, joinDoseText(variant.dose, variant.interval)].filter(Boolean).join(": "))
     .join(" | ");
 }
 
