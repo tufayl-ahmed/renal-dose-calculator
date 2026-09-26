@@ -1104,6 +1104,73 @@ diazoxide-choline:ORAL,Diazoxide Choline,ORAL,">= 90: Adult dosing: Usual dose n
 captopril-and-hydrochlorothiazide:ORAL,Captopril and Hydrochlorothiazide,ORAL,All values: Renal impairment: Renal impairment: smaller or less frequent doses titrate to the minimal effective dose,,Higher steady-state captopril levels in renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0ea90fd4-0da6-4ad2-ab83-6cfbe0ae515e,draft,,,,,
 ranitidine:ORAL,Ranitidine,ORAL,">= 50: Adult dosing: Usual dose by indication
 < 50: CrCl < 50 mL/min: 150 mg every 24 hours (may increase to every 12 hours with caution)",,Hemodialysis: time a dose to the end of dialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0fba6615-37c2-4ba6-b6e5-09599369a5bc,draft,,,,,
+synjardy:ORAL,Empagliflozin and Metformin,ORAL,">= 45: Adult dosing: Usual dose no renal adjustment
+30-44.99: Moderate renal impairment: Starting not recommended eGFR 30 to < 45 mL/min/1.73 m²
+< 30: Severe renal impairment: Contraindicated eGFR < 30 mL/min/1.73 m²",,Limits are due to the metformin component.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0fdd0255-0055-65f3-b2c0-db8fbb87beae,draft,,,,,
+brigatinib:ORAL,Brigatinib,ORAL,">= 30: Adult dosing: 90 mg for 7 days, then 180 mg once daily
+15-29.99: CrCl 15 to 29 mL/min: Reduce by about 50% (180 mg → 90 mg; 90 mg → 60 mg) once daily
+< 15: CrCl < 15 mL/min: No dosing recommendation CrCl < 15 mL/min not addressed in label",,"CrCl by Cockcroft-Gault. Usual: 90 mg once daily for 7 days, then 180 mg once daily.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0fe9ff20-d402-41f3-bc1e-7002ea7007db,draft,,,,,
+burosumab:SC,Burosumab,SC,">= 30: Adult dosing: Usual dose by indication
+< 30: Severe renal impairment or ESRD: Contraindicated CrCl 15–29 mL/min or ESRD (CrCl < 15)",,Adult definition shown (CrCl); pediatric definition uses eGFR.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=102f96a0-6e3a-4fc1-b204-34d604683af6,draft,,,,,
+fosamax-plus-d:ORAL,Alendronate and Cholecalciferol,ORAL,">= 35: Adult dosing: No dose adjustment (CrCl 35–60 included) once weekly
+< 35: Severe renal impairment: Not recommended CrCl < 35 mL/min",,One tablet once weekly.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=10307e7e-9a84-4aa1-8c5c-4b209cffe4d1,draft,,,,,
+edarbyclor:ORAL,Azilsartan Kamedoxomil and Chlorthalidone,ORAL,">= 30: Adult dosing: No dose adjustment mild or moderate renal impairment
+< 30: Severe renal impairment: Safety and effectiveness not established eGFR < 30 mL/min/1.73 m²",,Chlorthalidone may precipitate azotemia; monitor renal function.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=e60f795b-fce3-4361-aa03-f143451689d1,draft,,,,,
+alvimopan:ORAL,Alvimopan,ORAL,">= 15: Adult dosing: No dose adjustment; monitor for adverse reactions mild-to-severe renal impairment
+< 15: End-stage renal disease: Not recommended end-stage renal disease",,Monitor for gastrointestinal adverse reactions in any renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1cd584de-b704-4d26-8451-e3247ffb8d08,draft,,,,,
+aspirin-and-extended-release-dipyridamole:ORAL,Aspirin and Extended Release Dipyridamole,ORAL,">= 10: Adult dosing: 1 capsule twice daily
+< 10: GFR < 10 mL/min: Avoid severe renal dysfunction (GFR < 10 mL/min)",,Not studied in renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=111a4f6a-c3e4-43e2-8f0e-8c72f71cddb2,draft,,,,,
+donnatal:ORAL,Phenobarbital Hyoscyamine Sulfate Atropine Sulfate Scopolamine,ORAL,All values: Renal impairment: Renal disease: use with caution label gives no dose change,,The label gives no specific dose.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=11a48ba9-576b-4e8c-9536-6e83636d6930,draft,,,,,
+idvynso:ORAL,Doravirine Islatravir,ORAL,">= 30: Adult dosing: 1 tablet once daily
+< 30: Severe renal impairment: Not recommended eGFR < 30 mL/min/1.73 m²",,Not studied in dialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=11aaeb53-9848-433c-be7f-db8a5bc0b26f,draft,,,,,
+flurbiprofen:ORAL,Flurbiprofen,ORAL,All values: Renal impairment: Advanced renal disease: avoid unless benefits outweigh risk monitor renal function,,The label gives no CrCl threshold for advanced renal disease.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=4670cf21-eb0e-4f5a-ab22-41af85733525,draft,,,,,
+elamipretide:SC,Elamipretide,SC,">= 30: Adult dosing: 40 mg once daily
+< 30: Not on dialysis: 20 mg once daily | On dialysis: Insufficient information to recommend a dose label gives none",,Adults.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=146bf34c-76f2-48db-ac07-fb29cce2cd75,draft,,,,,
+multiple-vitamins:IV,Multiple Vitamins,IV,"All values: Renal impairment: Renal impairment: monitor renal function, calcium, phosphorus and vitamin A label gives no dose change",,Adult multiple vitamins injection; not studied in renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=65701853-78f0-c3cc-1237-5595c59c1bd1,draft,,,,,
+alogliptin-and-metformin:ORAL,Alogliptin and Metformin,ORAL,">= 60: Adult dosing: No dose adjustment usual dose
+30-59.99: Moderate renal impairment: Not recommended eGFR 30–59 mL/min/1.73 m²
+< 30: Severe renal impairment: Contraindicated eGFR < 30 mL/min/1.73 m²",,eGFR 30–59 needs a lower alogliptin dose than the fixed combination provides.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=14d98490-4f8f-4d2f-a4e9-7a3d7a0199ba,draft,,,,,
+bedaquiline:ORAL,Bedaquiline,ORAL,">= 30: Adult dosing: No dose adjustment mild or moderate renal impairment
+< 30: Severe renal impairment: Use with caution severe renal impairment or ESRD",,Includes ESRD on hemodialysis or peritoneal dialysis.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1534c9ae-4948-4cf4-9f66-222a99db6d0e,draft,,,,,
+telmisartan-and-amlodipine:ORAL,Telmisartan and Amlodipine,ORAL,">= 30: Adult dosing: No initial dosage adjustment mild or moderate renal impairment
+< 30: Severe renal impairment: Titrate slowly severe renal impairment",,Monitor renal function and potassium.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=15b438b4-4874-43f4-a50a-4e6f3e5530ac,draft,,,,,
+meperidine:IV,Meperidine,IV,All values: Renal impairment: Renal impairment: use with caution; titrate slowly monitor for CNS and respiratory depression,,Meperidine and normeperidine accumulate in renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b31d1308-28c3-43f4-e0a6-2f3ed76b8975,draft,,,,,
+meperidine:SC,Meperidine,SC,All values: Renal impairment: Renal impairment: use with caution; titrate slowly monitor for CNS and respiratory depression,,Meperidine and normeperidine accumulate in renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=b31d1308-28c3-43f4-e0a6-2f3ed76b8975,draft,,,,,
+iohexol:IV,Iohexol,IV,All values: Renal impairment: Renal impairment: higher risk of acute kidney injury use the lowest necessary dose; ensure hydration,,Iodinated contrast; clearance falls with renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ff9456ef-c45a-450d-9004-a684af2bcc59,draft,,,,,
+givosiran:SC,Givosiran,SC,All values: Renal impairment: Renal toxicity risk: monitor renal function during treatment label gives no dose change,,The label gives no renal dose adjustment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=167e663c-11e1-497b-a3fc-951d65d58eaa,draft,,,,,
+abrocitinib:ORAL,Abrocitinib,ORAL,">= 90: Adult dosing: 100 mg once daily (200 mg if inadequate response)
+60-89.99: Mild (eGFR 60–89): 100 mg once daily
+30-59.99: Moderate (eGFR 30–59): 50 mg once daily (100 mg if inadequate response)
+< 30: eGFR < 30: Not recommended severe impairment, ESRD or renal replacement therapy",,eGFR by MDRD. Mild or moderate impairment: the dose may be doubled if response is inadequate.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=16c12a56-4550-414b-ac9d-b785b41fea6b,draft,,,,,
+meprobamate:ORAL,Meprobamate,ORAL,All values: Renal impairment: Compromised kidney function: use caution to avoid accumulation label gives no dose change,,Excreted by the kidney.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=17d814e2-b277-4dce-8615-e7fd7cab773f,draft,,,,,
+pertuzumab:IV,Pertuzumab,IV,">= 30: Adult dosing: No dose adjustment usual dose
+< 30: Severe renal impairment: No dose adjustment can be recommended CrCl < 30 mL/min (limited data)",,Limited pharmacokinetic data in severe impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=17f85d17-ab71-4f5b-9fe3-0b8c822f69ff,draft,,,,,
+amlodipine-valsartan-and-hydrochlorothiazide:ORAL,Amlodipine Valsartan and Hydrochlorothiazide,ORAL,">= 30: Adult dosing: No dose adjustment mild or moderate renal impairment
+< 30: Severe renal impairment: Safety and effectiveness not established CrCl < 30 mL/min; contraindicated in anuria",,Contraindicated in anuria.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1ea4f227-b97a-49f1-bbc3-1dede2c1866d,draft,,,,,
+gadopiclenol:IV,Gadopiclenol,IV,">= 60: Adult dosing: Usual dose little, if any, NSF risk
+30-59.99: GFR 30–59: Lower NSF risk; use the lowest necessary dose chronic moderate kidney disease
+< 30: GFR < 30: Highest NSF risk: avoid unless essential; lowest necessary dose chronic severe kidney disease or acute kidney injury",,Screen for kidney disease before use; risk is also high in acute kidney injury.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=192725e9-e83e-1a36-33f2-abee55792ab3,draft,,,,,
+ketoprofen:ORAL,Ketoprofen,ORAL,">= 25: Adult dosing: Mild impairment: maximum 150 mg per day once daily (ER)
+< 25: GFR < 25 mL/min/1.73 m² or ESRD: Maximum 100 mg per day once daily (ER)",,Extended-release capsules. The label does not define mild impairment numerically.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=198a4140-f4c0-4478-9157-ee1d68d0bb96,draft,,,,,
+lofexidine:ORAL,Lofexidine,ORAL,">= 90: Adult dosing: 3 tablets (0.54 mg) 4 times daily
+30-89.99: eGFR 30–89.9: 2 tablets (0.36 mg) 4 times daily (1.44 mg/day)
+< 30: eGFR < 30, ESRD or dialysis: 1 tablet (0.18 mg) 4 times daily (0.72 mg/day)",,0.18 mg tablets; give without regard to dialysis timing.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=335e26bf-b236-46d6-81cf-2879e5f3b1d9,draft,,,,,
+tradipitant:ORAL,Tradipitant,ORAL,">= 30: Adult dosing: Usual dose no renal adjustment
+< 30: Severe renal impairment: Avoid eGFR ≤ 29 mL/min/1.73 m²",,Not studied in severe renal impairment.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a021ebd-16ac-4354-b4b2-1c3950c091e5,draft,,,,,
+cabozantinib:ORAL,Cabozantinib,ORAL,">= 30: Adult dosing: No dose adjustment mild or moderate renal impairment
+< 30: Severe renal impairment: No experience severe renal impairment",,COMETRIQ capsules.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a0c3bea-c87b-4d25-bb44-5f0174da6b34,draft,,,,,
+bexagliflozin:ORAL,Bexagliflozin,ORAL,">= 30: Adult dosing: 20 mg once daily
+< 30: Severe renal impairment: Not recommended eGFR < 30 mL/min/1.73 m²",,Assess volume status before starting.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a3ba9d5-1009-bad0-e063-6294a90ac4cc,draft,,,,,
+sotagliflozin:ORAL,Sotagliflozin,ORAL,">= 25: Adult dosing: Usual dose safety consistent across eGFR 25–60 subgroups
+< 25: eGFR < 25 mL/min/1.73 m²: Not studied eGFR < 25 or dialysis not enrolled in trials",,Studies stopped treatment if eGFR fell below 15 or chronic dialysis began.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1a46614e-05f6-421a-b6f4-d6f8760d643a,draft,,,,,
+clarinex-d:ORAL,Desloratadine and Pseudoephedrine,ORAL,All values: Renal impairment: Renal impairment: generally avoid consider an alternative,,12-hour extended-release tablets.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1af66b7a-4ab8-40d8-abdd-22d3310228a8,draft,,,,,
+temsirolimus:IV,Temsirolimus,IV,All values: Renal impairment: No renal dose adjustment monitor renal function at baseline and during treatment,,"Not studied in hemodialysis. Renal failure, sometimes fatal, has occurred; monitor renal function.",https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1c207bed-10e3-46f0-ad2c-69d5e5c97736,draft,,,,,
+dapagliflozin-and-saxagliptin:ORAL,Dapagliflozin and Saxagliptin,ORAL,">= 45: Adult dosing: No dose adjustment once daily in the morning
+< 45: Moderate to severe renal impairment: Contraindicated eGFR < 45 mL/min/1.73 m²",,Assess renal function before starting and periodically.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1cfa51fd-8406-404c-b2a8-0fc1068675fb,draft,,,,,
+methenamine-mandelate:ORAL,Methenamine Mandelate,ORAL,All values: Renal impairment: Renal insufficiency: contraindicated label gives no threshold,,The label gives no CrCl threshold.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1d76d132-6fd8-4139-989b-0bc38257ea3b,draft,,,,,
+gadodiamide:IV,Gadodiamide,IV,">= 60: Adult dosing: Usual dose little, if any, NSF risk
+30-59.99: GFR 30–59: Lower NSF risk; use caution and the lowest necessary dose chronic moderate kidney disease
+< 30: GFR < 30: Contraindicated chronic severe kidney disease (GFR < 30) or acute kidney injury",,Acute renal failure has occurred with pre-existing renal insufficiency. Dose adjustment not studied.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=1e9a37e2-f28a-4373-bf0f-3e9b60f42d8a,draft,,,,,
 azacitidine:ORAL,Azacitidine,ORAL,All values: Adult dosing per DailyMed label: No renal dose adjustment Use usual adult schedule by indication,,Auto-extracted from the DailyMed label; not yet checked by a clinician. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0e95e33f-8aba-4f19-b332-2416580d358b,unreviewed,,,,,
 azithromycin:IV,Azithromycin,IV,All values: Adult dosing per DailyMed label: No renal dose adjustment Use usual adult dosing by indication. Use caution in severe renal impairment; verify the selected azithromycin DailyMed label,,Auto-extracted from the DailyMed label; not yet checked by a clinician. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=6a22beb6-57e8-480d-97b5-44d9dbfabf93,unreviewed,,,,,
 brincidofovir:ORAL,Brincidofovir,ORAL,All values: Adult dosing per DailyMed label: No renal dose adjustment Use usual adult schedule by indication,,Auto-extracted from the DailyMed label; not yet checked by a clinician. Check indication-specific dosing in the label.,https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=0784838e-00bd-4b14-9b7e-653b7fbb7eea,unreviewed,,,,,
