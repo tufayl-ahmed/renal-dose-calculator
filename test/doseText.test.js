@@ -18,6 +18,16 @@ test("reasons and notes join the dose with a dash", () => {
   );
 });
 
+test("a capitalized ordinary word after the dash is lowercased", () => {
+  assert.equal(
+    joinDoseText("No renal dose adjustment", "Use usual adult schedule by indication"),
+    "No renal dose adjustment — use usual adult schedule by indication"
+  );
+  assert.equal(joinDoseText("Avoid", "CrCl < 30 mL/min"), "Avoid — CrCl < 30 mL/min");
+  assert.equal(joinDoseText("Not recommended", "ESRD"), "Not recommended — ESRD");
+  assert.equal(joinDoseText("Contraindicated", "Child-Pugh C"), "Contraindicated — Child-Pugh C");
+});
+
 test("empty parts are dropped", () => {
   assert.equal(joinDoseText("Avoid", ""), "Avoid");
   assert.equal(joinDoseText("", "once daily"), "once daily");

@@ -15,6 +15,18 @@ const FREQUENCY_SIGNAL =
 const NO_ADJUSTMENT =
   /\b(?:no\s+(?:dosage?|dose)\s+adjustment(?:\s+of\s+[\w\s-]+?)?\s+(?:is\s+)?(?:necessary|required|recommended)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended)|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended))\b/i;
 const INTERNAL_STATUS_TOKEN = /^(?:dose_found|no_renal_adjustment|review_source|not_found)$/i;
+// A dose band must be about kidney function. Models sometimes return a
+// hepatic band ("mild to moderate hepatic impairment") or "not_applicable".
+const RENAL_BAND_TERM =
+  /\b(?:crcl|clcr|creatinine clearance|e?gfr|renal|kidney|dialysis|hemodialysis|esrd|scr|serum creatinine|anuri\w*|oliguri\w*)\b|ml\/min/i;
+// Numbers with comparisons only ("< 30", "Above 2.8 to 5.7"): the metric is implied.
+const BAND_COMPARISON_WORDS =
+  /\b(?:above|below|over|under|greater|less|more|than|at|least|up|to|and|or|equal|between|not)\b/gi;
+const BARE_NUMERIC_BAND = /^[\s<>≤≥=\d.,–—-]+$/;
+// Cautions worth showing on a kidney-dosing card.
+const RENAL_CAUTION_TERM =
+  /\b(?:renal|kidney|creatinine|crcl|clcr|e?gfr|dialy\w*|esrd|nephro\w*|hyperkal\w*|potassium|uremi\w*|anuri\w*|oliguri\w*|electrolyte\w*|dehydrat\w*|hypovolem\w*|excreted)\b/i;
+const GENERIC_DRUG_NAME = /^selected drug$/i;
 
 export function buildLlmDosePrompt({ label, patient }) {
   const sourceText = buildCompactSourceText(label.sections || []);
@@ -138,7 +150,7 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
   const inferredMetric = inferRenalMetric(value.renalBand, requestedMetric, sourceText);
   const result = {
     status: ASSIST_STATUSES.has(value.status) ? value.status : "review_source",
-    drugName: compactText(value.drugName) || fallback.drugName || "Selected drug",
+    drugName: usableDrugName(value.drugName) || usableDrugName(fallback.drugName) || "Selected drug",
     route: compactText(value.route) || fallback.route || "All routes",
     renalMetricUsed: inferredMetric,
     renalBand: cleanModelText(value.renalBand) || fallback.renalBand || "",
@@ -146,11 +158,21 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
     frequency: cleanModelText(value.frequency),
     dialysisNote: cleanModelText(value.dialysisNote),
     importantCautions: Array.isArray(value.importantCautions)
-      ? value.importantCautions.map(cleanModelText).filter(Boolean).slice(0, 4)
+      ? value.importantCautions
+          .map(cleanModelText)
+          .filter((caution) => caution && RENAL_CAUTION_TERM.test(caution))
+          .slice(0, 4)
       : [],
     sourceSetId: fallback.sourceSetId || compactText(value.sourceSetId) || "",
     sourceUrl: fallback.sourceUrl || compactText(value.sourceUrl) || "",
   };
+
+  if (result.status === "dose_found" && !isRenalBand(result.renalBand)) {
+    return buildReviewSourceResult(
+      { ...fallback, ...result, renalBand: fallback.renalBand || "" },
+      "The AI answer was not tied to a kidney-function band."
+    );
+  }
 
   const bandMatch = renalBandMatchesMetric(result.renalBand, result.renalMetricUsed, fallback);
   if (result.status === "dose_found" && !bandMatch.matches) {
@@ -205,8 +227,8 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
   }
 
   if (result.status === "review_source") {
-    result.dose = isInternalToken(result.dose) ? "" : result.dose;
-    result.frequency = isInternalToken(result.frequency) ? "" : result.frequency;
+    result.dose = isInformativeReviewText(result.dose, result.drugName) ? result.dose : "";
+    result.frequency = isInformativeReviewText(result.frequency, result.drugName) ? result.frequency : "";
     result.dose = result.dose || "Review DailyMed source";
     result.frequency = result.frequency || "Source review required";
   }
@@ -450,7 +472,7 @@ function buildReviewSourceResult(fallback, reason) {
   const shouldUseReason = Boolean(reason);
   return {
     status: "review_source",
-    drugName: fallback.drugName || "Selected drug",
+    drugName: usableDrugName(fallback.drugName) || "Selected drug",
     route: fallback.route || "All routes",
     renalMetricUsed: normalizeRenalMetric(fallback.renalMetricUsed),
     renalBand: fallback.renalBand || "",
@@ -464,6 +486,35 @@ function buildReviewSourceResult(fallback, reason) {
     sourceSetId: fallback.sourceSetId || "",
     sourceUrl: fallback.sourceUrl || "",
   };
+}
+
+function isRenalBand(value) {
+  const band = compactText(value);
+  return (
+    !band || RENAL_BAND_TERM.test(band) || (/\d/.test(band) && BARE_NUMERIC_BAND.test(band.replace(BAND_COMPARISON_WORDS, " ")))
+  );
+}
+
+/** Review text worth keeping: not a status token, not just the drug's name. */
+function isInformativeReviewText(value, drugName) {
+  const text = compactText(value);
+  if (!text || isInternalToken(text)) {
+    return false;
+  }
+  const name = compactText(drugName).toLowerCase();
+  if (name && text.toLowerCase() === name) {
+    return false;
+  }
+  return DOSE_UNIT.test(text) || RENAL_ACTION_PHRASE.test(text) || RENAL_CAUTION_TERM.test(text) || text.split(" ").length >= 3;
+}
+
+function usableDrugName(value) {
+  const name = compactText(value);
+  if (!name || GENERIC_DRUG_NAME.test(name)) {
+    return "";
+  }
+  // "prednisone" → "Prednisone"; leave "NP Thyroid" or "TRUVADA" as written.
+  return name === name.toLowerCase() ? name.charAt(0).toUpperCase() + name.slice(1) : name;
 }
 
 function cleanReviewFallbackText(value) {

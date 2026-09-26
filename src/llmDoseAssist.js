@@ -120,6 +120,7 @@ export function normalizeAssistPayload(data, values = {}) {
       : "Curated rule (draft, pending clinician review)";
     guidance.sourceHeading = data.curated?.sourceLabel || "Curated renal dose rule";
     guidance.rows = data.curated?.rows || guidance.rows;
+    guidance.variants = data.curated?.variants || null;
     guidance.options = data.curated?.options || null;
     guidance.selectedControls = data.curated?.selectedControls || null;
     guidance.verification = data.curated?.verification || null;

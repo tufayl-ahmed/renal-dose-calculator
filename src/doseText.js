@@ -13,5 +13,17 @@ export function joinDoseText(dose, interval) {
   if (!left) {
     return right;
   }
-  return SCHEDULE_START.test(right) || /[:(]$/.test(left) ? `${left} ${right}` : `${left} — ${right}`;
+  if (SCHEDULE_START.test(right) || /[:(]$/.test(left)) {
+    return `${left} ${right}`;
+  }
+  return `${left} — ${lowerFirstWord(right)}`;
+}
+
+// Proper names that stay capitalized mid-sentence.
+const KEEP_CAPITALIZED = new Set(["Child", "Cockcroft", "Kaposi", "Parkinson", "Alzheimer"]);
+
+/** "Use usual schedule" → "use usual schedule"; "CrCl < 30" and "ESRD" stay. */
+function lowerFirstWord(text) {
+  const word = text.match(/^[A-Z][a-z]+(?=[\s,;:.)]|$)/)?.[0];
+  return word && !KEEP_CAPITALIZED.has(word) ? word.toLowerCase() + text.slice(word.length) : text;
 }
