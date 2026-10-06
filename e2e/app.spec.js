@@ -298,3 +298,48 @@ test("a newly deployed version offers a reload", async ({ page, browserName }) =
   await expect(page.locator("#update-banner")).toBeVisible();
   await expect(page.locator("#update-reload")).toBeVisible();
 });
+
+test("label-path cards show the label's own sentences or say it is silent", async ({ page, api }) => {
+  const base = {
+    renalMetricUsed: "crcl",
+    renalBand: "CrCl 25.0 mL/min",
+    importantCautions: [],
+    sourceUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=x",
+  };
+  api.overrides.examplostat = {
+    sourceMode: "label-excerpt",
+    result: {
+      ...base,
+      status: "review_source",
+      drugName: "Examplostat",
+      dose: "Read the label's kidney guidance",
+      frequency: "No dose table to apply; the label's own sentences are shown below.",
+      labelExcerpt: ["Patients with moderate to severe renal impairment may be able to only tolerate lower doses."],
+    },
+  };
+  api.overrides.silentamine = {
+    sourceMode: "label-silent",
+    result: {
+      ...base,
+      status: "no_renal_text",
+      drugName: "Silentamine",
+      dose: "No kidney dosing guidance in the label",
+      frequency: "The dosing, warnings and specific-population sections do not mention kidney function.",
+      labelExcerpt: [],
+    },
+  };
+  await fillPatient(page, { creatinine: "2.6" });
+  await addDrug(page, "examplostat");
+  await addDrug(page, "silentamine");
+  await calculate(page);
+
+  const cards = page.locator(".dose-card");
+  const excerpt = cards.filter({ hasText: "Examplostat" });
+  await expect(excerpt.locator(".label-excerpt figcaption")).toHaveText("From the label");
+  await expect(excerpt.locator(".label-excerpt q")).toContainText("only tolerate lower doses");
+  await expect(excerpt.locator(".badge")).toHaveText("Label text");
+
+  const silent = cards.filter({ hasText: "Silentamine" });
+  await expect(silent.locator(".decision")).toHaveText("Label silent");
+  await expect(silent.locator(".label-excerpt")).toHaveCount(0);
+});

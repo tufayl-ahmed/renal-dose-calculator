@@ -1,6 +1,7 @@
 import {
   buildLlmDosePrompt,
   createNoLabelAssistResult,
+  hasRenalDoseTableEvidence,
   parseAndValidateAssistResponse,
 } from "../../src/llmDoseAssistCore.js";
 import { reserveFreeAiCall, runWorkersAi } from "./ai.js";
@@ -9,8 +10,11 @@ import { resolveCandidatePayload } from "./candidates.js";
 import { resolveCuratedPayload } from "./curated.js";
 import { formatNumber, routeDisplayName } from "./format.js";
 import { annotateKidneyContext, prepareKidneyContext } from "./kidneyContext.js";
+import { extractKidneySentences } from "./labelExcerpt.js";
 import { lookupDrugLabel, toPublicLabel, toPublicSections } from "./openfda.js";
 import {
+  buildLabelExcerptResult,
+  buildLabelSilentResult,
   buildParserFallbackResult,
   buildReviewSourceResult,
   buildSpecialPayloadFromMissingLabel,
@@ -122,6 +126,22 @@ async function resolveForPatient({ patient, env }) {
     return payload;
   }
 
+  // Without a dose table in the kidney text, the AI can only paraphrase (or
+  // invent): show the label's own sentences, or say the label is silent.
+  const excerpt = extractKidneySentences(label);
+  if (!excerpt.length || !hasRenalDoseTableEvidence(`${sourceText} ${excerpt.join(" ")}`)) {
+    return {
+      result: excerpt.length
+        ? buildLabelExcerptResult({ patient, label, excerpt })
+        : buildLabelSilentResult({ patient, label }),
+      ...labelFields,
+      sourceMode: excerpt.length ? "label-excerpt" : "label-silent",
+      modelUsed: "",
+      freeMode: true,
+      freeModeRemaining: null,
+    };
+  }
+
   const cachedAssist = await readJsonCache(assistCacheKey);
   if (cachedAssist?.result) {
     return { ...cachedAssist, ...labelFields, sourceMode: "cache" };
@@ -148,9 +168,10 @@ async function resolveForPatient({ patient, env }) {
     sourceSetId: label.setId,
     sourceUrl: label.sourceUrl,
   });
-  const result = shouldUseParserFallback(aiResult, parserFallback) ? parserFallback : aiResult;
+  const chosen = shouldUseParserFallback(aiResult, parserFallback) ? parserFallback : aiResult;
+  const result = chosen.status === "review_source" ? { ...chosen, labelExcerpt: excerpt } : chosen;
   const sourceMode =
-    result === parserFallback
+    chosen === parserFallback
       ? "dailymed-table-parser-fallback"
       : ai.sourceMode || quota.sourceMode || (env?.AI ? "cloudflare-ai" : "no-ai-binding");
 
