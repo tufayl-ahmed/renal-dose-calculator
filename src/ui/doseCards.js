@@ -334,10 +334,11 @@ function renderResult(entry) {
           view.variants
             ? html`<ul class="dose-value dose-variants">
                 ${view.variants.map(
-                  (variant) => html`<li>
-                    <span>${variant.condition}</span>
-                    <strong>${variant.text}</strong>
-                  </li>`
+                  (variant) =>
+                    html`<li>
+                      <span>${variant.condition}</span>
+                      <strong>${variant.text}</strong>
+                    </li>`
                 )}
               </ul>`
             : html`<div class="dose-value">
@@ -347,6 +348,16 @@ function renderResult(entry) {
         }
       </div>
 
+      ${
+        view.excerpt.length
+          ? html`<figure class="label-excerpt">
+              <figcaption>From the label</figcaption>
+              <ul>
+                ${view.excerpt.map((sentence) => html`<li><q>${sentence}</q></li>`)}
+              </ul>
+            </figure>`
+          : ""
+      }
       ${renderContextControls(view, entry.context)}
       ${
         view.cautions.length
@@ -391,6 +402,7 @@ const DECISION_ICONS = {
   unavailable: '<circle cx="12" cy="12" r="8" /><path d="M8 12h8" />',
   caution: '<path d="M12 4 3 20h18L12 4Z" /><path d="M12 10v4" /><path d="M12 17h.01" />',
   "not-studied": '<circle cx="12" cy="12" r="8" /><path d="M12 8v5" /><path d="M12 16h.01" />',
+  silent: '<circle cx="12" cy="12" r="8" /><path d="M8 12h8" /><path d="M12 8v.01" />',
   varies: '<path d="M6 3v6a6 6 0 0 0 6 6h6" /><path d="m15 12 3 3-3 3" /><path d="M6 21v-6" />',
 };
 

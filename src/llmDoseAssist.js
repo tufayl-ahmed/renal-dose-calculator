@@ -78,6 +78,7 @@ export function normalizeAssistPayload(data, values = {}) {
   const isParserResult =
     data.sourceMode === "dailymed-table-parser" || data.sourceMode === "dailymed-table-parser-fallback";
   const isSpecialResult = data.sourceMode === "dailymed-special-review";
+  const isLabelText = data.sourceMode === "label-excerpt" || data.sourceMode === "label-silent";
   const isRouteNotFound = data.sourceMode === "route-not-found";
   // Curated and auto-extracted database rules are already structured; the
   // validator below is for free-text AI output and would reject them.
@@ -92,7 +93,7 @@ export function normalizeAssistPayload(data, values = {}) {
         egfr: values.egfr,
         creatinine: values.creatinine,
         sourceUrl: data.sourceUrl || buildDailyMedSearchUrl(values.drug || ""),
-        trustSourceEvidence: isParserResult || isSpecialResult,
+        trustSourceEvidence: isParserResult || isSpecialResult || isLabelText,
       });
   const guidance = buildAssistGuidance(result, values);
   if (isParserResult) {

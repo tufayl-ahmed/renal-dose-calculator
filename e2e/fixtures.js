@@ -7,11 +7,12 @@ import { sanitizePatient } from "../server/renalDose/results.js";
 /**
  * Serves /api/renal-dose/assist from the real curated-rule pipeline in Node,
  * so tests are deterministic and need no network. Drugs without a curated
- * record get a "not found" response. `api.requests` records request bodies.
+ * record get a "not found" response. `api.requests` records request bodies;
+ * `api.overrides[drug]` serves a fixed payload for that drug (label-path cases).
  */
 export const test = base.extend({
   api: async ({ page }, use) => {
-    const api = { requests: [], fail: false, offline: false };
+    const api = { requests: [], fail: false, offline: false, overrides: {} };
     await page.route("**/api/renal-dose/assist", async (route) => {
       const body = route.request().postDataJSON();
       api.requests.push(body);
@@ -21,6 +22,14 @@ export const test = base.extend({
       }
       if (api.fail) {
         await route.fulfill({ status: 500, body: "{}" });
+        return;
+      }
+      if (api.overrides[body.drug]) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(api.overrides[body.drug]),
+        });
         return;
       }
       const patient = sanitizePatient(body);

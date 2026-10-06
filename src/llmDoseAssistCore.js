@@ -2,7 +2,7 @@ const AI_ASSIST_CAVEAT =
   "Educational purpose only. AI-assisted output may be wrong. Results are estimates and are not for prescribing.";
 export const AI_SOURCE_TEXT_LIMIT = 9000;
 
-const ASSIST_STATUSES = new Set(["dose_found", "no_renal_adjustment", "review_source", "not_found"]);
+const ASSIST_STATUSES = new Set(["dose_found", "no_renal_adjustment", "review_source", "not_found", "no_renal_text"]);
 
 const VAGUE_DOSE =
   /\b(?:usual dose|usual dosage|see label|see prescribing information|as directed|adjust(?:\s+the)?\s+dose|adjust(?:\s+the)?\s+dosage|dose adjustment|dosage adjustment|review source|not applicable|n\/a)\b/i;
@@ -14,7 +14,7 @@ const FREQUENCY_SIGNAL =
   /\b(?:every\s+\d+\s+hours?|q\s*\d+\s*h|once daily|twice daily|three times daily|four times daily|daily|weekly|single dose|after dialysis|following dialysis|with each dialysis|bid|tid|qid|q24h|q12h|q8h|q6h|q48h|q72h)\b/i;
 const NO_ADJUSTMENT =
   /\b(?:no\s+(?:dosage?|dose)\s+adjustment(?:\s+of\s+[\w\s-]+?)?\s+(?:is\s+)?(?:necessary|required|recommended)|(?:dosage?|dose)\s+adjustment\s+(?:is\s+)?not\s+(?:necessary|required|recommended)|no\s+adjustment\s+(?:is\s+)?(?:necessary|required|recommended))\b/i;
-const INTERNAL_STATUS_TOKEN = /^(?:dose_found|no_renal_adjustment|review_source|not_found)$/i;
+const INTERNAL_STATUS_TOKEN = /^(?:dose_found|no_renal_adjustment|review_source|not_found|no_renal_text)$/i;
 // A dose band must be about kidney function. Models sometimes return a
 // hepatic band ("mild to moderate hepatic impairment") or "not_applicable".
 const RENAL_BAND_TERM =
@@ -165,6 +165,9 @@ export function validateAssistResponse(value, sourceText, fallback = {}) {
       : [],
     sourceSetId: fallback.sourceSetId || compactText(value.sourceSetId) || "",
     sourceUrl: fallback.sourceUrl || compactText(value.sourceUrl) || "",
+    labelExcerpt: Array.isArray(value.labelExcerpt)
+      ? value.labelExcerpt.map(compactText).filter(Boolean).slice(0, 5)
+      : [],
   };
 
   // An AI dose must name its own kidney band: an empty band would otherwise be
@@ -320,7 +323,7 @@ function isClearlyUnusableDoseResult(result) {
   return (!hasUsableDoseShape && VAGUE_DOSE.test(result.dose)) || !hasUsableDoseShape;
 }
 
-function hasRenalDoseTableEvidence(sourceText) {
+export function hasRenalDoseTableEvidence(sourceText) {
   const source = compactText(sourceText);
   return (
     /\b(?:creatinine clearance|crcl|clcr)\b/i.test(source) &&

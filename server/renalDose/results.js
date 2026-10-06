@@ -37,6 +37,43 @@ export function buildReviewSourceResult({ patient, label, reason }) {
   };
 }
 
+/** The label's dosing, warnings and population sections never mention the kidneys. */
+export function buildLabelSilentResult({ patient, label }) {
+  return {
+    status: "no_renal_text",
+    drugName: label.title || patient.drug || "Selected drug",
+    route: routeDisplayName(patient.route),
+    renalMetricUsed: "crcl",
+    renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
+    dose: "No kidney dosing guidance in the label",
+    frequency:
+      "The dosing, warnings and specific-population sections do not mention kidney function. That is not proof no adjustment is needed; check the full label.",
+    dialysisNote: "",
+    importantCautions: [],
+    labelExcerpt: [],
+    sourceSetId: label.setId || "",
+    sourceUrl: label.sourceUrl || "",
+  };
+}
+
+/** Kidney text exists but holds no dose table: show the sentences themselves. */
+export function buildLabelExcerptResult({ patient, label, excerpt }) {
+  return {
+    status: "review_source",
+    drugName: label.title || patient.drug || "Selected drug",
+    route: routeDisplayName(patient.route),
+    renalMetricUsed: "crcl",
+    renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
+    dose: "Read the label's kidney guidance",
+    frequency: "No dose table to apply; the label's own sentences are shown below.",
+    dialysisNote: "",
+    importantCautions: [],
+    labelExcerpt: excerpt,
+    sourceSetId: label.setId || "",
+    sourceUrl: label.sourceUrl || "",
+  };
+}
+
 export function createRouteUnavailableAssistResult({ drugName, route, sourceUrl, message }) {
   const routeLabel = routeDisplayName(route);
   return {
@@ -209,7 +246,8 @@ export function buildParserFallbackResult({ label, patient }) {
       renalMetricUsed: "crcl",
       renalBand: `CrCl ${formatNumber(patient.crcl)} mL/min`,
       dose: "Review label",
-      frequency: "The label sections read do not mention kidney function. Check the full label before assuming no adjustment.",
+      frequency:
+        "The label sections read do not mention kidney function. Check the full label before assuming no adjustment.",
       dialysisNote: "",
       importantCautions: [],
       sourceSetId: label.setId || "",

@@ -38,6 +38,18 @@ const TIERS = {
     tone: "info",
     description: "Renal dose table parsed from the live DailyMed label.",
   },
+  "label-excerpt": {
+    id: "label",
+    label: "Label text",
+    tone: "info",
+    description: "The label's own kidney-related sentences; no dose rule could be derived from them.",
+  },
+  "label-silent": {
+    id: "label",
+    label: "Label text",
+    tone: "info",
+    description: "The live DailyMed label was read; it gives no kidney dosing guidance.",
+  },
   ai: {
     id: "ai",
     label: "AI summary",
@@ -111,6 +123,7 @@ export function buildDoseView(assist, values = {}) {
       )
     ),
     variants,
+    excerpt: Array.isArray(result.labelExcerpt) ? result.labelExcerpt : [],
     rows: guidance.rows || [],
     options: guidance.options || null,
     selectedControls: guidance.selectedControls || null,
@@ -138,7 +151,9 @@ function getVariantsDecision({ result, variants, band, tier, reviewOnly }) {
 }
 
 function displayDrugName(...names) {
-  const name = names.map((value) => String(value || "").trim()).find((value) => value && !/^selected drug$/i.test(value));
+  const name = names
+    .map((value) => String(value || "").trim())
+    .find((value) => value && !/^selected drug$/i.test(value));
   if (!name) {
     return "Selected drug";
   }
@@ -156,6 +171,9 @@ function getDecision({ result, dose, frequency, band, tier, reviewOnly }) {
   }
   if (result.decisionHint === "not-studied") {
     return { id: "not-studied", label: "Not studied", tone: "neutral" };
+  }
+  if (result.status === "no_renal_text") {
+    return { id: "silent", label: "Label silent", tone: "neutral" };
   }
   if (AVOID.test(text)) {
     return { id: "avoid", label: "Avoid / restrict", tone: "danger" };
@@ -236,6 +254,7 @@ export function buildShareText({ patient, renal, views }) {
         : `${view.band ? `${view.metric} ${view.band}: ` : ""}${[view.dose, view.frequency].filter(Boolean).join(", ")}`
     );
     view.variants?.forEach((variant) => lines.push(`  • ${variant.condition}: ${variant.text}`));
+    view.excerpt.slice(0, 2).forEach((sentence) => lines.push(`Label: "${sentence}"`));
     view.cautions.slice(0, 2).forEach((caution) => lines.push(`Note: ${caution}`));
     if (view.sourceUrl) {
       lines.push(`DailyMed: ${view.sourceUrl}`);
