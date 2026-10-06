@@ -48,9 +48,9 @@ involved, how to prove it works, and what must not change.
   `scripts/import-rule-verifications.mjs` from a clinician's CSV does that.
 - Keep the educational-use disclaimer on every result and the DailyMed link on
   every card. Adults only; no pediatric dosing, no drug interactions.
-- Right after a deploy the live API answers "Selected drug / Review DailyMed
-  source" for ~30 s. Wait for a known curated drug to answer before judging a
-  deploy (see WP-3).
+- `npm run deploy` ends with `scripts/poll-after-deploy.mjs`, which checks two
+  curated drugs on the live API. (The "post-deploy window" noted earlier was a
+  zsh quoting bug in test commands; see WP-3 and `docs/DEPLOYMENT.md`.)
 
 ## Priority order
 

@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "cf:dev": "vite build && node scripts/cf-dev.mjs",
-    "deploy": "vite build && wrangler pages deploy dist --project-name renal-dose-calculator --branch main",
+    "deploy": "vite build && wrangler pages deploy dist --project-name renal-dose-calculator --branch main && node scripts/poll-after-deploy.mjs --quiet",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -29,7 +29,8 @@
     "fixtures:record": "node scripts/record-api-fixtures.mjs",
     "candidates:extract": "node scripts/extract-renal-candidates.mjs",
     "coverage:index": "node scripts/build-coverage-index.mjs",
-    "rules:verify-text": "node scripts/verify-rules-against-labels.mjs"
+    "rules:verify-text": "node scripts/verify-rules-against-labels.mjs",
+    "deploy:check": "node scripts/poll-after-deploy.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

@@ -1,31 +1,26 @@
 import { corsHeaders, jsonResponse } from "../../../server/renalDose/http.js";
 import { resolveDosePayload } from "../../../server/renalDose/pipeline.js";
-import { sanitizePatient } from "../../../server/renalDose/results.js";
+import { sanitizePatient, validatePatient } from "../../../server/renalDose/results.js";
 
 export async function onRequestPost(context) {
+  let body;
   try {
-    const patient = sanitizePatient(await context.request.json());
+    body = await context.request.json();
+  } catch {
+    return jsonResponse({ error: "Request body must be JSON." }, 400);
+  }
+  const patient = sanitizePatient(body || {});
+  const problem = validatePatient(patient);
+  if (problem) {
+    return jsonResponse({ error: problem }, 400);
+  }
+  try {
     return jsonResponse(await resolveDosePayload({ patient, env: context.env }), 200);
   } catch (error) {
-    return jsonResponse(
-      {
-        result: {
-          status: "review_source",
-          drugName: "Selected drug",
-          route: "All routes",
-          renalMetricUsed: "crcl",
-          renalBand: "",
-          dose: "Review DailyMed source",
-          frequency: error?.message || "Renal dose backend failed.",
-          dialysisNote: "",
-          importantCautions: [],
-          sourceSetId: "",
-          sourceUrl: "",
-        },
-        sourceMode: "error",
-      },
-      200
-    );
+    // A failure must not look like a clinical answer: the client retries 5xx
+    // and then shows "Unavailable".
+    console.error("renal-dose assist failed:", error?.message);
+    return jsonResponse({ error: "The dose service failed. Please retry." }, 500);
   }
 }
 
