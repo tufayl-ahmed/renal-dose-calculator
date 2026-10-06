@@ -28,7 +28,8 @@
     "rules:import": "node scripts/import-rule-verifications.mjs",
     "fixtures:record": "node scripts/record-api-fixtures.mjs",
     "candidates:extract": "node scripts/extract-renal-candidates.mjs",
-    "coverage:index": "node scripts/build-coverage-index.mjs"
+    "coverage:index": "node scripts/build-coverage-index.mjs",
+    "rules:verify-text": "node scripts/verify-rules-against-labels.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
