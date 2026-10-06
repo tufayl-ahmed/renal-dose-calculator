@@ -6,7 +6,7 @@ export function sanitizePatient(body) {
   return {
     drug: compactText(body.drug),
     normalizedDrug: body.normalizedDrug || null,
-    route: compactText(body.route) || "ALL",
+    route: compactText(body.route).toUpperCase() || "ALL",
     crcl: Number(body.crcl),
     egfr: Number(body.egfr),
     age: Number(body.age),
@@ -19,6 +19,25 @@ export function sanitizePatient(body) {
     indication: compactText(body.indication) || "any",
     formulation: compactText(body.formulation) || "any",
   };
+}
+
+const ROUTES = new Set(["ORAL", "IV", "SC", "ALL"]);
+
+/** Returns a message for a request that cannot be answered, or "". */
+export function validatePatient(patient) {
+  if (!patient.drug) {
+    return "A drug name is required.";
+  }
+  if (patient.drug.length > 120) {
+    return "The drug name is too long.";
+  }
+  if (!ROUTES.has(patient.route)) {
+    return "Route must be ORAL, IV, SC or ALL.";
+  }
+  if (!Number.isFinite(patient.crcl) || patient.crcl < 0 || patient.crcl > 500) {
+    return "A numeric creatinine clearance (crcl) is required.";
+  }
+  return "";
 }
 
 export function buildReviewSourceResult({ patient, label, reason }) {

@@ -79,3 +79,17 @@ npm run deploy
 
 Use direct deploy only as a temporary preview path once GitHub auto-deploy is
 connected.
+
+## After a deploy
+
+`npm run deploy` finishes by running `scripts/poll-after-deploy.mjs`, which
+asks the live API for two curated drugs (lorlatinib, simvastatin) until both
+answer correctly, and fails after 90 seconds. Run it on its own with
+`npm run deploy:check`.
+
+An earlier note blamed a ~30-second "Selected drug" window after each deploy.
+That turned out to be a quoting bug in hand-written test commands (zsh does not
+word-split `$var`, so requests were sent with invalid JSON). The API now
+rejects malformed requests with HTTP 400 and internal failures with HTTP 500
+instead of answering them with a review-shaped result, so this cannot be
+mistaken for a deploy problem again.
