@@ -1,6 +1,7 @@
 import { LABEL_CACHE_TTL_SECONDS, readJsonCache, writeJsonCache } from "./cache.js";
 import { compactText, escapeRegExp, routeDisplayName, routeSentenceName, truncate } from "./format.js";
 import { baseDrugKey } from "../../src/drugNormalizer.js";
+import { areAllRoutesNonSystemic, isSystemicByDesign } from "../../src/data/nonSystemicRoutes.js";
 
 const OPENFDA_LABEL_URL = "https://api.fda.gov/drug/label.json";
 
@@ -40,6 +41,19 @@ export async function lookupDrugLabel({ drug, route }) {
   const routeMatches = filterByRoute(humanPrescriptionMatches, route);
   const hasRouteFilter = route && route !== "ALL";
   if (hasRouteFilter && humanPrescriptionMatches.length && !routeMatches.length) {
+    // Only topical/eye/ear/nasal/inhaled forms exist: read that label instead
+    // of reporting a missing route (some, e.g. mupirocin, carry kidney advice).
+    // Labels without openfda route data do not count either way.
+    const withRoutes = humanPrescriptionMatches.filter((item) => readOpenFdaArray(item, "route").length);
+    const nonSystemic = withRoutes.filter(isNonSystemicLabel);
+    if (nonSystemic.length && nonSystemic.length === withRoutes.length) {
+      const best = chooseBestLabel(nonSystemic, drug);
+      return {
+        ...normalizeLabel(best, "ALL", drug),
+        status: "non_systemic",
+        nonSystemicRoutes: [...new Set(nonSystemic.flatMap((item) => readOpenFdaArray(item, "route")))],
+      };
+    }
     return {
       status: "route_not_found",
       title: drug,
@@ -374,7 +388,8 @@ function normalizeLabel(label, route, lookupTerm) {
 }
 
 export function toPublicLabel(label) {
-  if (!label || label.status !== "found") {
+  // Both carry normalized sections whose full text stays on the server.
+  if (!label || !["found", "non_systemic"].includes(label.status)) {
     return label;
   }
   return {
@@ -431,6 +446,12 @@ function filterByRoute(labels, route) {
     return labels;
   }
   return labels.filter((label) => {
+    // A label whose openFDA routes are all topical/eye/inhaled is never an
+    // oral, IV or SC product, whatever its package text says ("Not for
+    // ophthalmic, oral, or intravaginal use" on clobetasol reads as oral).
+    if (isNonSystemicLabel(label)) {
+      return false;
+    }
     const routes = getRouteEvidence(label);
     if (route === "IV") {
       return routes.some(hasIvRouteEvidence);
@@ -443,6 +464,13 @@ function filterByRoute(labels, route) {
     }
     return true;
   });
+}
+
+function isNonSystemicLabel(label) {
+  return (
+    areAllRoutesNonSystemic(readOpenFdaArray(label, "route")) &&
+    !isSystemicByDesign([...readOpenFdaArray(label, "substance_name"), ...readOpenFdaArray(label, "generic_name")])
+  );
 }
 
 function hasIvRouteEvidence(value) {

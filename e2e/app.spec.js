@@ -343,3 +343,40 @@ test("label-path cards show the label's own sentences or say it is silent", asyn
   await expect(silent.locator(".decision")).toHaveText("Label silent");
   await expect(silent.locator(".label-excerpt")).toHaveCount(0);
 });
+
+test("topical/eye/inhaled-only drugs say kidney dosing does not apply", async ({ page, api }) => {
+  api.overrides.examplaprost = {
+    sourceMode: "label-non-systemic",
+    result: {
+      status: "not_applicable",
+      drugName: "Examplaprost",
+      route: "Eye",
+      renalMetricUsed: "crcl",
+      renalBand: "",
+      dose: "Kidney dosing not applicable",
+      frequency: "Only eye forms were found, and the label gives no kidney dosing guidance.",
+      importantCautions: [],
+      labelExcerpt: [],
+      sourceUrl: "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=x",
+    },
+  };
+  await fillPatient(page, { creatinine: "2.6" });
+  await addDrug(page, "examplaprost");
+  await calculate(page);
+
+  const card = page.locator(".dose-card", { hasText: "Examplaprost" });
+  await expect(card.locator(".decision")).toHaveText("Not applicable");
+  await expect(card.locator(".badge")).toHaveText("Label text");
+  await expect(card).toContainText("Kidney dosing not applicable");
+  await expect(card).toContainText("Only eye forms were found");
+  await expect(card.locator(".label-excerpt")).toHaveCount(0);
+  await expect(card.getByRole("link", { name: "Open DailyMed label" })).toHaveAttribute("href", /dailymed/);
+});
+
+test("autocomplete marks non-systemic drugs 'Not applicable'", async ({ page }) => {
+  await page.fill("#drug-input", "latanoprost");
+  const option = page
+    .locator("#drug-suggestions li")
+    .filter({ has: page.locator("strong", { hasText: /^Latanoprost$/ }) });
+  await expect(option.locator(".badge")).toHaveText("Not applicable");
+});

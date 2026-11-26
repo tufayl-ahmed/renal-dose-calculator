@@ -50,6 +50,12 @@ const TIERS = {
     tone: "info",
     description: "The live DailyMed label was read; it gives no kidney dosing guidance.",
   },
+  "label-non-systemic": {
+    id: "label",
+    label: "Label text",
+    tone: "info",
+    description: "The live DailyMed label was read; no oral, IV or subcutaneous form of this drug was found.",
+  },
   ai: {
     id: "ai",
     label: "AI summary",
@@ -171,6 +177,9 @@ function getDecision({ result, dose, frequency, band, tier, reviewOnly }) {
   }
   if (result.decisionHint === "not-studied") {
     return { id: "not-studied", label: "Not studied", tone: "neutral" };
+  }
+  if (result.status === "not_applicable") {
+    return { id: "na", label: "Not applicable", tone: "neutral" };
   }
   if (result.status === "no_renal_text") {
     return { id: "silent", label: "Label silent", tone: "neutral" };
