@@ -21,6 +21,11 @@ export default defineConfig({
       // The manifest is maintained by hand in public/manifest.webmanifest.
       manifest: false,
       workbox: {
+        // A new deploy's worker takes over at once instead of waiting for every
+        // tab to close. The plugin only adds these itself when it injects the
+        // registration; src/ui/pwa.js registers the worker by hand.
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ["**/*.{js,css,html,woff2,png,webmanifest}"],
         navigateFallback: "/app/index.html",
         navigateFallbackDenylist: [/^\/api\//],

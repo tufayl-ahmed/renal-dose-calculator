@@ -2,6 +2,33 @@ import { $ } from "./dom.js";
 
 let deferredPrompt = null;
 
+/**
+ * For pages with nothing to lose (the landing page): when the page came from
+ * the offline copy and a newly deployed service worker takes over, reload once
+ * so a returning visitor sees the new version without refreshing by hand.
+ */
+export function reloadWhenUpdated() {
+  if (!("serviceWorker" in navigator) || !navigator.serviceWorker.controller) {
+    return;
+  }
+  let reloading = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!reloading) {
+      reloading = true;
+      window.location.reload();
+    }
+  });
+  // A tab left open checks for a new deploy when it is shown again.
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      navigator.serviceWorker
+        .getRegistration()
+        .then((registration) => registration?.update())
+        .catch(() => {});
+    }
+  });
+}
+
 export function initPwa() {
   updateStatus();
   window.addEventListener("online", updateStatus);
