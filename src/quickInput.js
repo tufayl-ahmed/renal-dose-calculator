@@ -1,3 +1,5 @@
+import { creatinineToMgDl } from "./renal.js";
+
 const AGE_LABELS = new Set(["age", "aged", "year", "years", "yr", "yrs", "yo"]);
 const SEX_LABELS = new Set(["sex", "gender"]);
 const WEIGHT_LABELS = new Set(["weight", "wt", "kg", "kgs"]);
@@ -49,6 +51,10 @@ export function parseQuickInput(value) {
     .join(" ")
     .trim();
   result.drugs = parseDrugSegments(tokens, used);
+  if (Number.isFinite(result.creatinine) && !result.creatinineUnit) {
+    result.creatinineUnit = "mg";
+    result.creatinineInput = result.creatinine;
+  }
 
   return result;
 }
@@ -166,7 +172,7 @@ function parseDirectTokens(tokens, used, result) {
 
     const attachedMicromol = token.lower.match(/^(\d+(?:\.\d+)?)(?:umol|µmol|μmol|micromol)(?:\/l)?$/);
     if (attachedMicromol) {
-      if (assignNumber(result, "creatinine", micromolToMgDl(Number(attachedMicromol[1])))) {
+      if (assignMicromol(result, Number(attachedMicromol[1]))) {
         used.add(index);
       }
       return;
@@ -174,7 +180,7 @@ function parseDirectTokens(tokens, used, result) {
     const nextIsMicromol = isMicromolUnit(tokens[index + 1]?.lower);
     const bareNumber = numberValue(token.clean);
     if (nextIsMicromol && Number.isFinite(bareNumber)) {
-      if (assignNumber(result, "creatinine", micromolToMgDl(bareNumber))) {
+      if (assignMicromol(result, bareNumber)) {
         used.add(index);
         used.add(index + 1);
       }
@@ -218,7 +224,7 @@ function parseLabelNeighbors(tokens, used, result) {
       !isUnitLabel &&
       looksLikeMicromol(numberValue(tokens[nextIndex].clean))
     ) {
-      if (assignNumber(result, field, micromolToMgDl(numberValue(tokens[nextIndex].clean)))) {
+      if (assignMicromol(result, numberValue(tokens[nextIndex].clean))) {
         used.add(index);
         used.add(nextIndex);
         if (isMicromolUnit(tokens[nextIndex + 1]?.lower)) {
@@ -331,6 +337,16 @@ function fieldForLabel(label) {
   return "";
 }
 
+// Keeps the µmol/L value as typed so the form can show it unchanged.
+function assignMicromol(result, micromol) {
+  if (!assignNumber(result, "creatinine", micromolToMgDl(micromol))) {
+    return false;
+  }
+  result.creatinineUnit = "umol";
+  result.creatinineInput = micromol;
+  return true;
+}
+
 function assignNumber(result, field, value) {
   if (!Number.isFinite(value) || !isValidFieldValue(field, value) || result[field]) {
     return false;
@@ -365,7 +381,7 @@ function isMicromolUnit(value) {
 }
 
 function micromolToMgDl(value) {
-  return Math.round((value / 88.42) * 100) / 100;
+  return creatinineToMgDl(value, "umol");
 }
 
 function numberValue(value) {

@@ -5,6 +5,7 @@ import {
   calculateCockcroftGault,
   calculateEgfrCkdEpi2021,
   calculateIdealBodyWeight,
+  creatinineForEquations,
   getCkdStage,
   selectCrclWeight,
   UMOL_PER_MG_DL,
@@ -14,7 +15,10 @@ import { $, html, setHtml } from "./dom.js";
 // Equal-width gauge segments; each maps an eGFR range onto one sixth of the bar.
 const GAUGE_STOPS = [0, 15, 30, 45, 60, 90, 120];
 
-export function computeRenal(values) {
+export function computeRenal(patient) {
+  // The equations take creatinine exactly as typed; values.creatinine stays the
+  // 2-decimal mg/dL used for display and creatinine-based label bands.
+  const values = { ...patient, creatinine: creatinineForEquations(patient) };
   const egfr = calculateEgfrCkdEpi2021(values);
   const crclWeight = selectCrclWeight({ ...values, basis: values.weightBasis });
   const crcl = calculateCockcroftGault({ ...values, weight: crclWeight.weight });

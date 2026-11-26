@@ -194,9 +194,10 @@ function formatNumber(value) {
   return Number.isFinite(value) ? value.toFixed(1) : "--";
 }
 
-// Serum creatinine: 1 mg/dL = 88.42 µmol/L.
-export const UMOL_PER_MG_DL = 88.42;
+// Serum creatinine: 1 mg/dL = 88.4 µmol/L, the factor KDIGO and the NKF calculator use.
+export const UMOL_PER_MG_DL = 88.4;
 
+/** mg/dL rounded to 2 decimals, for display and creatinine-based label bands. */
 export function creatinineToMgDl(value, unit) {
   if (!Number.isFinite(value)) {
     return NaN;
@@ -209,6 +210,15 @@ export function creatinineFromMgDl(value, unit) {
     return NaN;
   }
   return unit === "umol" ? Math.round(value * UMOL_PER_MG_DL) : value;
+}
+
+/**
+ * mg/dL for the eGFR and CrCl equations. A µmol/L value is divided by 88.4
+ * as typed, with no rounding first (rounding first can move eGFR by 1),
+ * which is how the NKF/KDIGO eGFR calculator does it.
+ */
+export function creatinineForEquations({ creatinine, creatinineUnit, creatinineInput }) {
+  return creatinineUnit === "umol" && Number.isFinite(creatinineInput) ? creatinineInput / UMOL_PER_MG_DL : creatinine;
 }
 
 /**

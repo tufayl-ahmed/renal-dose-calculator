@@ -63,6 +63,8 @@ export function createHistory({ onSelect }) {
           weight: patient.weight,
           height: patient.height,
           creatinine: patient.creatinine,
+          creatinineUnit: patient.creatinineUnit,
+          creatinineInput: patient.creatinineInput,
           weightBasis: patient.weightBasis,
           dialysis: patient.dialysis,
           unstable: patient.unstable,

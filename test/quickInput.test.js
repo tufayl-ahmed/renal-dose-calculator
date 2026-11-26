@@ -110,6 +110,13 @@ test("quick input converts creatinine given in µmol/L", () => {
   assert.equal(parseQuickInput("doxy 65 age f 1.1 mg/dL 62 kg oral").weight, 62);
 });
 
+test("quick input keeps creatinine as typed, with its unit", () => {
+  const micromol = parseQuickInput("28 M 80 kg SCr 142");
+  assert.deepEqual([micromol.creatinineUnit, micromol.creatinineInput], ["umol", 142]);
+  const mg = parseQuickInput("72 M 78 kg SCr 1.4");
+  assert.deepEqual([mg.creatinineUnit, mg.creatinineInput], ["mg", 1.4]);
+});
+
 test("quick input reads units after their numbers", () => {
   const parsed = parseQuickInput("72 M 110 kg 175 cm SCr 132");
   assert.equal(parsed.weight, 110);

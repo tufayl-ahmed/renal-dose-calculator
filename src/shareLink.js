@@ -11,6 +11,10 @@ export function encodeCheck({ patient, drugs, defaultRoute }) {
     w: patient.weight,
     h: patient.height ?? null,
     c: patient.creatinine,
+    // Creatinine as typed, so a µmol/L check reopens with the same eGFR.
+    ...(patient.creatinineUnit === "umol" && Number.isFinite(patient.creatinineInput)
+      ? { cu: patient.creatinineInput }
+      : {}),
     wb: patient.weightBasis || "actual",
     d: patient.dialysis || "none",
     u: patient.unstable ? 1 : 0,
@@ -38,6 +42,11 @@ export function decodeCheck(hash) {
         weight: number(state.w),
         height: number(state.h),
         creatinine: number(state.c),
+        ...(number(state.cu) !== null
+          ? { creatinineUnit: "umol", creatinineInput: number(state.cu) }
+          : number(state.c) !== null
+            ? { creatinineUnit: "mg", creatinineInput: number(state.c) }
+            : {}),
         weightBasis: ["ideal", "adjusted"].includes(state.wb) ? state.wb : "actual",
         dialysis: ["hd", "pd", "crrt"].includes(state.d) ? state.d : "none",
         unstable: state.u === 1,

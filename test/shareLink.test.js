@@ -28,6 +28,8 @@ test("share links round-trip a check", () => {
       weight: 55,
       height: 158,
       creatinine: 1.6,
+      creatinineUnit: "mg",
+      creatinineInput: 1.6,
       weightBasis: "ideal",
       dialysis: "hd",
       unstable: true,
@@ -38,6 +40,17 @@ test("share links round-trip a check", () => {
       { name: "méropénem", route: "IV" },
     ],
   });
+});
+
+test("share links keep creatinine typed in µmol/L exactly", () => {
+  const hash = encodeCheck({
+    patient: { age: 28, sex: "male", weight: 80, creatinine: 1.61, creatinineUnit: "umol", creatinineInput: 142 },
+    drugs: [],
+  });
+  const { patient } = decodeCheck(`#${hash}`);
+  assert.equal(patient.creatinine, 1.61);
+  assert.equal(patient.creatinineUnit, "umol");
+  assert.equal(patient.creatinineInput, 142);
 });
 
 test("bad or foreign fragments are ignored", () => {

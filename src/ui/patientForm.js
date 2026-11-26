@@ -120,14 +120,21 @@ export function showFieldErrors(errors = {}, { showMissing = false } = {}) {
   }
 }
 
-/** Fills the form; `patient.creatinine` is in mg/dL. */
+/**
+ * Fills the form. `patient.creatinine` is in mg/dL; when the creatinine as
+ * typed is known (`creatinineInput` in `creatinineUnit`), the form switches to
+ * that unit and shows it unchanged, so the result matches the original check.
+ */
 export function fillPatient(form, patient) {
   for (const name of ["age", "weight", "height"]) {
     if (patient[name] !== undefined && patient[name] !== "") {
       form.elements[name].value = patient[name] ?? "";
     }
   }
-  if (patient.creatinine !== undefined && patient.creatinine !== "") {
+  if (["mg", "umol"].includes(patient.creatinineUnit) && typeof patient.creatinineInput === "number") {
+    applyUnit(form, patient.creatinineUnit, { convert: false });
+    form.elements.creatinine.value = String(patient.creatinineInput);
+  } else if (patient.creatinine !== undefined && patient.creatinine !== "") {
     form.elements.creatinine.value = String(creatinineFromMgDl(Number(patient.creatinine), currentUnit(form)));
   }
   if (patient.sex) {

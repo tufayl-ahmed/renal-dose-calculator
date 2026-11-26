@@ -197,7 +197,9 @@ test("creatinine unit toggle converts between mg/dL and µmol/L", async ({ page 
   await page.locator("#scr-unit").click();
   await expect(page.locator("#scr-unit")).toHaveText("µmol/L");
   await expect(page.locator("#creatinine")).toHaveValue("124");
-  await expect(page.locator("#crcl-value")).toHaveText("52.6");
+  // Results now come from 124 µmol/L as shown (124 ÷ 88.4 = 1.403 mg/dL), not from 1.4.
+  await expect(page.locator("#crcl-value")).toHaveText("52.5");
+  await expect(page.locator("#egfr-value")).toHaveText("53");
   await page.locator("#scr-unit").click();
   await expect(page.locator("#creatinine")).toHaveValue("1.4");
 });
