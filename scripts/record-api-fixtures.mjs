@@ -9,7 +9,14 @@ import { calculateCockcroftGault, calculateEgfrCkdEpi2021 } from "../src/renal.j
 import { normalizeDrugQuery } from "../src/drugNormalizer.js";
 import { SMOKE_CASES } from "../test/fixtures/smokeCases.js";
 
-const args = Object.fromEntries(process.argv.slice(2).map((arg) => arg.replace(/^--/, "").split("=")));
+// A bare flag ("--replay") is true; before this it parsed as undefined and
+// silently re-recorded from the live APIs instead of replaying.
+const args = Object.fromEntries(
+  process.argv.slice(2).map((arg) => {
+    const [key, ...value] = arg.replace(/^--/, "").split("=");
+    return [key, value.length ? value.join("=") : "true"];
+  })
+);
 const handlerPath = path.resolve(args.handler || "functions/api/renal-dose/assist.js");
 const outputPath = args.out || "test/fixtures/api-smoke.json.gz";
 const { onRequestPost } = await import(pathToFileURL(handlerPath).href);

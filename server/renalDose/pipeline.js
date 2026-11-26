@@ -15,6 +15,7 @@ import { lookupDrugLabel, toPublicLabel, toPublicSections } from "./openfda.js";
 import {
   buildLabelExcerptResult,
   buildLabelSilentResult,
+  buildNonSystemicResult,
   buildParserFallbackResult,
   buildReviewSourceResult,
   buildSpecialPayloadFromMissingLabel,
@@ -70,6 +71,22 @@ async function resolveForPatient({ patient, env }) {
       sourceText: "",
       sourceUrl: label.sourceUrl,
       sourceMode: "route-not-found",
+    };
+  }
+
+  if (label.status === "non_systemic") {
+    // No AI call: there is no systemic dose to summarize.
+    const excerpt = extractKidneySentences(label);
+    return {
+      result: buildNonSystemicResult({ patient, label, excerpt }),
+      label: toPublicLabel(label),
+      sourceSections: toPublicSections(label.sections),
+      sourceText: "",
+      sourceUrl: label.sourceUrl,
+      sourceMode: excerpt.length ? "label-excerpt" : "label-non-systemic",
+      modelUsed: "",
+      freeMode: true,
+      freeModeRemaining: null,
     };
   }
 

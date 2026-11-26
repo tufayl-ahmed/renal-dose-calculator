@@ -82,14 +82,15 @@ export function isSystemicAutocompleteCandidate(item) {
 
 /**
  * Best rule-database status for a drug name: { status: "verified" | "curated"
- * | "extracted", routes } or null when only the live label lookup covers it.
+ * | "extracted" | "not-applicable", routes } or null when only the live label
+ * lookup covers it.
  */
 export function getDrugCoverage(name) {
   const entry = COVERAGE_INDEX[normalizeDrugKey(name)] || COVERAGE_INDEX[baseDrugKey(name)];
   if (!entry) {
     return null;
   }
-  return { status: { v: "verified", c: "curated", e: "extracted" }[entry.s], routes: entry.r };
+  return { status: { v: "verified", c: "curated", e: "extracted", n: "not-applicable" }[entry.s], routes: entry.r };
 }
 
 export function getDrugAutocompleteSuggestions(query, options = {}) {

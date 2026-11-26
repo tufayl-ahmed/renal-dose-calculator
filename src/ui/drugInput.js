@@ -5,6 +5,7 @@ const COVERAGE_BADGES = {
   verified: { label: "Verified", tone: "good" },
   curated: { label: "Curated", tone: "info" },
   extracted: { label: "Auto-extracted", tone: "info" },
+  "not-applicable": { label: "Not applicable", tone: "neutral" },
 };
 let nextId = 1;
 // The 2,000-drug list is only downloaded when the drug box is first used.

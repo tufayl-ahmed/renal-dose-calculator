@@ -402,6 +402,7 @@ const DECISION_ICONS = {
   unavailable: '<circle cx="12" cy="12" r="8" /><path d="M8 12h8" />',
   caution: '<path d="M12 4 3 20h18L12 4Z" /><path d="M12 10v4" /><path d="M12 17h.01" />',
   "not-studied": '<circle cx="12" cy="12" r="8" /><path d="M12 8v5" /><path d="M12 16h.01" />',
+  na: '<circle cx="12" cy="12" r="8" /><path d="M8 16 16 8" />',
   silent: '<circle cx="12" cy="12" r="8" /><path d="M8 12h8" /><path d="M12 8v.01" />',
   varies: '<path d="M6 3v6a6 6 0 0 0 6 6h6" /><path d="m15 12 3 3-3 3" /><path d="M6 21v-6" />',
 };

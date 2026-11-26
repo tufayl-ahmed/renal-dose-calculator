@@ -1,6 +1,7 @@
 import { deriveRenalDoseGuidance } from "../../src/doseGuidance.js";
 import { compactText, formatNumber, routeDisplayName, routeSentenceName, splitDoseAndFrequency } from "./format.js";
 import { buildDailyMedSearchUrl, toPublicSections } from "./openfda.js";
+import { describeNonSystemicRoutes } from "../../src/data/nonSystemicRoutes.js";
 
 export function sanitizePatient(body) {
   return {
@@ -88,6 +89,37 @@ export function buildLabelExcerptResult({ patient, label, excerpt }) {
     dialysisNote: "",
     importantCautions: [],
     labelExcerpt: excerpt,
+    sourceSetId: label.setId || "",
+    sourceUrl: label.sourceUrl || "",
+  };
+}
+
+/**
+ * Only topical/eye/ear/nasal/inhaled forms exist. If their label still talks
+ * about the kidneys (mupirocin's polyethylene glycol base), show those sentences; otherwise
+ * kidney dosing does not apply.
+ */
+export function buildNonSystemicResult({ patient, label, excerpt }) {
+  const kind = describeNonSystemicRoutes(label.nonSystemicRoutes);
+  const route = kind.charAt(0).toUpperCase() + kind.slice(1);
+  if (excerpt.length) {
+    return {
+      ...buildLabelExcerptResult({ patient, label, excerpt }),
+      route,
+      dose: `Only ${kind} forms found: read the label's kidney guidance`,
+    };
+  }
+  return {
+    status: "not_applicable",
+    drugName: label.title || patient.drug || "Selected drug",
+    route,
+    renalMetricUsed: "crcl",
+    renalBand: "",
+    dose: "Kidney dosing not applicable",
+    frequency: `Only ${kind} forms were found, and the label gives no kidney dosing guidance.`,
+    dialysisNote: "",
+    importantCautions: [],
+    labelExcerpt: [],
     sourceSetId: label.setId || "",
     sourceUrl: label.sourceUrl || "",
   };

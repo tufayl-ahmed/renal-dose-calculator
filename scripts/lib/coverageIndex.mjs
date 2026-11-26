@@ -1,9 +1,6 @@
-import {
-  getRecordVerification,
-  listCandidateRecords,
-  listCuratedRecords,
-} from "../../src/curatedDoseRules.js";
+import { getRecordVerification, listCandidateRecords, listCuratedRecords } from "../../src/curatedDoseRules.js";
 import { baseDrugKey, normalizeDrugKey } from "../../src/drugNormalizer.js";
+import { NON_SYSTEMIC_DRUGS } from "../../src/data/nonSystemicDrugs.js";
 
 const RANK = { v: 3, c: 2, e: 1 };
 
@@ -59,6 +56,18 @@ export function buildCoverageIndex() {
     const verification = getRecordVerification(record);
     if (verification.status !== "retired") {
       addBase(record, verification.status === "verified" ? "v" : "e");
+    }
+  }
+  // Drugs the live lookup found only in topical/eye/inhaled forms with no
+  // kidney text. A rule record for the same name, or its salt-free name
+  // ("Timolol Maleate" -> oral timolol), always wins.
+  for (const name of NON_SYSTEMIC_DRUGS) {
+    const parts = name.split(";").map((part) => part.trim());
+    for (const query of [parts.join(" and "), [...parts].reverse().join(" and ")]) {
+      const key = normalizeDrugKey(query);
+      if (key && !index[key] && !index[baseDrugKey(query)]) {
+        index[key] = { s: "n", r: [] };
+      }
     }
   }
   return Object.fromEntries(Object.entries(index).sort(([a], [b]) => a.localeCompare(b)));
