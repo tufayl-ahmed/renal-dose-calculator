@@ -1,5 +1,6 @@
 import { calculateCockcroftGault, calculateEgfrCkdEpi2021, getCkdStage } from "./renal.js";
 import { gaugePosition } from "./ui/kidneyCard.js";
+import { reloadWhenUpdated } from "./ui/pwa.js";
 import { initTheme } from "./ui/theme.js";
 
 // Telegram Mini App launches and shared check links (#c=...) belong in the
@@ -14,6 +15,7 @@ if (
 }
 
 initTheme();
+reloadWhenUpdated();
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
