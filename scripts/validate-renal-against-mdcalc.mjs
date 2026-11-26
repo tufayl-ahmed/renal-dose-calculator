@@ -67,7 +67,7 @@ const payload = {
     egfrCalculatorId: MDCALC_EGFR_ID,
     crclCalculator: "Creatinine Clearance (Cockcroft-Gault Equation)",
     crclCalculatorId: MDCALC_CRCL_ID,
-    note: "MDCalc displayed whole-number outputs; app and independent references are rounded to 1 decimal.",
+    note: "MDCalc displayed whole-number outputs; app eGFR and its reference are whole numbers, CrCl is rounded to 1 decimal.",
   },
   tolerance: {
     exactFormula: EXACT_TOLERANCE,
@@ -131,12 +131,8 @@ function referenceCkdEpi2021({ age, sex, creatinine }) {
   const ratio = creatinine / kappa;
 
   return roundTo(
-    142 *
-      Math.min(ratio, 1) ** alpha *
-      Math.max(ratio, 1) ** -1.2 *
-      0.9938 ** age *
-      (isFemale ? 1.012 : 1),
-    1
+    142 * Math.min(ratio, 1) ** alpha * Math.max(ratio, 1) ** -1.2 * 0.9938 ** age * (isFemale ? 1.012 : 1),
+    0
   );
 }
 

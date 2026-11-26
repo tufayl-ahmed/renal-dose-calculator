@@ -7,7 +7,7 @@ test.beforeEach(async ({ page, api: _api }) => {
 test("kidney function updates as you type", async ({ page }) => {
   await fillPatient(page);
   await expect(page.locator("#crcl-value")).toHaveText("52.6");
-  await expect(page.locator("#egfr-value")).toHaveText("53.4");
+  await expect(page.locator("#egfr-value")).toHaveText("53");
   await expect(page.locator("#ckd-tag")).toHaveText("CKD G3a");
   await expect(page.locator("#gauge-marker")).toBeVisible();
 

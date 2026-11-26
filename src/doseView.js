@@ -243,7 +243,7 @@ export function buildShareText({ patient, renal, views }) {
     `Patient: ${patient.age} y ${patient.sex}, SCr ${patient.creatinine} mg/dL${
       patient.creatinineUnit === "umol" ? ` (${patient.creatinineInput} µmol/L)` : ""
     }, weight ${patient.weight} kg${patient.height ? `, height ${patient.height} cm` : ""}`,
-    `eGFR (CKD-EPI 2021): ${renal.egfr.toFixed(1)} mL/min/1.73 m² (${renal.stage.stage})`,
+    `eGFR (CKD-EPI 2021): ${renal.egfr.toFixed(0)} mL/min/1.73 m² (${renal.stage.stage})`,
     `CrCl (Cockcroft-Gault, ${renal.crclWeight?.basis || "actual"} weight): ${renal.crcl.toFixed(1)} mL/min`,
   ];
   if (patient.dialysis && patient.dialysis !== "none") {

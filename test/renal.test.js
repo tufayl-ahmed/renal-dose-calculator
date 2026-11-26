@@ -16,7 +16,7 @@ test("calculates CKD-EPI 2021 eGFR for an adult male", () => {
     creatinine: 2.1,
   });
 
-  assert.equal(egfr, 38.8);
+  assert.equal(egfr, 39);
 });
 
 test("calculates CKD-EPI 2021 eGFR for an adult female", () => {
@@ -26,7 +26,7 @@ test("calculates CKD-EPI 2021 eGFR for an adult female", () => {
     creatinine: 1.4,
   });
 
-  assert.equal(egfr, 40.5);
+  assert.equal(egfr, 40);
 });
 
 test("calculates Cockcroft-Gault creatinine clearance", () => {

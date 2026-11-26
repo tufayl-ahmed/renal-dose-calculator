@@ -15,7 +15,8 @@ export function calculateEgfrCkdEpi2021({ age, sex, creatinine }) {
     Math.pow(0.9938, age) *
     (isFemale ? FEMALE_MULTIPLIER : 1);
 
-  return roundTo(egfr, 1);
+  // Reported as a whole number, as lab reports, KDIGO and the NKF calculator do.
+  return Math.round(egfr);
 }
 
 export function calculateCockcroftGault({ age, sex, creatinine, weight }) {
@@ -60,26 +61,29 @@ export function calculateAdjustedBodyWeight({ sex, weight, height }) {
   return roundTo(idealBodyWeight + 0.4 * (weight - idealBodyWeight), 1);
 }
 
+const KDIGO_G_CATEGORIES = [
+  { min: 90, stage: "G1", label: "Normal or high", tone: "good" },
+  { min: 60, stage: "G2", label: "Mildly decreased", tone: "good" },
+  { min: 45, stage: "G3a", label: "Mild-moderate decrease", tone: "caution" },
+  { min: 30, stage: "G3b", label: "Moderate-severe decrease", tone: "caution" },
+  { min: 15, stage: "G4", label: "Severely decreased", tone: "warning" },
+  { min: -Infinity, stage: "G5", label: "Kidney failure range", tone: "danger" },
+];
+
+function kdigoCategory(value) {
+  return KDIGO_G_CATEGORIES.find((category) => value >= category.min);
+}
+
+/**
+ * KDIGO G category for an eGFR. The ranges are whole numbers (G2 is 60-89),
+ * so a value with decimals is rounded first: 59.8 is 60 and G2, not G3a.
+ */
 export function getCkdStage(egfr) {
   if (!Number.isFinite(egfr)) {
     return { stage: "Waiting", label: "Waiting for inputs", tone: "neutral" };
   }
-  if (egfr >= 90) {
-    return { stage: "G1", label: "Normal or high", tone: "good" };
-  }
-  if (egfr >= 60) {
-    return { stage: "G2", label: "Mildly decreased", tone: "good" };
-  }
-  if (egfr >= 45) {
-    return { stage: "G3a", label: "Mild-moderate decrease", tone: "caution" };
-  }
-  if (egfr >= 30) {
-    return { stage: "G3b", label: "Moderate-severe decrease", tone: "caution" };
-  }
-  if (egfr >= 15) {
-    return { stage: "G4", label: "Severely decreased", tone: "warning" };
-  }
-  return { stage: "G5", label: "Kidney failure range", tone: "danger" };
+  const { stage, label, tone } = kdigoCategory(Math.round(egfr));
+  return { stage, label, tone };
 }
 
 export function buildInterpretation({ age, egfr, crcl, weight, height, sex }) {

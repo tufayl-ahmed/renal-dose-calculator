@@ -10,7 +10,7 @@ function referenceEgfr({ age, sex, creatinine }) {
   const alpha = female ? -0.241 : -0.302;
   const ratio = creatinine / kappa;
   const value = 142 * Math.min(ratio, 1) ** alpha * Math.max(ratio, 1) ** -1.2 * 0.9938 ** age * (female ? 1.012 : 1);
-  return Math.round(value * 10) / 10;
+  return Math.round(value);
 }
 
 function referenceCrcl({ age, sex, creatinine, weight }) {
@@ -32,15 +32,40 @@ test("eGFR and CrCl match the reference equations across the adult range", () =>
   }
 });
 
-test("KDIGO G categories use >= lower bounds", () => {
-  assert.equal(getCkdStage(90).stage, "G1");
-  assert.equal(getCkdStage(89.9).stage, "G2");
-  assert.equal(getCkdStage(60).stage, "G2");
-  assert.equal(getCkdStage(59.9).stage, "G3a");
-  assert.equal(getCkdStage(45).stage, "G3a");
-  assert.equal(getCkdStage(30).stage, "G3b");
-  assert.equal(getCkdStage(15).stage, "G4");
-  assert.equal(getCkdStage(14.9).stage, "G5");
+test("KDIGO G categories use >= lower bounds on the whole-number eGFR", () => {
+  const cases = [
+    [90, "G1"],
+    [89.5, "G1"],
+    [89.4, "G2"],
+    [60, "G2"],
+    [59.5, "G2"],
+    [59.4, "G3a"],
+    [45, "G3a"],
+    [44.5, "G3a"],
+    [44.4, "G3b"],
+    [30, "G3b"],
+    [29.5, "G3b"],
+    [29.4, "G4"],
+    [15, "G4"],
+    [14.5, "G4"],
+    [14.4, "G5"],
+  ];
+  for (const [egfr, stage] of cases) {
+    assert.equal(getCkdStage(egfr).stage, stage, String(egfr));
+  }
+});
+
+test("eGFR is a whole number, matching the NKF eGFR calculator", () => {
+  // kidney.org/professionals/gfr_calculator shows 53 and 60 (G2) for these men (checked Nov 2026).
+  assert.equal(calculateEgfrCkdEpi2021({ age: 72, sex: "male", creatinine: 1.4 }), 53);
+
+  const man = calculateEgfrCkdEpi2021({ age: 68, sex: "male", creatinine: 1.3 });
+  assert.equal(man, 60);
+  assert.equal(getCkdStage(man).stage, "G2");
+
+  const woman = calculateEgfrCkdEpi2021({ age: 50, sex: "female", creatinine: 0.8 });
+  assert.equal(woman, 90);
+  assert.equal(getCkdStage(woman).stage, "G1");
 });
 
 test("gauge marker maps eGFR onto equal-width KDIGO segments", () => {

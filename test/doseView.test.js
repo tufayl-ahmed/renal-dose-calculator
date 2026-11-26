@@ -78,9 +78,10 @@ test("bands are shown without metric and unit", () => {
 test("share text includes patient, each drug, sources and the disclaimer", () => {
   const text = buildShareText({
     patient: { age: 70, sex: "male", creatinine: 1.4, weight: 70, height: null },
-    renal: { egfr: 53.4, crcl: 52.6, stage: { stage: "G3a" } },
+    renal: { egfr: 53, crcl: 52.6, stage: { stage: "G3a" } },
     views: [buildDoseView(assist())],
   });
+  assert.match(text, /eGFR \(CKD-EPI 2021\): 53 mL\/min\/1\.73 m² \(G3a\)/);
   assert.match(text, /CrCl \(Cockcroft-Gault, actual weight\): 52\.6 mL\/min/);
   assert.match(text, /Drug \(Oral\) — Adjust dose \[Curated · draft\]/);
   assert.match(text, /DailyMed: https:\/\/dailymed/);

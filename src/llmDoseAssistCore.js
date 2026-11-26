@@ -277,7 +277,9 @@ export function buildAssistGuidance(result, { crcl, egfr, route } = {}) {
       result.renalMetricUsed === "egfr" ? "eGFR band" : result.renalMetricUsed === "scr" ? "SCr band" : "CrCl band",
     crclBand:
       result.renalBand ||
-      `${result.renalMetricUsed === "egfr" ? "eGFR" : "CrCl"} ${formatNumber(result.renalMetricUsed === "egfr" ? egfr : crcl)} mL/min`,
+      (result.renalMetricUsed === "egfr"
+        ? `eGFR ${formatNumber(egfr, 0)} mL/min`
+        : `CrCl ${formatNumber(crcl)} mL/min`),
     recommendation: `${result.dose || "Review DailyMed source"} ${result.frequency || ""}`.trim(),
     dose: result.dose || "Review DailyMed source",
     interval: result.frequency || "Source review required",
@@ -613,8 +615,8 @@ function routeDisplayName(route) {
   return "All routes";
 }
 
-function formatNumber(value) {
-  return Number.isFinite(value) ? value.toFixed(1) : "--";
+function formatNumber(value, decimals = 1) {
+  return Number.isFinite(value) ? value.toFixed(decimals) : "--";
 }
 
 function compactText(value) {

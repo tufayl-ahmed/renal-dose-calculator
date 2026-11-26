@@ -42,7 +42,7 @@ export function computeRenal(values) {
 
 export function renderKidneyCard(values, renal) {
   countTo($("#crcl-value"), renal.crcl);
-  countTo($("#egfr-value"), renal.egfr);
+  countTo($("#egfr-value"), renal.egfr, 0);
   $("#crcl-note").textContent = describeCrcl(renal.crcl);
   $("#egfr-note").textContent = `${renal.stage.stage} · ${renal.stage.label}`;
 
@@ -136,11 +136,11 @@ export function resetKidneyCard() {
 }
 
 /** Animates a number to its new value (skipped for reduced motion). */
-function countTo(element, value) {
+function countTo(element, value, decimals = 1) {
   const from = Number.parseFloat(element.textContent);
   window.cancelAnimationFrame(Number(element.dataset.frame || 0));
   if (!Number.isFinite(from) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    element.textContent = value.toFixed(1);
+    element.textContent = value.toFixed(decimals);
     return;
   }
   const start = performance.now();
@@ -148,7 +148,7 @@ function countTo(element, value) {
   const step = (now) => {
     const progress = Math.min(1, (now - start) / duration);
     const eased = 1 - (1 - progress) ** 3;
-    element.textContent = (from + (value - from) * eased).toFixed(1);
+    element.textContent = (from + (value - from) * eased).toFixed(decimals);
     if (progress < 1) {
       element.dataset.frame = String(window.requestAnimationFrame(step));
     }
