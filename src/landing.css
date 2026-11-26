@@ -2919,6 +2919,25 @@ html:not(.js) .lp-lab {
   opacity: 0.16;
 }
 
+.lab-band-g1 {
+  fill: var(--g1);
+}
+.lab-band-g2 {
+  fill: var(--g2);
+}
+.lab-band-g3a {
+  fill: var(--g3a);
+}
+.lab-band-g3b {
+  fill: var(--g3b);
+}
+.lab-band-g4 {
+  fill: var(--g4);
+}
+.lab-band-g5 {
+  fill: var(--g5);
+}
+
 .lab-band-label,
 .lab-tick {
   fill: var(--text-faint);

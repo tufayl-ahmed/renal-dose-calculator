@@ -618,12 +618,12 @@ function sleep(ms) {
 const SVG_NS = "http://www.w3.org/2000/svg";
 const LAB = { minScr: 0.4, maxScr: 8, maxY: 150, samples: 120 };
 const KDIGO_BANDS = [
-  ["G1", 90, 150, "--g1"],
-  ["G2", 60, 90, "--g2"],
-  ["G3a", 45, 60, "--g3a"],
-  ["G3b", 30, 45, "--g3b"],
-  ["G4", 15, 30, "--g4"],
-  ["G5", 0, 15, "--g5"],
+  ["G1", 90, 150],
+  ["G2", 60, 90],
+  ["G3a", 45, 60],
+  ["G3b", 30, 45],
+  ["G4", 15, 30],
+  ["G5", 0, 15],
 ];
 
 function initLab() {
@@ -674,16 +674,16 @@ function initLab() {
     const bottom = size.height - pad.bottom;
     svg.setAttribute("viewBox", `0 0 ${size.width} ${size.height}`);
     const frame = node("g");
-    for (const [name, low, high, color] of KDIGO_BANDS) {
+    for (const [name, low, high] of KDIGO_BANDS) {
       const top = toY(high);
       frame.append(
+        // Colour comes from a class: the site's CSP (style-src 'self') blocks style attributes.
         node("rect", {
-          class: "lab-band",
+          class: `lab-band lab-band-${name.toLowerCase()}`,
           x: pad.left,
           y: top,
           width: right - pad.left,
           height: toY(low) - top,
-          style: `fill: var(${color})`,
         }),
         node("text", { class: "lab-band-label", x: right + 8, y: (top + toY(low)) / 2 + 4 }, name)
       );
